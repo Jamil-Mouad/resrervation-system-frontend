@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentification - Service de Réservation</title>
+    <style>
+        /* Styles du code précédent, gardés à l'identique */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .error {
+            color: #f44336;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        .success {
+            color: #4CAF50;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        .nav-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .nav-tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+        }
+        .nav-tab.active {
+            border-bottom: 2px solid #4CAF50;
+            color: #4CAF50;
+            font-weight: 600;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        #userInfo {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            margin-top: 20px;
+            display: none;
+        }
+        .forgot-password {
+            text-align: right;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        .forgot-password a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-link:hover {
+            color: #4CAF50;
+            text-decoration: underline;
+        }
+        .verification-note {
+            font-size: 13px;
+            color: #777;
+            margin-top: 10px;
+        }
+        .user-details {
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .user-details p {
+            margin: 5px 0;
+        }
+        .home-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #4CAF50;
+            text-decoration: none;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Service de Réservation</h1>
+        
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="login">Connexion</button>
+            <button class="nav-tab" data-tab="register">Inscription</button>
+        </div>
+        
+        <!-- Login Form -->
+        <div id="loginTab" class="tab-content active">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mot de passe</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <div class="forgot-password">
+                    <a href="#" id="forgotPasswordLink">Mot de passe oublié?</a>
+                </div>
+                <button type="submit">Se connecter</button>
+                <div id="loginMessage"></div>
+            </form>
+            <a href="index.html" class="home-link">Retour à l'accueil</a>
+        </div>
+        
+        <!-- Register Form -->
+        <div id="registerTab" class="tab-content">
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerUsername">Nom d'utilisateur</label>
+                    <input type="text" id="registerUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Mot de passe</label>
+                    <input type="password" id="registerPassword" minlength="8" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPasswordConfirm">Confirmer le mot de passe</label>
+                    <input type="password" id="registerPasswordConfirm" minlength="8" required>
+                </div>
+                <button type="submit">S'inscrire</button>
+                <p class="verification-note">Un code de vérification sera envoyé à votre adresse email.</p>
+                <div id="registerMessage"></div>
+            </form>
+            <a href="index.html" class="home-link">Retour à l'accueil</a>
+        </div>
+
+        <!-- Formulaire de vérification d'email pour l'inscription -->
+        <div id="verifyEmailTab" class="tab-content">
+            <h2>Vérification de votre email</h2>
+            <p>Un code de vérification a été envoyé à votre adresse email. Veuillez le saisir ci-dessous pour finaliser votre inscription.</p>
+            <form id="verifyEmailForm">
+                <div class="form-group">
+                    <label for="emailVerificationCode">Code de vérification</label>
+                    <input type="text" id="emailVerificationCode" required>
+                </div>
+                <button type="submit">Vérifier et créer le compte</button>
+                <div id="verifyEmailMessage"></div>
+            </form>
+            <a href="#" class="back-link" id="resendVerificationCode">Renvoyer le code</a>
+        </div>
+        
+        <!-- Password Reset Request Form -->
+        <div id="passwordResetRequestTab" class="tab-content">
+            <h2>Réinitialisation du mot de passe</h2>
+            <p>Veuillez entrer votre adresse email pour recevoir un code de vérification.</p>
+            <form id="passwordResetRequestForm">
+                <div class="form-group">
+                    <label for="resetEmail">Email</label>
+                    <input type="email" id="resetEmail" required>
+                </div>
+                <button type="submit">Envoyer le code</button>
+                <div id="resetRequestMessage"></div>
+            </form>
+            <a href="#" class="back-link" id="backToLoginFromRequest">Retour à la connexion</a>
+        </div>
+        
+        <!-- Verification Code Form -->
+        <div id="verificationCodeTab" class="tab-content">
+            <h2>Vérification du code</h2>
+            <p>Un code de vérification a été envoyé à votre adresse email. Ce code expire dans 15 minutes.</p>
+            <form id="verificationCodeForm">
+                <div class="form-group">
+                    <label for="verificationCode">Code de vérification</label>
+                    <input type="text" id="verificationCode" required>
+                </div>
+                <button type="submit">Vérifier le code</button>
+                <div id="verificationMessage"></div>
+            </form>
+            <a href="#" class="back-link" id="backToResetRequest">Retour à la demande de réinitialisation</a>
+        </div>
+        
+        <!-- New Password Form -->
+        <div id="newPasswordTab" class="tab-content">
+            <h2>Nouveau mot de passe</h2>
+            <p>Veuillez entrer votre nouveau mot de passe.</p>
+            <form id="newPasswordForm">
+                <div class="form-group">
+                    <label for="newPassword">Nouveau mot de passe</label>
+                    <input type="password" id="newPassword" minlength="8" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmNewPassword">Confirmer le mot de passe</label>
+                    <input type="password" id="confirmNewPassword" minlength="8" required>
+                </div>
+                <button type="submit">Réinitialiser le mot de passe</button>
+                <div id="newPasswordMessage"></div>
+            </form>
+        </div>
+        
+        <!-- User Info (shown when logged in) -->
+        <div id="userInfo">
+            <h3>Bienvenue, <span id="userName"></span>!</h3>
+            <div class="user-details">
+                <p><strong>Email:</strong> <span id="userEmail"></span></p>
+                <p><strong>Rôle:</strong> <span id="userRole"></span></p>
+            </div>
+            <div id="redirectButtons">
+                <button id="dashboardBtn" style="margin-bottom: 10px;">Accéder au tableau de bord</button>
+                <button id="logoutBtn">Se déconnecter</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Base URL for API calls
+        const API_BASE_URL = 'http://localhost:8082';
+        
+        // DOM Elements
+        const navTabs = document.querySelectorAll('.nav-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const passwordResetRequestForm = document.getElementById('passwordResetRequestForm');
+        const verificationCodeForm = document.getElementById('verificationCodeForm');
+        const newPasswordForm = document.getElementById('newPasswordForm');
+        const loginMessage = document.getElementById('loginMessage');
+        const registerMessage = document.getElementById('registerMessage');
+        const resetRequestMessage = document.getElementById('resetRequestMessage');
+        const verificationMessage = document.getElementById('verificationMessage');
+        const newPasswordMessage = document.getElementById('newPasswordMessage');
+        const userInfo = document.getElementById('userInfo');
+        const userEmailSpan = document.getElementById('userEmail');
+        const userRoleSpan = document.getElementById('userRole');
+        const dashboardBtn = document.getElementById('dashboardBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const backToLoginFromRequest = document.getElementById('backToLoginFromRequest');
+        const backToResetRequest = document.getElementById('backToResetRequest');
+     
+        // Variables to store reset email and code
+        let resetEmailValue = '';
+        let resetCodeValue = '';
+        let registrationData = {};
+        let userRole = '';
+        
+        // Check session status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if a tab parameter is in the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabParam = urlParams.get('tab');
+            
+            if (tabParam === 'register') {
+                document.querySelector('.nav-tab[data-tab="register"]').click();
+            }
+            
+            checkSession();
+        });
+        
+        // Tab switching functionality
+        navTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                navTabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(`${tabId}Tab`).classList.add('active');
+            });
+        });
+        
+        // Dashboard button handler
+        dashboardBtn.addEventListener('click', () => {
+            if (userRole.includes('ROLE_ADMIN')) {
+                window.location.href = 'admin-dashboard.html';
+            } else if (userRole.includes('ROLE_AGENT')) {
+                window.location.href = 'agent-dashboard.html';
+            } else {
+                window.location.href = 'user-dashboard.html';
+            }
+        });
+        
+        // Login Form Handler
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password }),
+                    credentials: 'include' // Important for cookies/session
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    loginMessage.className = 'success';
+                    loginMessage.textContent = data.message;
+                    
+                    // Check session to get user details
+                    await checkSession();
+                } else {
+                    loginMessage.className = 'error';
+                    loginMessage.textContent = data.message;
+                }
+            } catch (error) {
+                loginMessage.className = 'error';
+                loginMessage.textContent = 'Erreur de connexion au serveur';
+                console.error('Login error:', error);
+            }
+        });
+        
+        // Register Form Handler
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            registrationData = {
+                username: document.getElementById('registerUsername').value,
+                email: document.getElementById('registerEmail').value,
+                password: document.getElementById('registerPassword').value,
+                passwordConfirm: document.getElementById('registerPasswordConfirm').value
+            };
+            // Check if passwords match
+            if (registrationData.password !== registrationData.passwordConfirm) {
+                registerMessage.className = 'error';
+                registerMessage.textContent = 'Les mots de passe ne correspondent pas';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(registrationData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    registerMessage.className = 'success';
+                    registerMessage.textContent = data.message;
+                    
+                    // Afficher le formulaire de vérification d'email
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    document.getElementById('verifyEmailTab').classList.add('active');
+                } else {
+                    registerMessage.className = 'error';
+                    registerMessage.textContent = data.message;
+                }
+            }  catch (error) {
+                registerMessage.className = 'error';
+                registerMessage.textContent = 'Erreur de connexion au serveur';
+                console.error('Register error:', error);
+            }
+        });
+        
+        // Gestionnaire pour le formulaire de vérification d'email
+        const verifyEmailForm = document.getElementById('verifyEmailForm');
+        const verifyEmailMessage = document.getElementById('verifyEmailMessage');
+        const resendVerificationCode = document.getElementById('resendVerificationCode');
+        
+        verifyEmailForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const code = document.getElementById('emailVerificationCode').value;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/verify-email`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: registrationData.email,
+                        code: code
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    verifyEmailMessage.className = 'success';
+                    verifyEmailMessage.textContent = data.message;
+                    
+                    // Redirection vers la page de connexion après 2 secondes
+                    setTimeout(() => {
+                        tabContents.forEach(c => c.classList.remove('active'));
+                        document.getElementById('loginTab').classList.add('active');
+                        loginMessage.className = 'success';
+                        loginMessage.textContent = 'Inscription réussie. Vous pouvez maintenant vous connecter.';
+                    }, 2000);
+                } else {
+                    verifyEmailMessage.className = 'error';
+                    verifyEmailMessage.textContent = data.message;
+                }
+            } catch (error) {
+                verifyEmailMessage.className = 'error';
+                verifyEmailMessage.textContent = 'Erreur de connexion au serveur';
+                console.error('Email verification error:', error);
+            }
+        });
+        
+        // Gestionnaire pour renvoyer le code de vérification
+        resendVerificationCode.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(registrationData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    verifyEmailMessage.className = 'success';
+                    verifyEmailMessage.textContent = 'Un nouveau code de vérification a été envoyé à votre adresse email.';
+                } else {
+                    verifyEmailMessage.className = 'error';
+                    verifyEmailMessage.textContent = data.message;
+                }
+            } catch (error) {
+                verifyEmailMessage.className = 'error';
+                verifyEmailMessage.textContent = 'Erreur de connexion au serveur';
+                console.error('Resend verification code error:', error);
+            }
+        });
+
+        // Logout Handler
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Hide user info and show login form
+                    userInfo.style.display = 'none';
+                    document.getElementById('loginTab').classList.add('active');
+                    loginMessage.className = 'success';
+                    loginMessage.textContent = data.message;
+                    
+                    // Reset forms
+                    loginForm.reset();
+                    registerForm.reset();
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        });
+        
+        // Forgot Password Link Handler
+        forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Hide all tabs
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            // Show password reset request form
+            document.getElementById('passwordResetRequestTab').classList.add('active');
+        });
+        
+        // Back to Login Link Handler
+        backToLoginFromRequest.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Hide all tabs
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            // Show login tab
+            document.getElementById('loginTab').classList.add('active');
+        });
+        
+        // Back to Reset Request Link Handler
+        backToResetRequest.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Hide all tabs
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            // Show password reset request form
+            document.getElementById('passwordResetRequestTab').classList.add('active');
+        });
+        
+        // Password Reset Request Form Handler
+        passwordResetRequestForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            resetEmailValue = document.getElementById('resetEmail').value;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/password-reset/request`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: resetEmailValue })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resetRequestMessage.className = 'success';
+                    resetRequestMessage.textContent = data.message;
+                    
+                    // Hide current tab and show verification code tab
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    document.getElementById('verificationCodeTab').classList.add('active');
+                } else {
+                    resetRequestMessage.className = 'error';
+                    resetRequestMessage.textContent = data.message;
+                }
+            } catch (error) {
+                resetRequestMessage.className = 'error';
+                resetRequestMessage.textContent = 'Erreur de connexion au serveur';
+                console.error('Password reset request error:', error);
+            }
+        });
+        
+        // Verification Code Form Handler
+        verificationCodeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            resetCodeValue = document.getElementById('verificationCode').value;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/password-reset/verify-code`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        email: resetEmailValue,
+                        code: resetCodeValue
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    verificationMessage.className = 'success';
+                    verificationMessage.textContent = data.message;
+                    
+                    // Hide current tab and show new password tab
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    document.getElementById('newPasswordTab').classList.add('active');
+                } else {
+                    verificationMessage.className = 'error';
+                    verificationMessage.textContent = data.message;
+                }
+            } catch (error) {
+                verificationMessage.className = 'error';
+                verificationMessage.textContent = 'Erreur de connexion au serveur';
+                console.error('Verification code error:', error);
+            }
+        });
+        
+        // New Password Form Handler
+        newPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+            
+            // Check if passwords match
+            if (newPassword !== confirmNewPassword) {
+                newPasswordMessage.className = 'error';
+                newPasswordMessage.textContent = 'Les mots de passe ne correspondent pas';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/password-reset/new-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: resetEmailValue,
+                        code: resetCodeValue,
+                        newPassword: newPassword,
+                        confirmPassword: confirmNewPassword
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    newPasswordMessage.className = 'success';
+                    newPasswordMessage.textContent = data.message;
+                    
+                    // Reset form
+                    newPasswordForm.reset();
+                    
+                    // Redirect to login tab after 2 seconds
+                    setTimeout(() => {
+                        tabContents.forEach(c => c.classList.remove('active'));
+                        document.getElementById('loginTab').classList.add('active');
+                        loginMessage.className = 'success';
+                        loginMessage.textContent = 'Mot de passe réinitialisé avec succès. Vous pouvez maintenant vous connecter.';
+                    }, 2000);
+                } else {
+                    newPasswordMessage.className = 'error';
+                    newPasswordMessage.textContent = data.message;
+                }
+            } catch (error) {
+                newPasswordMessage.className = 'error';
+                newPasswordMessage.textContent = 'Erreur de connexion au serveur';
+                console.error('New password error:', error);
+            }
+        });
+        
+        // Session Check Function
+        async function checkSession() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/check-session`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    console.log("Session data received:", data.message);
+                    
+                    let email, role, username;
+                    
+                    // Vérifier si le message contient le séparateur "|"
+                    if (data.message.includes('|')) {
+                        const parts = data.message.split('|');
+                        email = parts[0];
+                        role = parts[1];
+                        username = parts.length > 2 ? parts[2] : 'Utilisateur';
+                        userRole = role; // Store the role for redirections
+                    } else {
+                        // Format ancien: assumons que c'est juste l'email
+                        email = data.message;
+                        role = "Non spécifié";
+                        username = "Utilisateur";
+                        userRole = "ROLE_USER"; // Default role
+                    }
+                    
+                    // Afficher toutes les informations
+                    userEmailSpan.textContent = email;
+                    userRoleSpan.textContent = role;
+                    document.getElementById('userName').textContent = username;
+                    
+                    userInfo.style.display = 'block';
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Afficher un message accueillant l'utilisateur
+                    const welcomeMessage = document.createElement('div');
+                    welcomeMessage.className = 'success';
+                    welcomeMessage.textContent = `Bienvenue ${username}! Vous êtes connecté avec succès.`;
+                    
+                    // Créer une fonction pour afficher le message pendant quelques secondes
+                    const showTemporaryMessage = (message, duration = 5000) => {
+                        const container = document.querySelector('.container');
+                        // Vérifier si le message existe déjà pour éviter les doublons
+                        const existingMessage = container.querySelector('.success');
+                        if (existingMessage) {
+                            existingMessage.remove();
+                        }
+                        container.insertBefore(message, userInfo);
+                        setTimeout(() => {
+                            message.remove();
+                        }, duration);
+                    };
+                    
+                    showTemporaryMessage(welcomeMessage);
+                    
+                    // Redirect to dashboard after 2 seconds
+                    setTimeout(() => {
+                        if (role.includes('ROLE_ADMIN')) {
+                            window.location.href = 'admin-dashboard.html';
+                        } else if (role.includes('ROLE_AGENT')) {
+                            window.location.href = 'agent-dashboard.html';
+                        } else {
+                            window.location.href = 'user-dashboard.html';
+                        }
+                    }, 2000);
+                } else {
+                    userInfo.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Session check error:', error);
+            }
+        }
+    </script>
+</body>
+</html>

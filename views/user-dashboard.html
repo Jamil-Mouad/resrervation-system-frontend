@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord - Service de Réservation</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #45a049;
+            --secondary-color: #f5f5f5;
+            --text-color: #333;
+            --accent-color: #f44336;
+            --border-color: #ddd;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+        
+        header {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-name {
+            margin-right: 1rem;
+            font-weight: 500;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            border: none;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-danger {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+        
+        .dashboard {
+            display: flex;
+            margin-top: 2rem;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-right: 2rem;
+        }
+        
+        .sidebar-menu {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-menu li a {
+            display: block;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: var(--text-color);
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .sidebar-menu li a:hover,
+        .sidebar-menu li a.active {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .sidebar-menu li a.active {
+            font-weight: 600;
+        }
+        
+        .main-content {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+        
+        .section-title {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .reservation-form {
+            margin-bottom: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            margin-top: 1.5rem;
+        }
+        
+        .reservation-history {
+            display: none;
+        }
+        
+        .reservation-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .reservation-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .reservation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .reservation-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .reservation-status {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background-color: #ffeaa7;
+            color: #d35400;
+        }
+        
+        .status-confirmed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-canceled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-completed {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+        
+        .reservation-dates {
+            display: flex;
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .reservation-dates div {
+            margin-right: 1.5rem;
+        }
+        
+        .reservation-description {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+        
+        .alert {
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 1.5rem;
+                padding: 1rem;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <div class="logo">Service de Réservation</div>
+            <div class="user-info">
+                <span class="user-name">Bienvenue, <span id="username">Utilisateur</span></span>
+                <button id="logoutBtn" class="btn btn-danger">Déconnexion</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="dashboard">
+            <div class="sidebar">
+                <ul class="sidebar-menu">
+                    <li><a href="#" class="active" data-section="reservation-form">Nouvelle réservation</a></li>
+                    <li><a href="#" data-section="reservation-history">Historique des réservations</a></li>
+                </ul>
+            </div>
+            
+            <div class="main-content">
+                <!-- Section nouvelle réservation -->
+                <div id="reservation-form" class="reservation-form">
+                    <h2 class="section-title">Faire une nouvelle réservation</h2>
+                    <div id="reservationAlert" class="alert" style="display: none;"></div>
+                    
+                    <form id="newReservationForm">
+                        <div class="form-group">
+                            <label for="service">Service requis</label>
+                            <select id="service" required>
+                                <option value="">Sélectionnez un service</option>
+                                <option value="Consultation">Consultation</option>
+                                <option value="Maintenance">Maintenance</option>
+                                <option value="Installation">Installation</option>
+                                <option value="Formation">Formation</option>
+                                <option value="Support technique">Support technique</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea id="description" placeholder="Décrivez vos besoins en détail..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="preferredDate">Date souhaitée (facultatif)</label>
+                            <input type="date" id="preferredDate">
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Soumettre la demande</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Section historique des réservations -->
+                <div id="reservation-history" class="reservation-history">
+                    <h2 class="section-title">Historique des réservations</h2>
+                    <div id="historyLoader" class="loader">Chargement des réservations...</div>
+                    <div id="historyAlert" class="alert" style="display: none;"></div>
+                    
+                    <ul id="reservationList" class="reservation-list">
+                        <!-- Les réservations seront ajoutées ici dynamiquement -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Base URL pour l'API
+        const API_BASE_URL = 'http://localhost:8082';
+        
+        // Éléments du DOM
+        const usernameElement = document.getElementById('username');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const menuItems = document.querySelectorAll('.sidebar-menu a');
+        const sections = document.querySelectorAll('.main-content > div');
+        const newReservationForm = document.getElementById('newReservationForm');
+        const reservationAlert = document.getElementById('reservationAlert');
+        const historyLoader = document.getElementById('historyLoader');
+        const historyAlert = document.getElementById('historyAlert');
+        const reservationList = document.getElementById('reservationList');
+        
+        // Vérifier la session au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSession();
+            
+            // Ajouter les écouteurs d'événements
+            initializeEventListeners();
+        });
+        
+        // Initialiser les écouteurs d'événements
+        function initializeEventListeners() {
+            // Navigation dans le menu latéral
+            menuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Supprimer la classe active de tous les liens
+                    menuItems.forEach(menuItem => {
+                        menuItem.classList.remove('active');
+                    });
+                    
+                    // Ajouter la classe active au lien cliqué
+                    this.classList.add('active');
+                    
+                    // Afficher la section correspondante
+                    const sectionId = this.getAttribute('data-section');
+                    sections.forEach(section => {
+                        section.style.display = 'none';
+                    });
+                    document.getElementById(sectionId).style.display = 'block';
+                    
+                    // Charger les réservations si on affiche l'historique
+                    if (sectionId === 'reservation-history') {
+                        loadReservations();
+                    }
+                });
+            });
+            
+            // Soumission du formulaire de réservation
+            newReservationForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                createReservation();
+            });
+            
+            // Bouton de déconnexion
+            logoutBtn.addEventListener('click', function() {
+                logout();
+            });
+        }
+        
+        // Vérifier la session utilisateur
+        async function checkSession() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/check-session`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // Extraire les informations de l'utilisateur
+                    const parts = data.message.split('|');
+                    const email = parts[0];
+                    const role = parts[1];
+                    const username = parts.length > 2 ? parts[2] : email.split('@')[0];
+                    
+                    // Vérifier si l'utilisateur a le rôle USER
+                    if (!role.includes('ROLE_USER')) {
+                        // Rediriger vers la page appropriée
+                        if (role.includes('ROLE_ADMIN')) {
+                            window.location.href = 'admin-dashboard.html';
+                        } else if (role.includes('ROLE_AGENT')) {
+                            window.location.href = 'agent-dashboard.html';
+                        } else {
+                            // Utilisateur sans rôle valide, rediriger vers la page de connexion
+                            window.location.href = 'auth.html';
+                        }
+                        return;
+                    }
+                    
+                    // Afficher le nom d'utilisateur
+                    usernameElement.textContent = username;
+                } else {
+                    // Session non active, rediriger vers la page de connexion
+                    window.location.href = 'auth.html';
+                }
+            } catch (error) {
+                console.error('Erreur lors de la vérification de la session:', error);
+                // En cas d'erreur, rediriger vers la page de connexion
+                window.location.href = 'auth.html';
+            }
+        }
+        
+        // Créer une nouvelle réservation
+        async function createReservation() {
+            const service = document.getElementById('service').value;
+            const description = document.getElementById('description').value;
+            const preferredDate = document.getElementById('preferredDate').value;
+            
+            if (!service || !description) {
+                showAlert(reservationAlert, 'Veuillez remplir tous les champs obligatoires.', 'danger');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/user/reservation`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        service,
+                        description,
+                        preferredDate
+                    }),
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert(reservationAlert, 'Votre demande de réservation a été créée avec succès!', 'success');
+                    newReservationForm.reset();
+                } else {
+                    showAlert(reservationAlert, data.message || 'Une erreur est survenue lors de la création de la réservation.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la création de la réservation:', error);
+                showAlert(reservationAlert, 'Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
+        // Charger les réservations de l'utilisateur
+        async function loadReservations() {
+            // Afficher le loader
+            historyLoader.style.display = 'block';
+            // Vider la liste
+            reservationList.innerHTML = '';
+            // Cacher les alertes précédentes
+            historyAlert.style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/user/reservations`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const reservations = await response.json();
+                    
+                    if (reservations.length === 0) {
+                        historyAlert.className = 'alert alert-success';
+                        historyAlert.textContent = 'Vous n\'avez pas encore de réservations.';
+                        historyAlert.style.display = 'block';
+                    } else {
+                        // Afficher les réservations
+                        displayReservations(reservations);
+                    }
+                } else {
+                    // Afficher un message d'erreur
+                    historyAlert.className = 'alert alert-danger';
+                    historyAlert.textContent = 'Impossible de charger vos réservations.';
+                    historyAlert.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des réservations:', error);
+                // Afficher un message d'erreur
+                historyAlert.className = 'alert alert-danger';
+                historyAlert.textContent = 'Erreur de connexion au serveur.';
+                historyAlert.style.display = 'block';
+            } finally {
+                // Cacher le loader
+                historyLoader.style.display = 'none';
+            }
+        }
+        
+        // Afficher les réservations dans la liste
+        function displayReservations(reservations) {
+            reservationList.innerHTML = '';
+            
+            // Trier les réservations par date de création (plus récentes en premier)
+            reservations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            reservations.forEach(reservation => {
+                const listItem = document.createElement('li');
+                listItem.className = 'reservation-item';
+                
+                const formattedCreatedDate = new Date(reservation.createdAt).toLocaleDateString();
+                const statusClass = `status-${reservation.status.toLowerCase()}`;
+                
+                // Construction du HTML pour l'élément de réservation
+                let html = `
+                    <div class="reservation-header">
+                        <span class="reservation-title">${reservation.service}</span>
+                        <span class="reservation-status ${statusClass}">${formatStatus(reservation.status)}</span>
+                    </div>
+                    <div class="reservation-dates">
+                        <div>Créée le: ${formattedCreatedDate}</div>
+                `;
+                
+                // Ajouter les dates de début et de fin si elles existent
+                if (reservation.startDateTime) {
+                    const formattedStartDate = new Date(reservation.startDateTime).toLocaleString();
+                    html += `<div>Début: ${formattedStartDate}</div>`;
+                }
+                
+                if (reservation.endDateTime) {
+                    const formattedEndDate = new Date(reservation.endDateTime).toLocaleString();
+                    html += `<div>Fin: ${formattedEndDate}</div>`;
+                }
+                
+                html += `
+                    </div>
+                    <div class="reservation-description">
+                        <strong>Description:</strong> ${reservation.description}
+                    </div>
+                `;
+                
+                // Si une date préférée est spécifiée
+                if (reservation.preferredDate) {
+                    html += `
+                        <div class="reservation-description">
+                            <strong>Date souhaitée:</strong> ${reservation.preferredDate}
+                        </div>
+                    `;
+                }
+                
+                listItem.innerHTML = html;
+                reservationList.appendChild(listItem);
+            });
+        }
+        
+        // Formater le statut pour l'affichage
+        function formatStatus(status) {
+            switch (status) {
+                case 'PENDING':
+                    return 'En attente';
+                case 'CONFIRMED':
+                    return 'Confirmée';
+                case 'CANCELED':
+                    return 'Annulée';
+                case 'COMPLETED':
+                    return 'Terminée';
+                default:
+                    return status;
+            }
+        }
+        
+        // Afficher une alerte
+        function showAlert(element, message, type) {
+            element.className = `alert alert-${type}`;
+            element.textContent = message;
+            element.style.display = 'block';
+            
+            // Faire défiler jusqu'à l'alerte
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Masquer l'alerte après 5 secondes
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Déconnexion
+        async function logout() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    // Rediriger vers la page de connexion
+                    window.location.href = 'auth.html';
+                }
+            } catch (error) {
+                console.error('Erreur lors de la déconnexion:', error);
+                // Rediriger quand même vers la page de connexion
+                window.location.href = 'auth.html';
+            }
+        }
+    </script>
+</body>
+</html>

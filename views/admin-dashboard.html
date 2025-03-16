@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Service de Réservation</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #45a049;
+            --secondary-color: #f5f5f5;
+            --text-color: #333;
+            --accent-color: #f44336;
+            --info-color: #2196F3;
+            --border-color: #ddd;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+        
+        header {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-name {
+            margin-right: 1rem;
+            font-weight: 500;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            border: none;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-danger {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+        
+        .btn-info {
+            background-color: var(--info-color);
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background-color: #0b7dda;
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .dashboard {
+            display: flex;
+            margin-top: 2rem;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-right: 2rem;
+        }
+        
+        .sidebar-menu {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-menu li a {
+            display: block;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: var(--text-color);
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .sidebar-menu li a:hover,
+        .sidebar-menu li a.active {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .sidebar-menu li a.active {
+            font-weight: 600;
+        }
+        
+        .main-content {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+        
+        .section-title {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            background-color: #f9f9f9;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .role-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .role-user {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+        }
+        
+        .role-agent {
+            background-color: #e8f5e9;
+            color: #1b5e20;
+        }
+        
+        .role-admin {
+            background-color: #fce4ec;
+            color: #880e4f;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        
+        .close-modal {
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #aaa;
+        }
+        
+        .close-modal:hover {
+            color: #000;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .modal-actions {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        
+        .loader {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(76, 175, 80, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .alert {
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 1.5rem;
+                padding: 1rem;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <div class="logo">Service de Réservation</div>
+            <div class="user-info">
+                <span class="user-name">Admin: <span id="username">Administrateur</span></span>
+                <button id="logoutBtn" class="btn btn-danger">Déconnexion</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container dashboard">
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" data-section="user-management">Gestion des utilisateurs</a></li>
+                <li><a href="#" data-section="system-stats">Statistiques du système</a></li>
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <!-- Section gestion des utilisateurs -->
+            <div id="user-management" class="section">
+                <h2 class="section-title">Gestion des utilisateurs</h2>
+                <div id="userAlert" class="alert" style="display: none;"></div>
+                
+                <div id="userLoader" class="loader">
+                    <div class="loading-spinner"></div>
+                    <p>Chargement des utilisateurs...</p>
+                </div>
+                
+                <table id="usersTable" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom d'utilisateur</th>
+                            <th>Email</th>
+                            <th>Rôle</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Les utilisateurs seront ajoutés ici dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Section statistiques du système -->
+            <div id="system-stats" class="section" style="display: none;">
+                <h2 class="section-title">Statistiques du système</h2>
+                <p>Cette fonctionnalité sera disponible prochainement.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de modification de rôle -->
+    <div id="roleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Modifier le rôle</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="modalAlert" class="alert" style="display: none;"></div>
+            <form id="roleForm">
+                <input type="hidden" id="userId">
+                <div class="form-group">
+                    <label for="userRole">Rôle de l'utilisateur</label>
+                    <select id="userRole" required>
+                        <option value="USER">Utilisateur</option>
+                        <option value="AGENT">Agent</option>
+                        <option value="ADMIN">Administrateur</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-danger cancel-modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Base URL pour l'API
+        const API_BASE_URL = 'http://localhost:8082';
+        
+        // Éléments du DOM
+        const usernameElement = document.getElementById('username');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const menuItems = document.querySelectorAll('.sidebar-menu a');
+        const sections = document.querySelectorAll('.main-content > div');
+        const userAlert = document.getElementById('userAlert');
+        const userLoader = document.getElementById('userLoader');
+        const usersTable = document.getElementById('usersTable');
+        const roleModal = document.getElementById('roleModal');
+        const roleForm = document.getElementById('roleForm');
+        const modalAlert = document.getElementById('modalAlert');
+        const closeModalButtons = document.querySelectorAll('.close-modal, .cancel-modal');
+        
+        // Vérifier la session au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSession();
+            initializeEventListeners();
+        });
+        
+        // Initialiser les écouteurs d'événements
+        function initializeEventListeners() {
+            // Navigation dans le menu latéral
+            menuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Supprimer la classe active de tous les liens
+                    menuItems.forEach(menuItem => {
+                        menuItem.classList.remove('active');
+                    });
+                    
+                    // Ajouter la classe active au lien cliqué
+                    this.classList.add('active');
+                    
+                    // Afficher la section correspondante
+                    const sectionId = this.getAttribute('data-section');
+                    sections.forEach(section => {
+                        section.style.display = 'none';
+                    });
+                    document.getElementById(sectionId).style.display = 'block';
+                    
+                    // Charger les données si nécessaire
+                    if (sectionId === 'user-management') {
+                        loadUsers();
+                    }
+                });
+            });
+            
+            // Bouton de déconnexion
+            logoutBtn.addEventListener('click', function() {
+                logout();
+            });
+            
+            // Fermer le modal
+            closeModalButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    roleModal.style.display = 'none';
+                });
+            });
+            
+            // Fermer le modal quand on clique en dehors
+            window.addEventListener('click', function(event) {
+                if (event.target === roleModal) {
+                    roleModal.style.display = 'none';
+                }
+            });
+            
+            // Formulaire de modification de rôle
+            roleForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                changeUserRole();
+            });
+        }
+        
+        // Vérifier la session utilisateur
+        async function checkSession() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/check-session`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // Extraire les informations de l'utilisateur
+                    const parts = data.message.split('|');
+                    const email = parts[0];
+                    const role = parts[1];
+                    const username = parts.length > 2 ? parts[2] : email.split('@')[0];
+                    
+                    // Vérifier si l'utilisateur a le rôle ADMIN
+                    if (!role.includes('ROLE_ADMIN')) {
+                        // Rediriger vers la page appropriée
+                        if (role.includes('ROLE_AGENT')) {
+                            window.location.href = 'agent-dashboard.html';
+                        } else {
+                            window.location.href = 'user-dashboard.html';
+                        }
+                        return;
+                    }
+                    
+                    // Afficher le nom d'utilisateur
+                    usernameElement.textContent = username;
+                    
+                    // Charger les utilisateurs
+                    loadUsers();
+                } else {
+                    // Session non active, rediriger vers la page de connexion
+                    window.location.href = 'auth.html';
+                }
+            } catch (error) {
+                console.error('Erreur lors de la vérification de la session:', error);
+                // En cas d'erreur, rediriger vers la page de connexion
+                window.location.href = 'auth.html';
+            }
+        }
+        
+        // Charger la liste des utilisateurs
+        async function loadUsers() {
+            // Afficher le loader
+            userLoader.style.display = 'block';
+            usersTable.style.display = 'none';
+            userAlert.style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const users = await response.json();
+                    
+                    // Remplir le tableau
+                    const tbody = usersTable.querySelector('tbody');
+                    tbody.innerHTML = '';
+                    
+                    users.forEach(user => {
+                        const tr = document.createElement('tr');
+                        
+                        // Définir la classe de badge selon le rôle
+                        const roleClass = `role-${user.role.toLowerCase()}`;
+                        
+                        tr.innerHTML = `
+                            <td>${user.id}</td>
+                            <td>${user.username}</td>
+                            <td>${user.email}</td>
+                            <td><span class="role-badge ${roleClass}">${user.role}</span></td>
+                            <td class="actions">
+                                <button class="btn btn-info btn-sm edit-role-btn" data-id="${user.id}" data-role="${user.role}">Modifier le rôle</button>
+                            </td>
+                        `;
+                        
+                        tbody.appendChild(tr);
+                    });
+                    
+                    // Ajouter les écouteurs d'événements aux boutons
+                    document.querySelectorAll('.edit-role-btn').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const userId = this.getAttribute('data-id');
+                            const userRole = this.getAttribute('data-role');
+                            openRoleModal(userId, userRole);
+                        });
+                    });
+                    
+                    // Afficher le tableau
+                    usersTable.style.display = 'table';
+                } else {
+                    // Afficher un message d'erreur
+                    showAlert(userAlert, 'Impossible de charger la liste des utilisateurs.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des utilisateurs:', error);
+                showAlert(userAlert, 'Erreur de connexion au serveur.', 'danger');
+            } finally {
+                // Masquer le loader
+                userLoader.style.display = 'none';
+            }
+        }
+        
+        // Ouvrir le modal de modification de rôle
+        function openRoleModal(userId, userRole) {
+            document.getElementById('userId').value = userId;
+            document.getElementById('userRole').value = userRole;
+            
+            // Réinitialiser les alertes
+            modalAlert.style.display = 'none';
+            
+            // Afficher le modal
+            roleModal.style.display = 'block';
+        }
+        
+        // Modifier le rôle d'un utilisateur
+        async function changeUserRole() {
+            const userId = document.getElementById('userId').value;
+            const newRole = document.getElementById('userRole').value;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/users/change-role/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        newRole: newRole
+                    }),
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Fermer le modal
+                    roleModal.style.display = 'none';
+                    
+                    // Afficher une notification
+                    showAlert(userAlert, 'Rôle modifié avec succès!', 'success');
+                    
+                    // Recharger la liste des utilisateurs
+                    loadUsers();
+                } else {
+                    showModalAlert(data.message || 'Erreur lors de la modification du rôle.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la modification du rôle:', error);
+                showModalAlert('Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
+        // Afficher une alerte dans le container principal
+        function showAlert(element, message, type) {
+            element.className = `alert alert-${type}`;
+            element.textContent = message;
+            element.style.display = 'block';
+            
+            // Faire défiler jusqu'à l'alerte
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Masquer l'alerte après 5 secondes
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Afficher une alerte dans le modal
+        function showModalAlert(message, type) {
+            modalAlert.className = `alert alert-${type}`;
+            modalAlert.textContent = message;
+            modalAlert.style.display = 'block';
+        }
+        
+        // Déconnexion
+        async function logout() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    // Rediriger vers la page de connexion
+                    window.location.href = 'auth.html';
+                }
+            } catch (error) {
+                console.error('Erreur lors de la déconnexion:', error);
+                // Rediriger quand même vers la page de connexion
+                window.location.href = 'auth.html';
+            }
+        }
+    </script>
+</body>
+</html>

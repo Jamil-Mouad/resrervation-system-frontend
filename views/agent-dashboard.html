@@ -336,6 +336,41 @@
                 gap: 0;
             }
         }
+        
+        .websocket-status {
+            display: flex;
+            align-items: center;
+            margin-left: 15px;
+        }
+
+        .ws-connected, .ws-disconnected {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .ws-connected {
+            background-color: var(--primary-color);
+            box-shadow: 0 0 5px var(--primary-color);
+        }
+
+        .ws-disconnected {
+            background-color: var(--accent-color);
+            box-shadow: 0 0 5px var(--accent-color);
+        }
+        
+        @keyframes highlightNew {
+            0% { 
+                background-color: rgba(76, 175, 80, 0.3);
+                transform: scale(1.02);
+            }
+            100% { 
+                background-color: white;
+                transform: scale(1);
+            }
+        }
     </style>
 </head>
 <body>
@@ -345,6 +380,9 @@
             <div class="user-info">
                 <span class="user-name">Agent: <span id="username">Utilisateur</span></span>
                 <button id="logoutBtn" class="btn btn-danger">Déconnexion</button>
+            </div>
+            <div class="websocket-status">
+                <span id="wsStatus" class="ws-disconnected">•</span>
             </div>
         </div>
     </header>
@@ -501,32 +539,50 @@
         }
         
         // Connecter au WebSocket pour les mises à jour en temps réel
-        function connectWebSocket() {
-            // Charger les bibliothèques SockJS et STOMP
-            const sockjs = document.createElement('script');
-            sockjs.src = 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js';
-            sockjs.async = true;
+        // Remplace la fonction connectWebSocket() actuelle par celle-ci:
+function connectWebSocket() {
+    // Charger les bibliothèques SockJS et STOMP
+    const sockjs = document.createElement('script');
+    sockjs.src = 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js';
+    sockjs.async = true;
+    
+    const stomp = document.createElement('script');
+    stomp.src = 'https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js';
+    stomp.async = true;
+    
+    document.head.appendChild(sockjs);
+    document.head.appendChild(stomp);
+    
+    // Après le chargement des scripts
+    stomp.onload = function() {
+        const socket = new SockJS(`${API_BASE_URL}/reservation-websocket`);
+        stompClient = Stomp.over(socket);
+        
+        // Configuration pour éviter les logs trop verbeux
+        stompClient.debug = null;
+        
+        stompClient.connect({}, function(frame) {
+            console.log('Connected to WebSocket');
             
-            const stomp = document.createElement('script');
-            stomp.src = 'https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js';
-            stomp.async = true;
-            
-            document.head.appendChild(sockjs);
-            document.head.appendChild(stomp);
-            
-            // Après le chargement des scripts
-            stomp.onload = function() {
-                const socket = new SockJS(`${API_BASE_URL}/reservation-websocket`);
-                stompClient = Stomp.over(socket);
-                
-                stompClient.connect({}, function(frame) {
-                    console.log('Connected to WebSocket:', frame);
+            // S'abonner aux mises à jour des réservations
+            stompClient.subscribe('/topic/reservations', function(message) {
+                try {
+                    const reservations = JSON.parse(message.body);
                     
-                    // S'abonner aux mises à jour des réservations
-                    stompClient.subscribe('/topic/reservations', function(message) {
-                        const reservation = JSON.parse(message.body);
+                    // Si c'est un tableau, c'est une liste complète de réservations
+                    if (Array.isArray(reservations)) {
+                        // Vider la grille
+                        reservationsGridElement.innerHTML = '';
                         
-                        // Si c'est une nouvelle réservation, l'ajouter à la grille
+                        // Ajouter chaque réservation
+                        reservations.forEach(reservation => {
+                            addReservationToGrid(reservation);
+                        });
+                        updatePendingCount();
+                    } 
+                    // Sinon c'est une seule réservation nouvelle
+                    else {
+                        const reservation = reservations;
                         if (reservation.status === 'PENDING') {
                             addReservationToGrid(reservation);
                             updatePendingCount();
@@ -534,27 +590,48 @@
                             // Afficher une notification
                             showAlert('Nouvelle réservation reçue !', 'success');
                         }
-                    });
+                    }
+                } catch (e) {
+                    console.error('Erreur de traitement des données WebSocket:', e);
+                }
+            });
+            
+            // S'abonner aux mises à jour de réservations spécifiques
+            stompClient.subscribe('/topic/reservation-updated', function(message) {
+                try {
+                    const updatedReservation = JSON.parse(message.body);
                     
-                    // S'abonner aux mises à jour des réservations modifiées
-                    stompClient.subscribe('/topic/reservation-updated', function(message) {
-                        const updatedReservation = JSON.parse(message.body);
+                    // Supprimer la réservation de la grille si elle a été confirmée ou annulée
+                    if (updatedReservation.status !== 'PENDING') {
+                        removeReservationFromGrid(updatedReservation.id);
+                        updatePendingCount();
                         
-                        // Supprimer la réservation de la grille si elle a été confirmée ou annulée
-                        if (updatedReservation.status !== 'PENDING') {
-                            removeReservationFromGrid(updatedReservation.id);
-                            updatePendingCount();
+                        // Afficher notification spécifique à l'action
+                        if (updatedReservation.status === 'CONFIRMED') {
+                            showAlert('Réservation confirmée avec succès', 'success');
+                        } else if (updatedReservation.status === 'CANCELED') {
+                            showAlert('Réservation annulée', 'success');
                         }
-                    });
-                    
-                    // Demander les réservations en attente
-                    stompClient.send('/app/fetch-reservations', {}, {});
-                }, function(error) {
-                    console.error('Erreur de connexion WebSocket:', error);
-                    // En cas d'erreur, continuer avec le chargement standard
-                });
-            };
-        }
+                    }
+                } catch (e) {
+                    console.error('Erreur de traitement des données WebSocket:', e);
+                }
+            });
+            
+            // Demander les réservations en attente
+            stompClient.send('/app/fetch-reservations', {}, {});
+        }, function(error) {
+            console.error('Erreur de connexion WebSocket:', error);
+            showAlert('Problème de connexion temps réel. Rafraîchissez la page.', 'danger');
+            
+            // Charger les réservations via REST comme fallback
+            loadPendingReservations();
+            
+            // Tenter de reconnecter après 10 secondes
+            setTimeout(connectWebSocket, 10000);
+        });
+    };
+}
         
         // Charger les réservations en attente
         async function loadPendingReservations() {
@@ -634,7 +711,7 @@
         // Créer le HTML pour une carte de réservation
         function createReservationCard(reservation) {
             const createdDate = new Date(reservation.createdAt).toLocaleString();
-            
+            const clientName = reservation.user.username || reservation.user.email.split('@')[0];
             return `
                 <div id="reservation-${reservation.id}" class="reservation-card">
                     <div class="reservation-header">
@@ -643,7 +720,7 @@
                     </div>
                     
                     <div class="reservation-meta">
-                        <div><strong>Client:</strong> ${reservation.user.username}</div>
+                        <div><strong>Client:</strong> ${clientName}</div>
                         <div><strong>Email:</strong> ${reservation.user.email}</div>
                         <div><strong>Créée le:</strong> ${createdDate}</div>
                         ${reservation.preferredDate ? `<div><strong>Date souhaitée:</strong> ${reservation.preferredDate}</div>` : ''}
@@ -853,6 +930,52 @@
                 // Rediriger quand même vers la page de connexion
                 window.location.href = 'auth.html';
             }
+        }
+        // Ajoute cette fonction pour animer l'arrivée d'une nouvelle réservation
+        function animateNewReservation(cardElement) {
+            cardElement.style.animation = 'none';
+            cardElement.offsetHeight; // Force reflow
+            cardElement.style.animation = 'highlightNew 2s ease-out';
+        }
+
+
+
+        // Modifie la fonction addReservationToGrid
+        function addReservationToGrid(reservation) {
+            // Vérifier si la réservation existe déjà
+            const existingCard = document.getElementById(`reservation-${reservation.id}`);
+            if (existingCard) {
+                // Si elle existe, la mettre à jour
+                existingCard.outerHTML = createReservationCard(reservation);
+                return;
+            }
+            
+            // Masquer le message "pas de réservations" s'il est affiché
+            noReservationsElement.style.display = 'none';
+            
+            // Créer la carte de réservation
+            const card = createReservationCard(reservation);
+            
+            // Ajouter la carte à la grille
+            reservationsGridElement.insertAdjacentHTML('afterbegin', card);
+            
+            // Animer la nouvelle carte
+            const cardElement = document.getElementById(`reservation-${reservation.id}`);
+            animateNewReservation(cardElement);
+            
+            // Ajouter les écouteurs d'événements aux boutons
+            const confirmBtn = document.querySelector(`#reservation-${reservation.id} .confirm-btn`);
+            const cancelBtn = document.querySelector(`#reservation-${reservation.id} .cancel-btn`);
+            
+            confirmBtn.addEventListener('click', function() {
+                openConfirmationModal(reservation);
+            });
+            
+            cancelBtn.addEventListener('click', function() {
+                if (confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')) {
+                    cancelReservation(reservation.id);
+                }
+            });
         }
     </script>
 </body>

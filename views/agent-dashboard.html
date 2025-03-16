@@ -622,8 +622,7 @@ function connectWebSocket() {
             stompClient.send('/app/fetch-reservations', {}, {});
         }, function(error) {
             console.error('Erreur de connexion WebSocket:', error);
-            showAlert('Problème de connexion temps réel. Rafraîchissez la page.', 'danger');
-            
+            document.getElementById('wsStatus').className = 'ws-disconnected';
             // Charger les réservations via REST comme fallback
             loadPendingReservations();
             

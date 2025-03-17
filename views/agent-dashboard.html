@@ -710,7 +710,11 @@ function connectWebSocket() {
         // Créer le HTML pour une carte de réservation
         function createReservationCard(reservation) {
             const createdDate = new Date(reservation.createdAt).toLocaleString();
-            const clientName = reservation.user.username || reservation.user.email.split('@')[0];
+            // Méthode robuste pour obtenir le nom du client
+            const clientName = reservation.user.displayName || 
+                       reservation.user.username || 
+                            (reservation.user.email ? reservation.user.email.split('@')[0] : 'Client');
+            
             return `
                 <div id="reservation-${reservation.id}" class="reservation-card">
                     <div class="reservation-header">

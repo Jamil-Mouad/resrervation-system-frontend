@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Agences - Service de Réservation</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #45a049;
+            --secondary-color: #f5f5f5;
+            --text-color: #333;
+            --accent-color: #f44336;
+            --info-color: #2196F3;
+            --border-color: #ddd;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+        
+        header {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-name {
+            margin-right: 1rem;
+            font-weight: 500;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            border: none;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-danger {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+        
+        .btn-info {
+            background-color: var(--info-color);
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background-color: #0b7dda;
+        }
+        
+        .dashboard {
+            display: flex;
+            margin-top: 2rem;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-right: 2rem;
+        }
+        
+        .sidebar-menu {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-menu li a {
+            display: block;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: var(--text-color);
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .sidebar-menu li a:hover,
+        .sidebar-menu li a.active {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .main-content {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .page-title {
+            margin: 0;
+        }
+        
+        .agencies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .agency-card {
+            background-color: white;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .agency-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .agency-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .agency-address {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .agency-contact {
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .agency-agents {
+            background-color: #f9f9f9;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        
+        .agency-agents-title {
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .agents-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .agents-list li {
+            margin-bottom: 0.25rem;
+        }
+        
+        .agency-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            max-width: 700px;
+            width: 90%;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        
+        .close-modal {
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #aaa;
+        }
+        
+        .close-modal:hover {
+            color: #000;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            padding: 0 0.5rem;
+            flex: 1 0 100%;
+        }
+        
+        .form-group-half {
+            flex: 1 0 50%;
+        }
+        
+        @media (max-width: 768px) {
+            .form-group-half {
+                flex: 1 0 100%;
+            }
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .modal-actions {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        
+        .business-hours-container {
+            margin-bottom: 1rem;
+        }
+        
+        .business-hours-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .business-hours-day {
+            width: 100px;
+            font-weight: 600;
+        }
+        
+        .business-hours-inputs {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .business-hours-time {
+            width: 120px;
+        }
+        
+        .business-hours-closed {
+            margin-left: 1rem;
+        }
+        
+        .loader {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(76, 175, 80, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .alert {
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        
+        .map-container {
+            width: 100%;
+            height: 300px;
+            margin-top: 1rem;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <div class="logo">Service de Réservation</div>
+            <div class="user-info">
+                <span class="user-name">Admin: <span id="username">Administrateur</span></span>
+                <button id="logoutBtn" class="btn btn-danger">Déconnexion</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container dashboard">
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="admin-dashboard.html" data-section="user-management">Gestion des utilisateurs</a></li>
+                <li><a href="#" class="active" data-section="agency-management">Gestion des agences</a></li>
+                <li><a href="#" data-section="system-stats">Statistiques du système</a></li>
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <div class="page-header">
+                <h2 class="page-title">Gestion des agences</h2>
+                <button id="addAgencyBtn" class="btn btn-primary">Ajouter une agence</button>
+            </div>
+            
+            <div id="alertContainer"></div>
+            
+            <div id="agencyLoader" class="loader">
+                <div class="loading-spinner"></div>
+                <p>Chargement des agences...</p>
+            </div>
+            
+            <div id="agenciesGrid" class="agencies-grid">
+                <!-- Les agences seront ajoutées ici dynamiquement -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal pour ajouter/modifier une agence -->
+    <div id="agencyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle" class="modal-title">Ajouter une agence</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="modalAlert" class="alert" style="display: none;"></div>
+            <form id="agencyForm">
+                <input type="hidden" id="agencyId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="agencyName">Nom de l'agence</label>
+                        <input type="text" id="agencyName" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="agencyAddress">Adresse</label>
+                        <input type="text" id="agencyAddress" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group form-group-half">
+                        <label for="agencyPhone">Téléphone</label>
+                        <input type="text" id="agencyPhone">
+                    </div>
+                    <div class="form-group form-group-half">
+                        <label for="agencyEmail">Email</label>
+                        <input type="email" id="agencyEmail">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="agencyDescription">Description</label>
+                        <textarea id="agencyDescription" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group form-group-half">
+                        <label for="agencyLatitude">Latitude</label>
+                        <input type="number" id="agencyLatitude" step="0.000001">
+                    </div>
+                    <div class="form-group form-group-half">
+                        <label for="agencyLongitude">Longitude</label>
+                        <input type="number" id="agencyLongitude" step="0.000001">
+                    </div>
+                </div>
+                
+                <!-- Carte pour sélectionner la localisation (à intégrer avec une API Maps) -->
+                <div id="mapContainer" class="map-container">
+                    <!-- La carte sera chargée ici -->
+                    <p style="text-align: center; padding-top: 120px; color: #666;">
+                        Carte pour sélectionner la localisation (à implémenter avec une API Maps)
+                    </p>
+                </div>
+                
+                <h3>Heures d'ouverture</h3>
+                <div id="businessHoursContainer" class="business-hours-container">
+                    <div class="business-hours-row">
+                        <div class="business-hours-day">Lundi</div>
+                        <div class="business-hours-inputs">
+                            <input type="time" class="business-hours-time" data-day="MONDAY" data-type="open" value="09:00">
+                            <span>à</span>
+                            <input type="time" class="business-hours-time" data-day="MONDAY" data-type="close" value="18:00">
+                            <label class="business-hours-closed">
+                                <input type="checkbox" data-day="MONDAY" data-type="closed"> Fermé
+                            </label>
+                        </div>
+                    </div>
+                    <div class="business-hours-row">
+                        <div class="business-hours-day">Mardi</div>
+                        <div class="business-hours-inputs">
+                            <input type="time" class="business-hours-time" data-day="TUESDAY" data-type="open" value="09:00">
+                            <span>à</span>
+                            <input type="time" class="business-hours-time" data-day="TUESDAY" data-type="close" value="18:00">
+                            <label class="business-hours-closed">
+                                <input type="checkbox" data-day="TUESDAY" data-type="closed"> Fermé
+                            </label>
+                        </div>
+                    </div>
+                    <div class="business-hours-row">
+                        <div class="business-hours-day">Mercredi</div>
+                        <div class="business-hours-inputs">
+                            <input type="time" class="business-hours-time" data-day="WEDNESDAY" data-type="open" value="09:00">
+                            <span>à</span>
+                            <input type="time" class="business-hours-time" data-day="WEDNESDAY" data-type="close" value="18:00">
+                            <label class="business-hours-closed">
+                                <input type="checkbox" data-day="WEDNESDAY" data-type="closed"> Fermé
+                            </label>
+                        </div>
+                    </div>
+                    <div class="business-hours-row">
+                        <div class="business-hours-day">Jeudi</div>
+                        <div class="business-hours-inputs">
+                            <input type="time" class="business-hours-time" data-day="THURSDAY" data-type="open" value="09:00">
+                            <span>à</span>
+                            <input type="time" class="business-hours-time" data-day="THURSDAY" data-type="close" value="18:00">
+                            <label class="business-hours-closed">
+                                <input type="checkbox" data-day="THURSDAY" data-type="closed"> Fermé
+                            </label>
+                        </div>
+                    </div>
+                    <div class="business-hours-row">
+                        <div class="business-hours-day">Vendredi</div>
+                        <div class="business-hours-inputs">
+                            <input type="time" class="business-hours-time" data-day="FRIDAY" data-type="open" value="09:00">
+                            <span>à</span>
+                            <input type="time" class="business-hours-time" data-day="FRIDAY" data-type="close" value="18:00">
+                            <label class="business-hours-closed">
+                                <input type="checkbox" data-day="FRIDAY" data-type="closed"> Fermé
+                            </label>
+                        </div>
+                    </div>
+                    <div class="business-hours-row">
+                        <div class="business-hours-day">Samedi</div>
+                        <div class="business-hours-inputs">
+                            <input type="time" class="business-hours-time" data-day="SATURDAY" data-type="open" value="09:00">
+                            <span>à</span>
+                            <input type="time" class="business-hours-time" data-day="SATURDAY" data-type="close" value="13:00">
+                            <label class="business-hours-closed">
+                                <input type="checkbox" data-day="SATURDAY" data-type="closed"> Fermé
+                            </label>
+                        </div>
+                    </div>
+                    <div class="business-hours-row">
+                        <div class="business-hours-day">Dimanche</div>
+                        <div class="business-hours-inputs">
+                            <input type="time" class="business-hours-time" data-day="SUNDAY" data-type="open" value="00:00">
+                            <span>à</span>
+                            <input type="time" class="business-hours-time" data-day="SUNDAY" data-type="close" value="00:00">
+                            <label class="business-hours-closed">
+                                <input type="checkbox" data-day="SUNDAY" data-type="closed" checked> Fermé
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-danger cancel-modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal pour assigner un agent à une agence -->
+    <div id="assignAgentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Assigner un agent à l'agence</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="assignAgentAlert" class="alert" style="display: none;"></div>
+            <form id="assignAgentForm">
+                <input type="hidden" id="assignAgencyId">
+                <div class="form-group">
+                    <label for="agentSelect">Sélectionner un agent</label>
+                    <select id="agentSelect" required>
+                        <option value="">-- Sélectionner un agent --</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-danger cancel-modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Assigner</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Base URL pour l'API
+        const API_BASE_URL = 'http://localhost:8082';
+        
+        // Éléments du DOM
+        const usernameElement = document.getElementById('username');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const agencyLoader = document.getElementById('agencyLoader');
+        const agenciesGrid = document.getElementById('agenciesGrid');
+        const alertContainer = document.getElementById('alertContainer');
+        const addAgencyBtn = document.getElementById('addAgencyBtn');
+        const agencyModal = document.getElementById('agencyModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const agencyForm = document.getElementById('agencyForm');
+        const modalAlert = document.getElementById('modalAlert');
+        const closeModalButtons = document.querySelectorAll('.close-modal, .cancel-modal');
+        const assignAgentModal = document.getElementById('assignAgentModal');
+        const assignAgentForm = document.getElementById('assignAgentForm');
+        const assignAgentAlert = document.getElementById('assignAgentAlert');
+        
+        // Vérifier la session au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSession();
+            initializeEventListeners();
+        });
+        
+        // Initialiser les écouteurs d'événements
+        function initializeEventListeners() {
+            // Bouton de déconnexion
+            logoutBtn.addEventListener('click', function() {
+                logout();
+            });
+            
+            // Bouton d'ajout d'agence
+            addAgencyBtn.addEventListener('click', function() {
+                openAgencyModal();
+            });
+            
+            // Formulaire d'ajout/modification d'agence
+            agencyForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveAgency();
+            });
+            
+            // Formulaire d'assignation d'agent
+            assignAgentForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                assignAgent();
+            });
+            
+            // Fermer les modals
+            closeModalButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    agencyModal.style.display = 'none';
+                    assignAgentModal.style.display = 'none';
+                });
+            });
+            
+            // Fermer les modals quand on clique en dehors
+            window.addEventListener('click', function(event) {
+                if (event.target === agencyModal) {
+                    agencyModal.style.display = 'none';
+                }
+                if (event.target === assignAgentModal) {
+                    assignAgentModal.style.display = 'none';
+                }
+            });
+            
+            // Gestion des checkboxes "Fermé"
+            document.querySelectorAll('input[data-type="closed"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const day = this.getAttribute('data-day');
+                    const timeInputs = document.querySelectorAll(`input[data-day="${day}"][data-type="open"], input[data-day="${day}"][data-type="close"]`);
+                    
+                    if (this.checked) {
+                        timeInputs.forEach(input => {
+                            input.disabled = true;
+                        });
+                    } else {
+                        timeInputs.forEach(input => {
+                            input.disabled = false;
+                        });
+                    }
+                });
+                
+                // Initialiser l'état des inputs
+                if (checkbox.checked) {
+                    const day = checkbox.getAttribute('data-day');
+                    const timeInputs = document.querySelectorAll(`input[data-day="${day}"][data-type="open"], input[data-day="${day}"][data-type="close"]`);
+                    timeInputs.forEach(input => {
+                        input.disabled = true;
+                    });
+                }
+            });
+        }
+        
+        // Vérifier la session utilisateur
+        async function checkSession() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/check-session`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    // Extraire les informations de l'utilisateur
+                    const parts = data.message.split('|');
+                    const email = parts[0];
+                    const role = parts[1];
+                    const username = parts.length > 2 ? parts[2] : email.split('@')[0];
+                    
+                    // Vérifier si l'utilisateur a le rôle ADMIN
+                    if (!role.includes('ROLE_ADMIN')) {
+                        // Rediriger vers la page appropriée
+                        if (role.includes('ROLE_AGENT')) {
+                            window.location.href = 'agent-dashboard.html';
+                        } else {
+                            window.location.href = 'user-dashboard.html';
+                        }
+                        return;
+                    }
+                    
+                    // Afficher le nom d'utilisateur
+                    usernameElement.textContent = username;
+                    
+                    // Charger les agences
+                    loadAgencies();
+                } else {
+                    // Session non active, rediriger vers la page de connexion
+                    window.location.href = 'auth.html';
+                }
+            } catch (error) {
+                console.error('Erreur lors de la vérification de la session:', error);
+                // En cas d'erreur, rediriger vers la page de connexion
+                window.location.href = 'auth.html';
+            }
+        }
+        
+        // Charger les agences
+        async function loadAgencies() {
+            // Afficher le loader
+            agencyLoader.style.display = 'block';
+            agenciesGrid.innerHTML = '';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/agencies`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const agencies = await response.json();
+                    
+                    if (agencies.length === 0) {
+                        showAlert('Aucune agence trouvée. Ajoutez votre première agence!', 'info');
+                    } else {
+                        // Afficher les agences
+                        agencies.forEach(agency => {
+                            addAgencyToGrid(agency);
+                        });
+                    }
+                } else {
+                    showAlert('Impossible de charger les agences.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des agences:', error);
+                showAlert('Erreur de connexion au serveur.', 'danger');
+            } finally {
+                // Masquer le loader
+                agencyLoader.style.display = 'none';
+            }
+        }
+        
+        // Ajouter une agence à la grille
+        function addAgencyToGrid(agency) {
+            const agencyCard = document.createElement('div');
+            agencyCard.className = 'agency-card';
+            agencyCard.id = `agency-${agency.id}`;
+            
+            // Créer la liste des agents
+            let agentsHTML = '';
+            if (agency.agents && agency.agents.length > 0) {
+                agentsHTML = `
+                    <div class="agency-agents">
+                        <h4 class="agency-agents-title">Agents assignés (${agency.agents.length})</h4>
+                        <ul class="agents-list">
+                            ${agency.agents.map(agent => `<li>${agent.username}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            } else {
+                agentsHTML = `
+                    <div class="agency-agents">
+                        <h4 class="agency-agents-title">Aucun agent assigné</h4>
+                    </div>
+                `;
+            }
+            
+            agencyCard.innerHTML = `
+                <h3 class="agency-name">${agency.name}</h3>
+                <div class="agency-address">${agency.address}</div>
+                <div class="agency-contact">
+                    ${agency.phoneNumber ? `<div>Tél: ${agency.phoneNumber}</div>` : ''}
+                    ${agency.email ? `<div>Email: ${agency.email}</div>` : ''}
+                </div>
+                ${agentsHTML}
+                <div class="agency-actions">
+                    <button class="btn btn-danger delete-agency-btn" data-id="${agency.id}">Supprimer</button>
+                    <button class="btn btn-info assign-agent-btn" data-id="${agency.id}">Assigner un agent</button>
+                    <button class="btn btn-primary edit-agency-btn" data-id="${agency.id}">Modifier</button>
+                </div>
+            `;
+            
+            agenciesGrid.appendChild(agencyCard);
+            
+            // Ajouter les écouteurs d'événements aux boutons
+            const editBtn = agencyCard.querySelector('.edit-agency-btn');
+            const deleteBtn = agencyCard.querySelector('.delete-agency-btn');
+            const assignBtn = agencyCard.querySelector('.assign-agent-btn');
+            
+            editBtn.addEventListener('click', function() {
+                editAgency(agency.id);
+            });
+            
+            deleteBtn.addEventListener('click', function() {
+                if (confirm(`Êtes-vous sûr de vouloir supprimer l'agence "${agency.name}" ?`)) {
+                    deleteAgency(agency.id);
+                }
+            });
+            
+            assignBtn.addEventListener('click', function() {
+                openAssignAgentModal(agency.id);
+            });
+        }
+        
+        // Ouvrir le modal d'ajout d'agence
+        function openAgencyModal(agencyId = null) {
+            // Réinitialiser le formulaire
+            agencyForm.reset();
+            document.getElementById('agencyId').value = '';
+            
+            // Réinitialiser les checkboxes des heures d'ouverture
+            document.querySelectorAll('input[data-type="closed"]').forEach(checkbox => {
+                const day = checkbox.getAttribute('data-day');
+                const timeInputs = document.querySelectorAll(`input[data-day="${day}"][data-type="open"], input[data-day="${day}"][data-type="close"]`);
+                
+                if (day === 'SUNDAY') {
+                    checkbox.checked = true;
+                    timeInputs.forEach(input => {
+                        input.disabled = true;
+                    });
+                } else {
+                    checkbox.checked = false;
+                    timeInputs.forEach(input => {
+                        input.disabled = false;
+                    });
+                }
+            });
+            
+            // Si un ID est fourni, c'est une modification
+            if (agencyId) {
+                modalTitle.textContent = 'Modifier l\'agence';
+                fetchAgencyDetails(agencyId);
+            } else {
+                modalTitle.textContent = 'Ajouter une agence';
+            }
+            
+            // Afficher le modal
+            modalAlert.style.display = 'none';
+            agencyModal.style.display = 'block';
+        }
+        
+        // Ouvrir le modal d'assignation d'agent
+        async function openAssignAgentModal(agencyId) {
+            document.getElementById('assignAgencyId').value = agencyId;
+            assignAgentAlert.style.display = 'none';
+            
+            // Charger la liste des agents disponibles
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const users = await response.json();
+                    const agentSelect = document.getElementById('agentSelect');
+                    
+                    // Vider le select
+                    agentSelect.innerHTML = '<option value="">-- Sélectionner un agent --</option>';
+                    
+                    // Filtrer les utilisateurs avec le rôle AGENT
+                    const agents = users.filter(user => user.role === 'AGENT');
+                    
+                    if (agents.length === 0) {
+                        showAlert('Aucun agent disponible. Créez des comptes agents d\'abord.', 'info');
+                        return;
+                    }
+                    
+                    // Ajouter les agents au select
+                    agents.forEach(agent => {
+                        const option = document.createElement('option');
+                        option.value = agent.id;
+                        option.textContent = `${agent.username} (${agent.email})`;
+                        agentSelect.appendChild(option);
+                    });
+                    
+                    // Afficher le modal
+                    assignAgentModal.style.display = 'block';
+                } else {
+                    showAlert('Impossible de charger la liste des agents.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des agents:', error);
+                showAlert('Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
+        // Récupérer les détails d'une agence
+        async function fetchAgencyDetails(agencyId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/agencies/${agencyId}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const agency = await response.json();
+                    
+                    // Remplir le formulaire
+                    document.getElementById('agencyId').value = agency.id;
+                    document.getElementById('agencyName').value = agency.name;
+                    document.getElementById('agencyAddress').value = agency.address;
+                    document.getElementById('agencyPhone').value = agency.phoneNumber || '';
+                    document.getElementById('agencyEmail').value = agency.email || '';
+                    document.getElementById('agencyDescription').value = agency.description || '';
+                    document.getElementById('agencyLatitude').value = agency.latitude || '';
+                    document.getElementById('agencyLongitude').value = agency.longitude || '';
+                    
+                    // Remplir les heures d'ouverture
+                    if (agency.businessHours && agency.businessHours.length > 0) {
+                        agency.businessHours.forEach(hours => {
+                            const day = hours.day;
+                            const closedCheckbox = document.querySelector(`input[data-day="${day}"][data-type="closed"]`);
+                            const openTimeInput = document.querySelector(`input[data-day="${day}"][data-type="open"]`);
+                            const closeTimeInput = document.querySelector(`input[data-day="${day}"][data-type="close"]`);
+                            
+                            if (hours.closed) {
+                                closedCheckbox.checked = true;
+                                openTimeInput.disabled = true;
+                                closeTimeInput.disabled = true;
+                            } else {
+                                closedCheckbox.checked = false;
+                                openTimeInput.disabled = false;
+                                closeTimeInput.disabled = false;
+                                openTimeInput.value = hours.openingTime;
+                                closeTimeInput.value = hours.closingTime;
+                            }
+                        });
+                    }
+                } else {
+                    showAlert('Impossible de charger les détails de l\'agence.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des détails de l\'agence:', error);
+                showAlert('Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
+        // Enregistrer une agence (ajout ou modification)
+        async function saveAgency() {
+            const agencyId = document.getElementById('agencyId').value;
+            const name = document.getElementById('agencyName').value;
+            const address = document.getElementById('agencyAddress').value;
+            const phoneNumber = document.getElementById('agencyPhone').value;
+            const email = document.getElementById('agencyEmail').value;
+            const description = document.getElementById('agencyDescription').value;
+            const latitude = document.getElementById('agencyLatitude').value;
+            const longitude = document.getElementById('agencyLongitude').value;
+            
+            // Récupérer les heures d'ouverture
+            const businessHours = [];
+            const days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+            
+            days.forEach(day => {
+                const closedCheckbox = document.querySelector(`input[data-day="${day}"][data-type="closed"]`);
+                const openTimeInput = document.querySelector(`input[data-day="${day}"][data-type="open"]`);
+                const closeTimeInput = document.querySelector(`input[data-day="${day}"][data-type="close"]`);
+                
+                businessHours.push({
+                    day: day,
+                    openingTime: openTimeInput.value,
+                    closingTime: closeTimeInput.value,
+                    closed: closedCheckbox.checked
+                });
+            });
+            
+            const agencyData = {
+                name,
+                address,
+                phoneNumber,
+                email,
+                description,
+                latitude: latitude ? parseFloat(latitude) : null,
+                longitude: longitude ? parseFloat(longitude) : null,
+                businessHours
+            };
+            
+            try {
+                let response;
+                
+                if (agencyId) {
+                    // Mise à jour
+                    response = await fetch(`${API_BASE_URL}/api/agencies/${agencyId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(agencyData),
+                        credentials: 'include'
+                    });
+                } else {
+                    // Création
+                    response = await fetch(`${API_BASE_URL}/api/agencies`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(agencyData),
+                        credentials: 'include'
+                    });
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Fermer le modal
+                    agencyModal.style.display = 'none';
+                    
+                    // Rafraîchir la liste des agences
+                    loadAgencies();
+                    
+                    // Afficher une notification
+                    showAlert(agencyId ? 'Agence mise à jour avec succès!' : 'Agence créée avec succès!', 'success');
+                } else {
+                    showModalAlert(data.message || 'Erreur lors de l\'enregistrement de l\'agence.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'enregistrement de l\'agence:', error);
+                showModalAlert('Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
+        // Supprimer une agence
+        async function deleteAgency(agencyId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/agencies/${agencyId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    // Supprimer la carte de l'agence
+                    document.getElementById(`agency-${agencyId}`).remove();
+                    
+                    // Afficher une notification
+                    showAlert('Agence supprimée avec succès!', 'success');
+                    
+                    // Si plus aucune agence, afficher un message
+                    if (agenciesGrid.children.length === 0) {
+                        showAlert('Aucune agence disponible. Ajoutez votre première agence!', 'info');
+                    }
+                } else {
+                    const data = await response.json();
+                    showAlert(data.message || 'Erreur lors de la suppression de l\'agence.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la suppression de l\'agence:', error);
+                showAlert('Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
+        // Modifier une agence
+        async function editAgency(agencyId) {
+            openAgencyModal(agencyId);
+        }
+        
+        // Assigner un agent à une agence
+        async function assignAgent() {
+            const agencyId = document.getElementById('assignAgencyId').value;
+            const userId = document.getElementById('agentSelect').value;
+            
+            if (!userId) {
+                showAssignAgentAlert('Veuillez sélectionner un agent.', 'danger');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/agencies/${agencyId}/assign-agent/${userId}`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Fermer le modal
+                    assignAgentModal.style.display = 'none';
+                    
+                    // Rafraîchir la liste des agences
+                    loadAgencies();
+                    
+                    // Afficher une notification
+                    showAlert('Agent assigné à l\'agence avec succès!', 'success');
+                } else {
+                    showAssignAgentAlert(data.message || 'Erreur lors de l\'assignation de l\'agent.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'assignation de l\'agent:', error);
+                showAssignAgentAlert('Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
+        // Afficher une alerte dans le container principal
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            
+            alertContainer.appendChild(alertDiv);
+            
+            // Masquer l'alerte après 5 secondes
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+        
+        // Afficher une alerte dans le modal d'agence
+        function showModalAlert(message, type) {
+            modalAlert.className = `alert alert-${type}`;
+            modalAlert.textContent = message;
+            modalAlert.style.display = 'block';
+        }
+        
+        // Afficher une alerte dans le modal d'assignation d'agent
+        function showAssignAgentAlert(message, type) {
+            assignAgentAlert.className = `alert alert-${type}`;
+            assignAgentAlert.textContent = message;
+            assignAgentAlert.style.display = 'block';
+        }
+        
+        // Déconnexion
+        async function logout() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    // Rediriger vers la page de connexion
+                    window.location.href = 'auth.html';
+                }
+            } catch (error) {
+                console.error('Erreur lors de la déconnexion:', error);
+                // Rediriger quand même vers la page de connexion
+                window.location.href = 'auth.html';
+            }
+        }
+    </script>
+</body>
+</html>

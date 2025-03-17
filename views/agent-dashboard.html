@@ -852,7 +852,7 @@ function connectWebSocket() {
                     updatePendingCount();
                     
                     // Afficher une notification
-                    showAlert('Réservation confirmée avec succès!', 'success');
+                    //showAlert('Réservation confirmée avec succès!', 'success');
                 } else {
                     showModalAlert(data.message || 'Erreur lors de la confirmation de la réservation.', 'danger');
                 }
@@ -880,7 +880,7 @@ function connectWebSocket() {
                     updatePendingCount();
                     
                     // Afficher une notification
-                    showAlert('Réservation annulée.', 'success');
+                    //showAlert('Réservation annulée.', 'success');
                 } else {
                     showAlert(data.message || 'Erreur lors de l\'annulation de la réservation.', 'danger');
                 }

@@ -719,32 +719,6 @@
                     userRoleSpan.textContent = role;
                     document.getElementById('userName').textContent = username;
                     
-                    userInfo.style.display = 'block';
-                    tabContents.forEach(c => c.classList.remove('active'));
-                    
-                    // Afficher un message accueillant l'utilisateur
-                    const welcomeMessage = document.createElement('div');
-                    welcomeMessage.className = 'success';
-                    welcomeMessage.textContent = `Bienvenue ${username}! Vous êtes connecté avec succès.`;
-                    
-                    // Créer une fonction pour afficher le message pendant quelques secondes
-                    const showTemporaryMessage = (message, duration = 5000) => {
-                        const container = document.querySelector('.container');
-                        // Vérifier si le message existe déjà pour éviter les doublons
-                        const existingMessage = container.querySelector('.success');
-                        if (existingMessage) {
-                            existingMessage.remove();
-                        }
-                        container.insertBefore(message, userInfo);
-                        setTimeout(() => {
-                            message.remove();
-                        }, duration);
-                    };
-                    
-                    showTemporaryMessage(welcomeMessage);
-                    
-                    // Redirect to dashboard after 2 seconds
-                    setTimeout(() => {
                         if (role.includes('ROLE_ADMIN')) {
                             window.location.href = 'admin-dashboard.html';
                         } else if (role.includes('ROLE_AGENT')) {
@@ -752,10 +726,7 @@
                         } else {
                             window.location.href = 'user-dashboard.html';
                         }
-                    }, 2000);
-                } else {
-                    userInfo.style.display = 'none';
-                }
+              }
             } catch (error) {
                 console.error('Session check error:', error);
             }

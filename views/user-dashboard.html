@@ -4,14 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tableau de bord - Service de Réservation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #4CAF50;
             --primary-dark: #45a049;
+            --primary-light: #e8f5e9;
             --secondary-color: #f5f5f5;
             --text-color: #333;
             --accent-color: #f44336;
             --border-color: #ddd;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
         }
         
         body {
@@ -24,7 +28,7 @@
         
         header {
             background-color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
             padding: 1rem 0;
             position: sticky;
             top: 0;
@@ -64,7 +68,7 @@
             padding: 0.5rem 1rem;
             border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: var(--transition);
             text-decoration: none;
             border: none;
             font-size: 1rem;
@@ -77,6 +81,16 @@
         
         .btn-primary:hover {
             background-color: var(--primary-dark);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary-light);
         }
         
         .btn-danger {
@@ -97,9 +111,12 @@
             width: 250px;
             background-color: white;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
             padding: 1.5rem;
             margin-right: 2rem;
+            height: calc(100vh - 140px);
+            position: sticky;
+            top: 90px;
         }
         
         .sidebar-menu {
@@ -113,17 +130,24 @@
         }
         
         .sidebar-menu li a {
-            display: block;
+            display: flex;
+            align-items: center;
             padding: 0.75rem 1rem;
             text-decoration: none;
             color: var(--text-color);
             border-radius: 4px;
-            transition: background-color 0.3s;
+            transition: var(--transition);
+        }
+        
+        .sidebar-menu li a i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
         }
         
         .sidebar-menu li a:hover,
         .sidebar-menu li a.active {
-            background-color: rgba(76, 175, 80, 0.1);
+            background-color: var(--primary-light);
             color: var(--primary-color);
         }
         
@@ -135,8 +159,9 @@
             flex: 1;
             background-color: white;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
             padding: 1.5rem;
+            min-height: calc(100vh - 140px);
         }
         
         .section-title {
@@ -144,14 +169,177 @@
             margin-bottom: 1.5rem;
             padding-bottom: 0.75rem;
             border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .reservation-form {
+        /* Search bar */
+        .search-container {
+            display: flex;
+            margin-bottom: 1.5rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 1rem;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px 0 0 4px;
+            font-size: 1rem;
+        }
+        
+        .search-btn {
+            padding: 0.75rem 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .search-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        /* Agency cards */
+        .agencies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
             margin-bottom: 2rem;
         }
         
-        .form-group {
+        .agency-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .agency-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .agency-header {
+            background-color: var(--primary-light);
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .agency-title {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+        
+        .agency-location {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .agency-location i {
+            margin-right: 5px;
+        }
+        
+        .agency-body {
+            padding: 1.5rem;
+            flex: 1;
+        }
+        
+        .agency-description {
             margin-bottom: 1rem;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .agency-contact {
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .agency-contact div {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .agency-contact i {
+            width: 20px;
+            margin-right: 5px;
+        }
+        
+        .agency-footer {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .agency-hours {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        /* Reservation form */
+        .reservation-form {
+            background-color: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .reservation-agency {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .agency-logo {
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .agency-info h3 {
+            margin: 0 0 0.5rem 0;
+        }
+        
+        .agency-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
         }
         
         label {
@@ -166,19 +354,26 @@
             border: 1px solid var(--border-color);
             border-radius: 4px;
             font-size: 1rem;
+            font-family: inherit;
         }
         
         textarea {
-            min-height: 100px;
+            min-height: 120px;
             resize: vertical;
         }
         
         .form-actions {
-            margin-top: 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
         }
         
+        /* Reservation history */
         .reservation-history {
-            display: none;
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
         }
         
         .reservation-list {
@@ -190,78 +385,105 @@
         .reservation-item {
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+        
+        .reservation-item:hover {
+            box-shadow: var(--shadow);
         }
         
         .reservation-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
         }
         
         .reservation-title {
             font-weight: 600;
             font-size: 1.1rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .reservation-title i {
+            margin-right: 8px;
+            color: var(--primary-color);
         }
         
         .reservation-status {
             display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
             font-size: 0.875rem;
             font-weight: 600;
+            text-transform: uppercase;
         }
         
         .status-pending {
-            background-color: #ffeaa7;
-            color: #d35400;
+            background-color: #fff8e1;
+            color: #ff8f00;
         }
         
         .status-confirmed {
-            background-color: #d4edda;
-            color: #155724;
+            background-color: #e8f5e9;
+            color: #2e7d32;
         }
         
         .status-canceled {
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: #ffebee;
+            color: #c62828;
         }
         
         .status-completed {
-            background-color: #cce5ff;
-            color: #004085;
+            background-color: #e3f2fd;
+            color: #1565c0;
         }
         
-        .reservation-dates {
+        .reservation-details {
+            margin-bottom: 1rem;
+        }
+        
+        .reservation-detail {
             display: flex;
-            margin: 0.5rem 0;
-            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .detail-label {
+            width: 120px;
+            font-weight: 600;
             color: #666;
         }
         
-        .reservation-dates div {
-            margin-right: 1.5rem;
+        .detail-value {
+            flex: 1;
         }
         
         .reservation-description {
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-        }
-        
-        .loader {
-            display: none;
-            text-align: center;
-            padding: 2rem;
-            color: #666;
-        }
-        
-        .alert {
-            padding: 0.75rem 1.25rem;
+            background-color: #f9f9f9;
+            padding: 1rem;
+            border-radius: 4px;
             margin-bottom: 1rem;
+        }
+        
+        /* Alerts */
+        .alert {
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
             border: 1px solid transparent;
             border-radius: 4px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .alert i {
+            margin-right: 10px;
+            font-size: 1.2rem;
         }
         
         .alert-success {
@@ -276,7 +498,87 @@
             border-color: #f5c6cb;
         }
         
-        @media (max-width: 768px) {
+        .alert-info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+        }
+        
+        /* Loaders */
+        .loader {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: #666;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(76, 175, 80, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* No results */
+        .no-results {
+            text-align: center;
+            padding: 3rem 0;
+            color: #666;
+        }
+        
+        .no-results i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .page-item {
+            margin: 0 0.25rem;
+        }
+        
+        .page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: white;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .page-link:hover {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+        }
+        
+        .page-link.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
             .dashboard {
                 flex-direction: column;
             }
@@ -285,12 +587,61 @@
                 width: 100%;
                 margin-right: 0;
                 margin-bottom: 1.5rem;
-                padding: 1rem;
+                height: auto;
+                position: static;
             }
             
-            .main-content {
-                padding: 1rem;
+            .sidebar-menu {
+                display: flex;
+                flex-wrap: wrap;
             }
+            
+            .sidebar-menu li {
+                margin-right: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .sidebar-menu li a {
+                padding: 0.5rem 1rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .agencies-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .section-title .btn {
+                margin-top: 1rem;
+            }
+            
+            .reservation-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .reservation-status {
+                margin-top: 0.5rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .form-actions .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+        
+        /* Utilities */
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
@@ -300,56 +651,155 @@
             <div class="logo">Service de Réservation</div>
             <div class="user-info">
                 <span class="user-name">Bienvenue, <span id="username">Utilisateur</span></span>
-                <button id="logoutBtn" class="btn btn-danger">Déconnexion</button>
+                <button id="logoutBtn" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
             </div>
         </div>
     </header>
 
     <div class="container">
         <div class="dashboard">
-            <div class="sidebar">
+            <aside class="sidebar">
                 <ul class="sidebar-menu">
-                    <li><a href="#" class="active" data-section="reservation-form">Nouvelle réservation</a></li>
-                    <li><a href="#" data-section="reservation-history">Historique des réservations</a></li>
+                    <li><a href="#" class="active" data-section="agencies-section"><i class="fas fa-building"></i> Agences</a></li>
+                    <li><a href="#" data-section="reservation-history-section"><i class="fas fa-history"></i> Historique</a></li>
+                    <li><a href="#" data-section="profile-section"><i class="fas fa-user"></i> Profil</a></li>
+                    <li><a href="#" data-section="help-section"><i class="fas fa-question-circle"></i> Aide</a></li>
                 </ul>
-            </div>
+            </aside>
             
-            <div class="main-content">
-                <!-- Section nouvelle réservation -->
-                <div id="reservation-form" class="reservation-form">
-                    <h2 class="section-title">Faire une nouvelle réservation</h2>
-                    <div id="reservationAlert" class="alert" style="display: none;"></div>
+            <main class="main-content">
+                <!-- Section Agences -->
+                <section id="agencies-section">
+                    <div class="section-title">
+                        <h2>Nos agences</h2>
+                    </div>
                     
-                    <form id="newReservationForm">
-                        <div class="form-group">
-                            <label for="service">Service requis</label>
-                            <input type="text" id="service" placeholder="Entrez le nom du service souhaité" required>
+                    <div id="alertContainer"></div>
+                    
+                    <div class="search-container">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Rechercher par nom d'agence ou ville...">
+                        <button id="searchBtn" class="search-btn"><i class="fas fa-search"></i></button>
+                    </div>
+                    
+                    <div id="agenciesLoader" class="loader">
+                        <div class="spinner"></div>
+                        <p>Chargement des agences...</p>
+                    </div>
+                    
+                    <div id="noAgencies" class="no-results hidden">
+                        <i class="fas fa-building"></i>
+                        <p>Aucune agence trouvée.</p>
+                    </div>
+                    
+                    <div id="agenciesGrid" class="agencies-grid"></div>
+                    
+                    <div id="agenciesPagination" class="pagination hidden">
+                        <div class="page-item">
+                            <a href="#" class="page-link" data-page="prev"><i class="fas fa-chevron-left"></i></a>
                         </div>
-                        <div class="form-group">
-                            <label for="description">Description</label>
-                            <textarea id="description" placeholder="Décrivez vos besoins en détail..." required></textarea>
+                        <div class="page-item">
+                            <a href="#" class="page-link active" data-page="1">1</a>
                         </div>
-                        <div class="form-group">
-                            <label for="preferredDate">Date souhaitée (facultatif)</label>
-                            <input type="date" id="preferredDate">
+                        <div class="page-item">
+                            <a href="#" class="page-link" data-page="2">2</a>
                         </div>
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary">Soumettre la demande</button>
+                        <div class="page-item">
+                            <a href="#" class="page-link" data-page="next"><i class="fas fa-chevron-right"></i></a>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </section>
                 
-                <!-- Section historique des réservations -->
-                <div id="reservation-history" class="reservation-history">
-                    <h2 class="section-title">Historique des réservations</h2>
-                    <div id="historyLoader" class="loader">Chargement des réservations...</div>
-                    <div id="historyAlert" class="alert" style="display: none;"></div>
+                <!-- Section Formulaire de Réservation -->
+                <section id="reservation-form-section" class="hidden">
+                    <div class="section-title">
+                        <h2>Nouvelle réservation</h2>
+                        <button class="btn btn-outline" id="backToAgenciesBtn"><i class="fas fa-arrow-left"></i> Retour aux agences</button>
+                    </div>
                     
-                    <ul id="reservationList" class="reservation-list">
-                        <!-- Les réservations seront ajoutées ici dynamiquement -->
-                    </ul>
-                </div>
-            </div>
+                    <div id="reservationAlert" class="alert hidden"></div>
+                    
+                    <div class="reservation-form">
+                        <div class="reservation-agency">
+                            <div class="agency-logo">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div class="agency-info">
+                                <h3 id="selectedAgencyName">Nom de l'agence</h3>
+                                <p id="selectedAgencyAddress">Adresse de l'agence</p>
+                            </div>
+                        </div>
+                        
+                        <form id="newReservationForm">
+                            <input type="hidden" id="agencyId" name="agencyId">
+                            
+                            <div class="form-group">
+                                <label for="service">Service requis</label>
+                                <input type="text" id="service" name="service" placeholder="Entrez le nom du service souhaité" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea id="description" name="description" placeholder="Décrivez vos besoins en détail..." required></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="preferredDate">Date souhaitée (facultatif)</label>
+                                <input type="date" id="preferredDate" name="preferredDate">
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-outline" id="cancelReservationBtn">Annuler</button>
+                                <button type="submit" class="btn btn-primary">Soumettre la demande</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+                
+                <!-- Section Historique des Réservations -->
+                <section id="reservation-history-section" class="hidden">
+                    <div class="section-title">
+                        <h2>Historique des réservations</h2>
+                    </div>
+                    
+                    <div id="historyLoader" class="loader">
+                        <div class="spinner"></div>
+                        <p>Chargement des réservations...</p>
+                    </div>
+                    
+                    <div id="historyAlert" class="alert hidden"></div>
+                    
+                    <div id="noReservations" class="no-results hidden">
+                        <i class="fas fa-calendar-times"></i>
+                        <p>Vous n'avez pas encore de réservations.</p>
+                    </div>
+                    
+                    <div id="reservationList" class="reservation-list"></div>
+                </section>
+                
+                <!-- Section Profil (Placeholder) -->
+                <section id="profile-section" class="hidden">
+                    <div class="section-title">
+                        <h2>Mon profil</h2>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Cette fonctionnalité sera disponible prochainement.</span>
+                    </div>
+                </section>
+                
+                <!-- Section Aide (Placeholder) -->
+                <section id="help-section" class="hidden">
+                    <div class="section-title">
+                        <h2>Aide et support</h2>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Cette fonctionnalité sera disponible prochainement.</span>
+                    </div>
+                </section>
+            </main>
         </div>
     </div>
 
@@ -357,22 +807,44 @@
         // Base URL pour l'API
         const API_BASE_URL = 'http://localhost:8082';
         
+        // Variables globales
+        let allAgencies = [];
+        let currentAgencyId = null;
+        
         // Éléments du DOM
         const usernameElement = document.getElementById('username');
         const logoutBtn = document.getElementById('logoutBtn');
         const menuItems = document.querySelectorAll('.sidebar-menu a');
-        const sections = document.querySelectorAll('.main-content > div');
+        const sections = document.querySelectorAll('main section');
+        
+        // Éléments de la section Agences
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const agenciesLoader = document.getElementById('agenciesLoader');
+        const noAgencies = document.getElementById('noAgencies');
+        const agenciesGrid = document.getElementById('agenciesGrid');
+        
+        // Éléments de la section Formulaire de Réservation
+        const backToAgenciesBtn = document.getElementById('backToAgenciesBtn');
         const newReservationForm = document.getElementById('newReservationForm');
+        const selectedAgencyName = document.getElementById('selectedAgencyName');
+        const selectedAgencyAddress = document.getElementById('selectedAgencyAddress');
+        const agencyIdInput = document.getElementById('agencyId');
         const reservationAlert = document.getElementById('reservationAlert');
+        const cancelReservationBtn = document.getElementById('cancelReservationBtn');
+        
+        // Éléments de la section Historique
         const historyLoader = document.getElementById('historyLoader');
         const historyAlert = document.getElementById('historyAlert');
+        const noReservations = document.getElementById('noReservations');
         const reservationList = document.getElementById('reservationList');
         
-        // Vérifier la session au chargement de la page
+        // Initialisation au chargement de la page
         document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier la session
             checkSession();
             
-            // Ajouter les écouteurs d'événements
+            // Initialiser les écouteurs d'événements
             initializeEventListeners();
         });
         
@@ -384,25 +856,44 @@
                     e.preventDefault();
                     
                     // Supprimer la classe active de tous les liens
-                    menuItems.forEach(menuItem => {
-                        menuItem.classList.remove('active');
-                    });
+                    menuItems.forEach(menuItem => menuItem.classList.remove('active'));
                     
                     // Ajouter la classe active au lien cliqué
                     this.classList.add('active');
                     
                     // Afficher la section correspondante
                     const sectionId = this.getAttribute('data-section');
-                    sections.forEach(section => {
-                        section.style.display = 'none';
-                    });
-                    document.getElementById(sectionId).style.display = 'block';
+                    sections.forEach(section => section.classList.add('hidden'));
+                    document.getElementById(sectionId).classList.remove('hidden');
                     
-                    // Charger les réservations si on affiche l'historique
-                    if (sectionId === 'reservation-history') {
+                    // Charger les données si nécessaire
+                    if (sectionId === 'agencies-section') {
+                        loadAgencies();
+                    } else if (sectionId === 'reservation-history-section') {
                         loadReservations();
                     }
                 });
+            });
+            
+            // Recherche d'agences
+            searchBtn.addEventListener('click', filterAgencies);
+            searchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    filterAgencies();
+                }
+            });
+            
+            // Retour à la liste des agences
+            backToAgenciesBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showSection('agencies-section');
+            });
+            
+            // Annulation de la réservation
+            cancelReservationBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showSection('agencies-section');
+                newReservationForm.reset();
             });
             
             // Soumission du formulaire de réservation
@@ -411,10 +902,8 @@
                 createReservation();
             });
             
-            // Bouton de déconnexion
-            logoutBtn.addEventListener('click', function() {
-                logout();
-            });
+            // Déconnexion
+            logoutBtn.addEventListener('click', logout);
         }
         
         // Vérifier la session utilisateur
@@ -450,6 +939,9 @@
                     
                     // Afficher le nom d'utilisateur
                     usernameElement.textContent = username;
+                    
+                    // Charger les agences
+                    loadAgencies();
                 } else {
                     // Session non active, rediriger vers la page de connexion
                     window.location.href = 'auth.html';
@@ -461,14 +953,175 @@
             }
         }
         
+        // Charger les agences
+        async function loadAgencies() {
+            // Afficher le loader
+            agenciesLoader.classList.remove('hidden');
+            noAgencies.classList.add('hidden');
+            agenciesGrid.innerHTML = '';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/agencies/public`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    // Stocker toutes les agences
+                    allAgencies = await response.json();
+                    
+                    if (allAgencies.length === 0) {
+                        // Aucune agence trouvée
+                        noAgencies.classList.remove('hidden');
+                    } else {
+                        // Afficher les agences
+                        displayAgencies(allAgencies);
+                    }
+                } else {
+                    // Erreur lors du chargement des agences
+                    showAlert('Une erreur est survenue lors du chargement des agences.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des agences:', error);
+                showAlert('Erreur de connexion au serveur.', 'danger');
+            } finally {
+                // Masquer le loader
+                agenciesLoader.classList.add('hidden');
+            }
+        }
+        
+        // Filtrer les agences
+        function filterAgencies() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                // Si la recherche est vide, afficher toutes les agences
+                displayAgencies(allAgencies);
+                return;
+            }
+            
+            // Filtrer les agences par nom ou ville
+            const filteredAgencies = allAgencies.filter(agency => 
+                agency.name.toLowerCase().includes(searchTerm) || 
+                agency.city.toLowerCase().includes(searchTerm)
+            );
+            
+            // Afficher les résultats
+            if (filteredAgencies.length === 0) {
+                // Aucun résultat
+                agenciesGrid.innerHTML = '';
+                noAgencies.classList.remove('hidden');
+            } else {
+                // Afficher les agences filtrées
+                displayAgencies(filteredAgencies);
+                noAgencies.classList.add('hidden');
+            }
+        }
+        
+        // Afficher les agences dans la grille
+        function displayAgencies(agencies) {
+            agenciesGrid.innerHTML = '';
+            
+            agencies.forEach(agency => {
+                const card = createAgencyCard(agency);
+                agenciesGrid.appendChild(card);
+            });
+        }
+        
+        // Créer une carte d'agence
+        function createAgencyCard(agency) {
+            const card = document.createElement('div');
+            card.className = 'agency-card';
+            
+            // Déterminer les heures d'ouverture aujourd'hui
+            const businessHoursText = getBusinessHoursText(agency.businessHours);
+            
+            card.innerHTML = `
+                <div class="agency-header">
+                    <h3 class="agency-title">${agency.name}</h3>
+                    <div class="agency-location">
+                        <i class="fas fa-map-marker-alt"></i> ${agency.city}
+                    </div>
+                </div>
+                <div class="agency-body">
+                    <p class="agency-description">${agency.description || 'Aucune description disponible.'}</p>
+                    <div class="agency-contact">
+                        <div><i class="fas fa-phone"></i> ${agency.phoneNumber}</div>
+                        <div><i class="fas fa-envelope"></i> ${agency.email || 'Non disponible'}</div>
+                        <div><i class="fas fa-map-pin"></i> ${agency.address}</div>
+                    </div>
+                </div>
+                <div class="agency-footer">
+                    <div class="agency-hours">${businessHoursText}</div>
+                    <button class="btn btn-primary book-agency-btn" data-id="${agency.id}">Réserver</button>
+                </div>
+            `;
+            
+            // Ajouter l'écouteur d'événement pour le bouton de réservation
+            card.querySelector('.book-agency-btn').addEventListener('click', function() {
+                const agencyId = this.getAttribute('data-id');
+                openReservationForm(agencyId);
+            });
+            
+            return card;
+        }
+        
+        // Obtenir le texte des heures d'ouverture
+        function getBusinessHoursText(businessHours) {
+            if (!businessHours || businessHours.length === 0) {
+                return 'Horaires non disponibles';
+            }
+            
+            // Obtenir le jour actuel (0 = Dimanche, 1 = Lundi, etc.)
+            const today = new Date().getDay();
+            const daysOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+            const todayName = daysOfWeek[today];
+            
+            // Trouver les heures d'ouverture pour aujourd'hui
+            const todayHours = businessHours.find(hour => hour.day === todayName);
+            
+            if (!todayHours) {
+                return 'Horaires non disponibles';
+            }
+            
+            if (todayHours.closed) {
+                return 'Fermé aujourd\'hui';
+            }
+            
+            return `Ouvert aujourd'hui: ${todayHours.openingTime} - ${todayHours.closingTime}`;
+        }
+        
+        // Ouvrir le formulaire de réservation
+        function openReservationForm(agencyId) {
+            const agency = allAgencies.find(a => a.id == agencyId);
+            
+            if (!agency) {
+                showAlert('Agence non trouvée.', 'danger');
+                return;
+            }
+            
+            // Mettre à jour les informations de l'agence sélectionnée
+            selectedAgencyName.textContent = agency.name;
+            selectedAgencyAddress.textContent = agency.address;
+            agencyIdInput.value = agency.id;
+            currentAgencyId = agency.id;
+            
+            // Réinitialiser le formulaire
+            newReservationForm.reset();
+            
+            // Afficher la section du formulaire de réservation
+            showSection('reservation-form-section');
+        }
+        
         // Créer une nouvelle réservation
         async function createReservation() {
             const service = document.getElementById('service').value;
             const description = document.getElementById('description').value;
             const preferredDate = document.getElementById('preferredDate').value;
+            const agencyId = agencyIdInput.value;
             
-            if (!service || !description) {
-                showAlert(reservationAlert, 'Veuillez remplir tous les champs obligatoires.', 'danger');
+            if (!service || !description || !agencyId) {
+                showReservationAlert('Veuillez remplir tous les champs obligatoires.', 'danger');
                 return;
             }
             
@@ -481,7 +1134,8 @@
                     body: JSON.stringify({
                         service,
                         description,
-                        preferredDate
+                        preferredDate,
+                        agencyId
                     }),
                     credentials: 'include'
                 });
@@ -489,25 +1143,39 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    showAlert(reservationAlert, 'Votre demande de réservation a été créée avec succès!', 'success');
+                    showReservationAlert('Votre demande de réservation a été créée avec succès!', 'success');
+                    
+                    // Réinitialiser le formulaire
                     newReservationForm.reset();
+                    
+                    // Rediriger vers l'historique des réservations après 2 secondes
+                    setTimeout(() => {
+                        showSection('reservation-history-section');
+                        menuItems.forEach(item => {
+                            if (item.getAttribute('data-section') === 'reservation-history-section') {
+                                item.classList.add('active');
+                            } else {
+                                item.classList.remove('active');
+                            }
+                        });
+                        loadReservations();
+                    }, 2000);
                 } else {
-                    showAlert(reservationAlert, data.message || 'Une erreur est survenue lors de la création de la réservation.', 'danger');
+                    showReservationAlert(data.message || 'Une erreur est survenue lors de la création de la réservation.', 'danger');
                 }
             } catch (error) {
                 console.error('Erreur lors de la création de la réservation:', error);
-                showAlert(reservationAlert, 'Erreur de connexion au serveur.', 'danger');
+                showReservationAlert('Erreur de connexion au serveur.', 'danger');
             }
         }
         
         // Charger les réservations de l'utilisateur
         async function loadReservations() {
             // Afficher le loader
-            historyLoader.style.display = 'block';
-            // Vider la liste
+            historyLoader.classList.remove('hidden');
+            noReservations.classList.add('hidden');
+            historyAlert.classList.add('hidden');
             reservationList.innerHTML = '';
-            // Cacher les alertes précédentes
-            historyAlert.style.display = 'none';
             
             try {
                 const response = await fetch(`${API_BASE_URL}/api/user/reservations`, {
@@ -519,28 +1187,22 @@
                     const reservations = await response.json();
                     
                     if (reservations.length === 0) {
-                        historyAlert.className = 'alert alert-success';
-                        historyAlert.textContent = 'Vous n\'avez pas encore de réservations.';
-                        historyAlert.style.display = 'block';
+                        // Aucune réservation trouvée
+                        noReservations.classList.remove('hidden');
                     } else {
                         // Afficher les réservations
                         displayReservations(reservations);
                     }
                 } else {
-                    // Afficher un message d'erreur
-                    historyAlert.className = 'alert alert-danger';
-                    historyAlert.textContent = 'Impossible de charger vos réservations.';
-                    historyAlert.style.display = 'block';
+                    // Erreur lors du chargement des réservations
+                    showHistoryAlert('Une erreur est survenue lors du chargement des réservations.', 'danger');
                 }
             } catch (error) {
                 console.error('Erreur lors du chargement des réservations:', error);
-                // Afficher un message d'erreur
-                historyAlert.className = 'alert alert-danger';
-                historyAlert.textContent = 'Erreur de connexion au serveur.';
-                historyAlert.style.display = 'block';
+                showHistoryAlert('Erreur de connexion au serveur.', 'danger');
             } finally {
-                // Cacher le loader
-                historyLoader.style.display = 'none';
+                // Masquer le loader
+                historyLoader.classList.add('hidden');
             }
         }
         
@@ -552,55 +1214,84 @@
             reservations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             
             reservations.forEach(reservation => {
-                const listItem = document.createElement('li');
+                const listItem = document.createElement('div');
                 listItem.className = 'reservation-item';
                 
-                const formattedCreatedDate = new Date(reservation.createdAt).toLocaleDateString();
+                // Formater les dates
+                const createdDate = new Date(reservation.createdAt).toLocaleDateString();
                 const statusClass = `status-${reservation.status.toLowerCase()}`;
+                const statusText = formatStatus(reservation.status);
                 
-                // Construction du HTML pour l'élément de réservation
+                // Trouver l'agence correspondante si elle existe dans notre liste
+                let agencyName = "Agence";
+                if (reservation.agency && reservation.agency.name) {
+                    agencyName = reservation.agency.name;
+                }
+                
                 let html = `
                     <div class="reservation-header">
-                        <span class="reservation-title">${reservation.service}</span>
-                        <span class="reservation-status ${statusClass}">${formatStatus(reservation.status)}</span>
+                        <h3 class="reservation-title">
+                            <i class="fas fa-calendar-check"></i>
+                            ${reservation.service}
+                        </h3>
+                        <span class="reservation-status ${statusClass}">${statusText}</span>
                     </div>
-                    <div class="reservation-dates">
-                        <div>Créée le: ${formattedCreatedDate}</div>
+                    
+                    <div class="reservation-details">
+                        <div class="reservation-detail">
+                            <span class="detail-label">Agence:</span>
+                            <span class="detail-value">${agencyName}</span>
+                        </div>
+                        <div class="reservation-detail">
+                            <span class="detail-label">Créée le:</span>
+                            <span class="detail-value">${createdDate}</span>
+                        </div>
                 `;
                 
                 // Ajouter les dates de début et de fin si elles existent
                 if (reservation.startDateTime) {
-                    const formattedStartDate = new Date(reservation.startDateTime).toLocaleString();
-                    html += `<div>Début: ${formattedStartDate}</div>`;
+                    const startDate = new Date(reservation.startDateTime).toLocaleString();
+                    html += `
+                        <div class="reservation-detail">
+                            <span class="detail-label">Date de début:</span>
+                            <span class="detail-value">${startDate}</span>
+                        </div>
+                    `;
                 }
                 
                 if (reservation.endDateTime) {
-                    const formattedEndDate = new Date(reservation.endDateTime).toLocaleString();
-                    html += `<div>Fin: ${formattedEndDate}</div>`;
+                    const endDate = new Date(reservation.endDateTime).toLocaleString();
+                    html += `
+                        <div class="reservation-detail">
+                            <span class="detail-label">Date de fin:</span>
+                            <span class="detail-value">${endDate}</span>
+                        </div>
+                    `;
+                }
+                
+                if (reservation.preferredDate) {
+                    html += `
+                        <div class="reservation-detail">
+                            <span class="detail-label">Date souhaitée:</span>
+                            <span class="detail-value">${reservation.preferredDate}</span>
+                        </div>
+                    `;
                 }
                 
                 html += `
                     </div>
+                    
                     <div class="reservation-description">
-                        <strong>Description:</strong> ${reservation.description}
+                        ${reservation.description}
                     </div>
                 `;
-                
-                // Si une date préférée est spécifiée
-                if (reservation.preferredDate) {
-                    html += `
-                        <div class="reservation-description">
-                            <strong>Date souhaitée:</strong> ${reservation.preferredDate}
-                        </div>
-                    `;
-                }
                 
                 listItem.innerHTML = html;
                 reservationList.appendChild(listItem);
             });
         }
         
-        // Formater le statut pour l'affichage
+        // Formater le statut de la réservation
         function formatStatus(status) {
             switch (status) {
                 case 'PENDING':
@@ -616,19 +1307,94 @@
             }
         }
         
-        // Afficher une alerte
-        function showAlert(element, message, type) {
-            element.className = `alert alert-${type}`;
-            element.textContent = message;
-            element.style.display = 'block';
+        // Afficher une alerte dans le conteneur principal
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            
+            // Créer l'élément d'alerte
+            const alertElement = document.createElement('div');
+            alertElement.className = `alert alert-${type}`;
+            
+            // Ajouter l'icône en fonction du type
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            if (type === 'danger') icon = 'exclamation-circle';
+            
+            alertElement.innerHTML = `
+                <i class="fas fa-${icon}"></i>
+                <span>${message}</span>
+            `;
+            
+            // Ajouter l'alerte au conteneur
+            alertContainer.appendChild(alertElement);
             
             // Faire défiler jusqu'à l'alerte
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            alertElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
             
             // Masquer l'alerte après 5 secondes
             setTimeout(() => {
-                element.style.display = 'none';
+                alertElement.remove();
             }, 5000);
+        }
+        
+        // Afficher une alerte dans la section de réservation
+        function showReservationAlert(message, type) {
+            const alertElement = document.getElementById('reservationAlert');
+            
+            // Ajouter l'icône en fonction du type
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            if (type === 'danger') icon = 'exclamation-circle';
+            
+            alertElement.innerHTML = `
+                <i class="fas fa-${icon}"></i>
+                <span>${message}</span>
+            `;
+            
+            alertElement.className = `alert alert-${type}`;
+            alertElement.classList.remove('hidden');
+            
+            // Faire défiler jusqu'à l'alerte
+            alertElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Masquer l'alerte après 5 secondes si c'est une erreur
+            if (type === 'danger') {
+                setTimeout(() => {
+                    alertElement.classList.add('hidden');
+                }, 5000);
+            }
+        }
+        
+        // Afficher une alerte dans la section d'historique
+        function showHistoryAlert(message, type) {
+            const alertElement = document.getElementById('historyAlert');
+            
+            // Ajouter l'icône en fonction du type
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            if (type === 'danger') icon = 'exclamation-circle';
+            
+            alertElement.innerHTML = `
+                <i class="fas fa-${icon}"></i>
+                <span>${message}</span>
+            `;
+            
+            alertElement.className = `alert alert-${type}`;
+            alertElement.classList.remove('hidden');
+            
+            // Masquer l'alerte après 5 secondes
+            setTimeout(() => {
+                alertElement.classList.add('hidden');
+            }, 5000);
+        }
+        
+        // Afficher une section et masquer les autres
+        function showSection(sectionId) {
+            sections.forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            document.getElementById(sectionId).classList.remove('hidden');
         }
         
         // Déconnexion

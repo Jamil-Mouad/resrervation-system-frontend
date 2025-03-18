@@ -4,36 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administration - Service de Réservation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #4CAF50;
             --primary-dark: #45a049;
+            --primary-light: #e8f5e9;
             --secondary-color: #f5f5f5;
-            --text-color: #333;
-            --accent-color: #f44336;
+            --dark-color: #2c3e50;
+            --light-color: #ffffff;
+            --danger-color: #f44336;
+            --warning-color: #ff9800;
             --info-color: #2196F3;
+            --success-color: #4CAF50;
             --border-color: #ddd;
+            --text-color: #333;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
             background-color: var(--secondary-color);
             color: var(--text-color);
+            line-height: 1.6;
         }
         
+        /* Header Styles */
         header {
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: var(--dark-color);
+            color: var(--light-color);
             padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: var(--shadow);
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 1rem;
         }
@@ -47,6 +62,13 @@
         .logo {
             font-size: 1.5rem;
             font-weight: bold;
+            color: var(--light-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 0.5rem;
             color: var(--primary-color);
         }
         
@@ -58,69 +80,128 @@
         .user-name {
             margin-right: 1rem;
             font-weight: 500;
+            display: flex;
+            align-items: center;
         }
         
+        .user-name i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        /* Button Styles */
         .btn {
             display: inline-block;
             padding: 0.5rem 1rem;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
             text-decoration: none;
             border: none;
-            font-size: 1rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
         }
         
         .btn-primary {
             background-color: var(--primary-color);
-            color: white;
+            color: var(--light-color);
         }
         
         .btn-primary:hover {
             background-color: var(--primary-dark);
         }
         
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary-light);
+        }
+        
         .btn-danger {
-            background-color: var(--accent-color);
-            color: white;
+            background-color: var(--danger-color);
+            color: var(--light-color);
         }
         
         .btn-danger:hover {
             background-color: #d32f2f;
         }
         
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: var(--light-color);
+        }
+        
+        .btn-warning:hover {
+            background-color: #e68a00;
+        }
+        
         .btn-info {
             background-color: var(--info-color);
-            color: white;
+            color: var(--light-color);
         }
         
         .btn-info:hover {
             background-color: #0b7dda;
         }
         
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-        }
-        
+        /* Dashboard Layout */
         .dashboard {
             display: flex;
-            margin-top: 2rem;
+            margin: 1.5rem 0;
         }
         
         .sidebar {
-            width: 250px;
-            background-color: white;
+            width: 280px;
+            background-color: var(--light-color);
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
             padding: 1.5rem;
-            margin-right: 2rem;
+            margin-right: 1.5rem;
+            height: calc(100vh - 100px);
+            position: sticky;
+            top: 90px;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .sidebar-header i {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+        
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-color);
         }
         
         .sidebar-menu {
             list-style-type: none;
-            padding: 0;
-            margin: 0;
         }
         
         .sidebar-menu li {
@@ -128,187 +209,315 @@
         }
         
         .sidebar-menu li a {
-            display: block;
+            display: flex;
+            align-items: center;
             padding: 0.75rem 1rem;
             text-decoration: none;
             color: var(--text-color);
             border-radius: 4px;
-            transition: background-color 0.3s;
+            transition: var(--transition);
+        }
+        
+        .sidebar-menu li a i {
+            margin-right: 0.5rem;
+            width: 20px;
+            text-align: center;
         }
         
         .sidebar-menu li a:hover,
         .sidebar-menu li a.active {
-            background-color: rgba(76, 175, 80, 0.1);
+            background-color: var(--primary-light);
             color: var(--primary-color);
-        }
-        
-        .sidebar-menu li a.active {
-            font-weight: 600;
         }
         
         .main-content {
             flex: 1;
-            background-color: white;
+            background-color: var(--light-color);
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
             padding: 1.5rem;
+            overflow-x: auto;
+            min-height: calc(100vh - 100px);
         }
         
         .section-title {
-            margin-top: 0;
             margin-bottom: 1.5rem;
             padding-bottom: 0.75rem;
             border-bottom: 1px solid var(--border-color);
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 2rem;
-        }
-        
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        th {
-            background-color: #f9f9f9;
-            font-weight: 600;
-        }
-        
-        tr:hover {
-            background-color: #f5f5f5;
-        }
-        
-        .role-badge {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.875rem;
-            font-weight: 600;
-        }
-        
-        .role-user {
-            background-color: #e3f2fd;
-            color: #0d47a1;
-        }
-        
-        .role-agent {
-            background-color: #e8f5e9;
-            color: #1b5e20;
-        }
-        
-        .role-admin {
-            background-color: #fce4ec;
-            color: #880e4f;
-        }
-        
-        .actions {
             display: flex;
-            gap: 0.5rem;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
+        .section-title h2 {
+            font-size: 1.5rem;
+            color: var(--dark-color);
+            margin: 0;
         }
         
-        .modal-content {
-            background-color: white;
-            margin: 10% auto;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            max-width: 500px;
-            width: 90%;
-        }
-        
-        .modal-header {
+        /* Search and filter controls */
+        .controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .search-container {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.75rem;
+            padding-left: 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 0 0 1px var(--border-color);
+        }
+        
+        .data-table th, 
+        .data-table td {
+            padding: 1rem;
+            text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
         
-        .modal-title {
-            font-size: 1.5rem;
+        .data-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: var(--dark-color);
+            white-space: nowrap;
+        }
+        
+        .data-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .data-table .actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-user {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+        }
+        
+        .badge-agent {
+            background-color: #e8f5e9;
+            color: #1b5e20;
+        }
+        
+        .badge-admin {
+            background-color: #fce4ec;
+            color: #880e4f;
+        }
+        
+        /* Card Styles */
+        .card {
+            background-color: var(--light-color);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 1.25rem;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-title {
             margin: 0;
+            font-size: 1.25rem;
+            color: var(--dark-color);
+        }
+        
+        .card-body {
+            padding: 1.25rem;
+        }
+        
+        .card-footer {
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-col {
+            flex: 1;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 2rem 0;
+        }
+        
+        .modal-dialog {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .modal-title {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--dark-color);
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
         }
         
         .close-modal {
-            font-size: 1.5rem;
-            font-weight: bold;
-            cursor: pointer;
             background: none;
             border: none;
+            font-size: 1.5rem;
+            font-weight: 700;
             color: #aaa;
+            cursor: pointer;
         }
         
         .close-modal:hover {
             color: #000;
         }
         
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-        
-        select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-        
-        .modal-actions {
-            margin-top: 1.5rem;
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-        }
-        
-        .loader {
-            text-align: center;
-            padding: 3rem;
-            color: #666;
-        }
-        
-        .loading-spinner {
-            display: inline-block;
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(76, 175, 80, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--primary-color);
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
+        /* Alert Styles */
         .alert {
-            padding: 0.75rem 1.25rem;
-            margin-bottom: 1rem;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
             border: 1px solid transparent;
             border-radius: 4px;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .alert i {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
         }
         
         .alert-success {
@@ -323,24 +532,351 @@
             border-color: #f5c6cb;
         }
         
-        @media (max-width: 768px) {
+        .alert-warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+        }
+        
+        .alert-info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+        }
+        
+        /* Loader Styles */
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            flex-direction: column;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(76, 175, 80, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background-color: var(--light-color);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stat-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+        }
+        
+        .stat-icon i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .stat-title {
+            font-size: 0.9rem;
+            color: #777;
+            margin: 0;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin: 0;
+        }
+        
+        .stat-footer {
+            margin-top: auto;
+            font-size: 0.85rem;
+            color: #777;
+        }
+        
+        /* Business Hours Management */
+        .business-hours {
+            margin-top: 1rem;
+        }
+        
+        .business-hours-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .business-hour-item {
+            display: flex;
+            margin-bottom: 0.75rem;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+        
+        .day-label {
+            width: 120px;
+            font-weight: 500;
+        }
+        
+        .hour-inputs {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+        }
+        
+        .hour-input {
+            width: 120px;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+        
+        .closed-checkbox {
+            display: flex;
+            align-items: center;
+            margin-left: 1rem;
+        }
+        
+        .closed-checkbox input {
+            margin-right: 0.5rem;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tab {
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+            color: #777;
+        }
+        
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark-color);
+            color: #fff;
+            text-align: center;
+            padding: 0.5rem;
+            border-radius: 4px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            list-style-type: none;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .page-item {
+            display: flex;
+        }
+        
+        .page-link {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+        
+        .page-link:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .page-item.active .page-link {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* Checkbox styled as toggle switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Utility Classes */
+        .text-right {
+            text-align: right;
+        }
+        
+        .mt-2 {
+            margin-top: 1rem;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
             .dashboard {
                 flex-direction: column;
             }
             
             .sidebar {
                 width: 100%;
+                height: auto;
+                position: static;
                 margin-right: 0;
                 margin-bottom: 1.5rem;
-                padding: 1rem;
             }
             
-            .main-content {
-                padding: 1rem;
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
-            
-            .actions {
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
                 flex-direction: column;
+                gap: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .business-hour-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .hour-inputs {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .hour-input {
+                width: 100%;
+            }
+            
+            .closed-checkbox {
+                margin-left: 0;
+                margin-top: 0.5rem;
+            }
+            
+            .data-table {
+                display: block;
+                overflow-x: auto;
             }
         }
     </style>
@@ -348,80 +884,505 @@
 <body>
     <header>
         <div class="container header-container">
-            <div class="logo">Service de Réservation</div>
+            <div class="logo">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Administration</span>
+            </div>
             <div class="user-info">
-                <span class="user-name">Admin: <span id="username">Administrateur</span></span>
-                <button id="logoutBtn" class="btn btn-danger">Déconnexion</button>
+                <span class="user-name">
+                    <i class="fas fa-user-shield"></i>
+                    <span id="username">Administrateur</span>
+                </span>
+                <button id="logoutBtn" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                </button>
             </div>
         </div>
     </header>
 
-    <div class="container dashboard">
-        <div class="sidebar">
-            <ul class="sidebar-menu">
-                <li><a href="#" class="active" data-section="user-management">Gestion des utilisateurs</a></li>
-                <li><a href="#" data-section="system-stats">Statistiques du système</a></li>
-            </ul>
-        </div>
-        
-        <div class="main-content">
-            <!-- Section gestion des utilisateurs -->
-            <div id="user-management" class="section">
-                <h2 class="section-title">Gestion des utilisateurs</h2>
-                <div id="userAlert" class="alert" style="display: none;"></div>
-                
-                <div id="userLoader" class="loader">
-                    <div class="loading-spinner"></div>
-                    <p>Chargement des utilisateurs...</p>
+    <div class="container">
+        <div class="dashboard">
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <i class="fas fa-cogs"></i>
+                    <h3 class="sidebar-title">Panneau de contrôle</h3>
                 </div>
-                
-                <table id="usersTable" style="display: none;">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nom d'utilisateur</th>
-                            <th>Email</th>
-                            <th>Rôle</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Les utilisateurs seront ajoutés ici dynamiquement -->
-                    </tbody>
-                </table>
-            </div>
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="#" class="active" data-section="dashboard-section">
+                            <i class="fas fa-chart-pie"></i> Vue d'ensemble
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="user-management-section">
+                            <i class="fas fa-users"></i> Gestion des utilisateurs
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="agency-management-section">
+                            <i class="fas fa-building"></i> Gestion des agences
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="agent-management-section">
+                            <i class="fas fa-user-tie"></i> Gestion des agents
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="reservation-section">
+                            <i class="fas fa-calendar-check"></i> Réservations
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="system-stats-section">
+                            <i class="fas fa-server"></i> Statistiques système
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-section="settings-section">
+                            <i class="fas fa-cog"></i> Paramètres
+                        </a>
+                    </li>
+                </ul>
+            </aside>
             
-            <!-- Section statistiques du système -->
-            <div id="system-stats" class="section" style="display: none;">
-                <h2 class="section-title">Statistiques du système</h2>
-                <p>Cette fonctionnalité sera disponible prochainement.</p>
-            </div>
+            <main class="main-content">
+                <!-- Dashboard Overview Section -->
+                <section id="dashboard-section" class="active-section">
+                    <div class="section-title">
+                        <h2><i class="fas fa-chart-pie"></i> Vue d'ensemble</h2>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <h3 class="stat-title">Utilisateurs</h3>
+                            </div>
+                            <p class="stat-value" id="total-users">0</p>
+                            <div class="stat-footer">
+                                <i class="fas fa-arrow-up" style="color: var(--success-color);"></i> 
+                                <span id="new-users-count">0</span> nouveaux cette semaine
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon" style="background-color: #e3f2fd;">
+                                    <i class="fas fa-building" style="color: var(--info-color);"></i>
+                                </div>
+                                <h3 class="stat-title">Agences</h3>
+                            </div>
+                            <p class="stat-value" id="total-agencies">0</p>
+                            <div class="stat-footer">
+                                <span id="active-agencies">0</span> agences actives
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon" style="background-color: #fff8e1;">
+                                    <i class="fas fa-calendar-check" style="color: var(--warning-color);"></i>
+                                </div>
+                                <h3 class="stat-title">Réservations</h3>
+                            </div>
+                            <p class="stat-value" id="total-reservations">0</p>
+                            <div class="stat-footer">
+                                <span id="pending-reservations">0</span> en attente
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon" style="background-color: #ffebee;">
+                                    <i class="fas fa-user-tie" style="color: var(--danger-color);"></i>
+                                </div>
+                                <h3 class="stat-title">Agents</h3>
+                            </div>
+                            <p class="stat-value" id="total-agents">0</p>
+                            <div class="stat-footer">
+                                <span id="available-agents">0</span> agents disponibles
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Activité récente</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="activity-list">
+                                <div class="loader">
+                                    <div class="spinner"></div>
+                                    <p>Chargement de l'activité récente...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- User Management Section -->
+                <section id="user-management-section" class="hidden">
+                    <div class="section-title">
+                        <h2><i class="fas fa-users"></i> Gestion des utilisateurs</h2>
+                        <div id="userManagementAlert" class="alert hidden"></div>
+                    </div>
+                    
+                    <div class="controls">
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="userSearchInput" class="search-input" placeholder="Rechercher par email...">
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" id="refreshUsersBtn">
+                                <i class="fas fa-sync"></i> Actualiser
+                            </button>
+                            <button class="btn btn-primary" id="createUserBtn">
+                                <i class="fas fa-user-plus"></i> Nouvel utilisateur
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="userLoader" class="loader">
+                        <div class="spinner"></div>
+                        <p>Chargement des utilisateurs...</p>
+                    </div>
+                    
+                    <table id="usersTable" class="data-table hidden">
+                        <thead>
+                            <tr>
+                                <th>Nom d'utilisateur</th>
+                                <th>Email</th>
+                                <th>Rôle</th>
+                                <th>Dernière connexion</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Les utilisateurs seront ajoutés ici dynamiquement -->
+                        </tbody>
+                    </table>
+                </section>
+                
+                <!-- Agency Management Section -->
+                <section id="agency-management-section" class="hidden">
+                    <div class="section-title">
+                        <h2><i class="fas fa-building"></i> Gestion des agences</h2>
+                    </div>
+                    
+                    <div id="agencyManagementAlert" class="alert hidden"></div>
+                    
+                    <div class="controls">
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="agencySearchInput" class="search-input" placeholder="Rechercher par nom ou ville...">
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" id="refreshAgenciesBtn">
+                                <i class="fas fa-sync"></i> Actualiser
+                            </button>
+                            <button class="btn btn-primary" id="createAgencyBtn">
+                                <i class="fas fa-plus"></i> Nouvelle agence
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="agencyLoader" class="loader">
+                        <div class="spinner"></div>
+                        <p>Chargement des agences...</p>
+                    </div>
+                    
+                    <table id="agenciesTable" class="data-table hidden">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Ville</th>
+                                <th>Adresse</th>
+                                <th>Téléphone</th>
+                                <th>Email</th>
+                                <th>Agents</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Les agences seront ajoutées ici dynamiquement -->
+                        </tbody>
+                    </table>
+                </section>
+                
+                <!-- Agent Management Section -->
+                <section id="agent-management-section" class="hidden">
+                    <div class="section-title">
+                        <h2><i class="fas fa-user-tie"></i> Gestion des agents</h2>
+                    </div>
+                    
+                    <div id="agentManagementAlert" class="alert hidden"></div>
+                    
+                    <div class="controls">
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="agentSearchInput" class="search-input" placeholder="Rechercher par nom ou email...">
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" id="refreshAgentsBtn">
+                                <i class="fas fa-sync"></i> Actualiser
+                            </button>
+                            <button class="btn btn-primary" id="createAgentBtn">
+                                <i class="fas fa-user-plus"></i> Nouvel agent
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="agentLoader" class="loader">
+                        <div class="spinner"></div>
+                        <p>Chargement des agents...</p>
+                    </div>
+                    
+                    <table id="agentsTable" class="data-table hidden">
+                        <thead>
+                            <tr>
+                                <th>Nom d'utilisateur</th>
+                                <th>Email</th>
+                                <th>Agence assignée</th>
+                                <th>Disponibilité</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Les agents seront ajoutés ici dynamiquement -->
+                        </tbody>
+                    </table>
+                </section>
+                
+                <!-- Reservation Section (Placeholder) -->
+                <section id="reservation-section" class="hidden">
+                    <div class="section-title">
+                        <h2><i class="fas fa-calendar-check"></i> Réservations</h2>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Cette fonctionnalité sera disponible prochainement.</span>
+                    </div>
+                </section>
+                
+                <!-- System Stats Section (Placeholder) -->
+                <section id="system-stats-section" class="hidden">
+                    <div class="section-title">
+                        <h2><i class="fas fa-server"></i> Statistiques système</h2>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Cette fonctionnalité sera disponible prochainement.</span>
+                    </div>
+                </section>
+                
+                <!-- Settings Section (Placeholder) -->
+                <section id="settings-section" class="hidden">
+                    <div class="section-title">
+                        <h2><i class="fas fa-cog"></i> Paramètres</h2>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Cette fonctionnalité sera disponible prochainement.</span>
+                    </div>
+                </section>
+            </main>
         </div>
     </div>
     
-    <!-- Modal de modification de rôle -->
+    <!-- Modal pour modifier le rôle d'un utilisateur -->
     <div id="roleModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-dialog">
             <div class="modal-header">
-                <h2 class="modal-title">Modifier le rôle</h2>
+                <h3 class="modal-title">Modifier le rôle</h3>
                 <button class="close-modal">&times;</button>
             </div>
-            <div id="modalAlert" class="alert" style="display: none;"></div>
+            <div id="modalAlert" class="alert hidden"></div>
             <form id="roleForm">
-                <input type="hidden" id="userId">
-                <div class="form-group">
-                    <label for="userRole">Rôle de l'utilisateur</label>
-                    <select id="userRole" required>
-                        <option value="USER">Utilisateur</option>
-                        <option value="AGENT">Agent</option>
-                        <option value="ADMIN">Administrateur</option>
-                    </select>
+                <div class="modal-body">
+                    <input type="hidden" id="userId">
+                    <div class="form-group">
+                        <label class="form-label" for="userRole">Rôle de l'utilisateur</label>
+                        <select id="userRole" class="form-control" required>
+                            <option value="USER">Utilisateur</option>
+                            <option value="AGENT">Agent</option>
+                            <option value="ADMIN">Administrateur</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-danger cancel-modal">Annuler</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline cancel-modal">Annuler</button>
                     <button type="submit" class="btn btn-primary">Enregistrer</button>
                 </div>
             </form>
+        </div>
+    </div>
+    
+    <!-- Modal pour créer/modifier une agence -->
+    <div id="agencyModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title" id="agencyModalTitle">Nouvelle agence</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="agencyModalAlert" class="alert hidden"></div>
+            <form id="agencyForm">
+                <div class="modal-body">
+                    <input type="hidden" id="agencyId">
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label" for="agencyName">Nom de l'agence *</label>
+                                <input type="text" id="agencyName" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label" for="agencyCity">Ville *</label>
+                                <input type="text" id="agencyCity" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="agencyAddress">Adresse *</label>
+                        <input type="text" id="agencyAddress" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label" for="agencyPhone">Téléphone *</label>
+                                <input type="text" id="agencyPhone" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label" for="agencyEmail">Email</label>
+                                <input type="email" id="agencyEmail" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="agencyDescription">Description</label>
+                        <textarea id="agencyDescription" class="form-control"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="business-hours-title">Horaires d'ouverture</div>
+                        <div class="business-hours" id="businessHoursContainer">
+                            <!-- Hours will be dynamically added here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline cancel-modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal pour créer un agent -->
+    <div id="createAgentModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title">Nouvel agent</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="createAgentModalAlert" class="alert hidden"></div>
+            <form id="createAgentForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="agentUsername">Nom d'utilisateur *</label>
+                        <input type="text" id="agentUsername" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="agentEmail">Email *</label>
+                        <input type="email" id="agentEmail" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label" for="agentPassword">Mot de passe *</label>
+                                <input type="password" id="agentPassword" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group">
+                                <label class="form-label" for="agentPasswordConfirm">Confirmer le mot de passe *</label>
+                                <input type="password" id="agentPasswordConfirm" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="agentAgency">Agence assignée</label>
+                        <select id="agentAgency" class="form-control">
+                            <option value="">Aucune agence</option>
+                            <!-- Les agences seront ajoutées ici dynamiquement -->
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline cancel-modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Créer l'agent</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal pour assigner un agent à une agence -->
+    <div id="assignAgentModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title">Assigner un agent à une agence</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="assignAgentModalAlert" class="alert hidden"></div>
+            <form id="assignAgentForm">
+                <div class="modal-body">
+                    <input type="hidden" id="assignAgentId">
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="assignAgencyId">Agence</label>
+                        <select id="assignAgencyId" class="form-control" required>
+                            <option value="">Sélectionnez une agence</option>
+                            <!-- Les agences seront ajoutées ici dynamiquement -->
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline cancel-modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Assigner</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal pour confirmer une action -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title" id="confirmModalTitle">Confirmation</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmModalMessage">Êtes-vous sûr de vouloir effectuer cette action ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline cancel-modal">Annuler</button>
+                <button type="button" class="btn btn-danger" id="confirmModalBtn">Confirmer</button>
+            </div>
         </div>
     </div>
 
@@ -433,14 +1394,73 @@
         const usernameElement = document.getElementById('username');
         const logoutBtn = document.getElementById('logoutBtn');
         const menuItems = document.querySelectorAll('.sidebar-menu a');
-        const sections = document.querySelectorAll('.main-content > div');
-        const userAlert = document.getElementById('userAlert');
+        const sections = document.querySelectorAll('main section');
+        
+        // Éléments statistiques
+        const totalUsersElement = document.getElementById('total-users');
+        const newUsersCountElement = document.getElementById('new-users-count');
+        const totalAgenciesElement = document.getElementById('total-agencies');
+        const activeAgenciesElement = document.getElementById('active-agencies');
+        const totalReservationsElement = document.getElementById('total-reservations');
+        const pendingReservationsElement = document.getElementById('pending-reservations');
+        const totalAgentsElement = document.getElementById('total-agents');
+        const availableAgentsElement = document.getElementById('available-agents');
+        
+        // Éléments de la gestion des utilisateurs
+        const userSearchInput = document.getElementById('userSearchInput');
+        const refreshUsersBtn = document.getElementById('refreshUsersBtn');
         const userLoader = document.getElementById('userLoader');
         const usersTable = document.getElementById('usersTable');
+        const userManagementAlert = document.getElementById('userManagementAlert');
+        
+        // Éléments du modal de rôle
         const roleModal = document.getElementById('roleModal');
         const roleForm = document.getElementById('roleForm');
         const modalAlert = document.getElementById('modalAlert');
-        const closeModalButtons = document.querySelectorAll('.close-modal, .cancel-modal');
+        
+        // Éléments de la gestion des agences
+        const agencySearchInput = document.getElementById('agencySearchInput');
+        const refreshAgenciesBtn = document.getElementById('refreshAgenciesBtn');
+        const createAgencyBtn = document.getElementById('createAgencyBtn');
+        const agencyLoader = document.getElementById('agencyLoader');
+        const agenciesTable = document.getElementById('agenciesTable');
+        const agencyManagementAlert = document.getElementById('agencyManagementAlert');
+        
+        // Éléments du modal d'agence
+        const agencyModal = document.getElementById('agencyModal');
+        const agencyForm = document.getElementById('agencyForm');
+        const agencyModalAlert = document.getElementById('agencyModalAlert');
+        const businessHoursContainer = document.getElementById('businessHoursContainer');
+        
+        // Éléments de la gestion des agents
+        const agentSearchInput = document.getElementById('agentSearchInput');
+        const refreshAgentsBtn = document.getElementById('refreshAgentsBtn');
+        const createAgentBtn = document.getElementById('createAgentBtn');
+        const agentLoader = document.getElementById('agentLoader');
+        const agentsTable = document.getElementById('agentsTable');
+        const agentManagementAlert = document.getElementById('agentManagementAlert');
+        
+        // Éléments du modal de création d'agent
+        const createAgentModal = document.getElementById('createAgentModal');
+        const createAgentForm = document.getElementById('createAgentForm');
+        const createAgentModalAlert = document.getElementById('createAgentModalAlert');
+        
+        // Éléments du modal d'assignation d'agent
+        const assignAgentModal = document.getElementById('assignAgentModal');
+        const assignAgentForm = document.getElementById('assignAgentForm');
+        const assignAgentModalAlert = document.getElementById('assignAgentModalAlert');
+        
+        // Éléments du modal de confirmation
+        const confirmModal = document.getElementById('confirmModal');
+        const confirmModalTitle = document.getElementById('confirmModalTitle');
+        const confirmModalMessage = document.getElementById('confirmModalMessage');
+        const confirmModalBtn = document.getElementById('confirmModalBtn');
+        
+        // Variables globales
+        let allUsers = [];
+        let allAgencies = [];
+        let allAgents = [];
+        let currentConfirmCallback = null;
         
         // Vérifier la session au chargement de la page
         document.addEventListener('DOMContentLoaded', function() {
@@ -466,13 +1486,19 @@
                     // Afficher la section correspondante
                     const sectionId = this.getAttribute('data-section');
                     sections.forEach(section => {
-                        section.style.display = 'none';
+                        section.classList.add('hidden');
                     });
-                    document.getElementById(sectionId).style.display = 'block';
+                    document.getElementById(sectionId).classList.remove('hidden');
                     
                     // Charger les données si nécessaire
-                    if (sectionId === 'user-management') {
+                    if (sectionId === 'user-management-section') {
                         loadUsers();
+                    } else if (sectionId === 'agency-management-section') {
+                        loadAgencies();
+                    } else if (sectionId === 'agent-management-section') {
+                        loadAgents();
+                    } else if (sectionId === 'dashboard-section') {
+                        loadDashboardStats();
                     }
                 });
             });
@@ -482,24 +1508,82 @@
                 logout();
             });
             
-            // Fermer le modal
-            closeModalButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    roleModal.style.display = 'none';
-                });
+            // Recherche d'utilisateurs
+            userSearchInput.addEventListener('input', function() {
+                filterUsers();
             });
             
-            // Fermer le modal quand on clique en dehors
-            window.addEventListener('click', function(event) {
-                if (event.target === roleModal) {
-                    roleModal.style.display = 'none';
-                }
+            // Actualiser la liste des utilisateurs
+            refreshUsersBtn.addEventListener('click', function() {
+                loadUsers();
+            });
+            
+            // Recherche d'agences
+            agencySearchInput.addEventListener('input', function() {
+                filterAgencies();
+            });
+            
+            // Actualiser la liste des agences
+            refreshAgenciesBtn.addEventListener('click', function() {
+                loadAgencies();
+            });
+            
+            // Créer une nouvelle agence
+            createAgencyBtn.addEventListener('click', function() {
+                openAgencyModal();
+            });
+            
+            // Recherche d'agents
+            agentSearchInput.addEventListener('input', function() {
+                filterAgents();
+            });
+            
+            // Actualiser la liste des agents
+            refreshAgentsBtn.addEventListener('click', function() {
+                loadAgents();
+            });
+            
+            // Créer un nouvel agent
+            createAgentBtn.addEventListener('click', function() {
+                openCreateAgentModal();
             });
             
             // Formulaire de modification de rôle
             roleForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 changeUserRole();
+            });
+            
+            // Formulaire de création/modification d'agence
+            agencyForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveAgency();
+            });
+            
+            // Formulaire de création d'agent
+            createAgentForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                createAgent();
+            });
+            
+            // Formulaire d'assignation d'agent
+            assignAgentForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                assignAgentToAgency();
+            });
+            
+            // Fermer les modals
+            document.querySelectorAll('.close-modal, .cancel-modal').forEach(button => {
+                button.addEventListener('click', function() {
+                    closeAllModals();
+                });
+            });
+            
+            // Fermer les modals quand on clique en dehors
+            window.addEventListener('click', function(event) {
+                if (event.target.classList.contains('modal')) {
+                    closeAllModals();
+                }
             });
         }
         
@@ -534,8 +1618,8 @@
                     // Afficher le nom d'utilisateur
                     usernameElement.textContent = username;
                     
-                    // Charger les utilisateurs
-                    loadUsers();
+                    // Charger les données du dashboard
+                    loadDashboardStats();
                 } else {
                     // Session non active, rediriger vers la page de connexion
                     window.location.href = 'auth.html';
@@ -547,12 +1631,116 @@
             }
         }
         
+        // Charger les statistiques du dashboard
+        async function loadDashboardStats() {
+            try {
+                // Charger le nombre d'utilisateurs
+                const usersResponse = await fetch(`${API_BASE_URL}/api/admin/users`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (usersResponse.ok) {
+                    const users = await usersResponse.json();
+                    totalUsersElement.textContent = users.length;
+                    
+                    // Simuler le nombre de nouveaux utilisateurs (à remplacer par une API réelle)
+                    newUsersCountElement.textContent = Math.floor(Math.random() * 10);
+                }
+                
+                // Charger le nombre d'agences
+                const agenciesResponse = await fetch(`${API_BASE_URL}/api/agencies`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (agenciesResponse.ok) {
+                    const agencies = await agenciesResponse.json();
+                    totalAgenciesElement.textContent = agencies.length;
+                    activeAgenciesElement.textContent = agencies.length;
+                }
+                
+                // Charger le nombre d'agents
+                const agentsResponse = await fetch(`${API_BASE_URL}/api/admin/agents`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (agentsResponse.ok) {
+                    const agents = await agentsResponse.json();
+                    totalAgentsElement.textContent = agents.length;
+                    
+                    // Calculer le nombre d'agents disponibles
+                    const availableAgents = agents.filter(agent => agent.available).length;
+                    availableAgentsElement.textContent = availableAgents;
+                }
+                
+                // Simuler le nombre de réservations (à remplacer par une API réelle)
+                totalReservationsElement.textContent = Math.floor(Math.random() * 100);
+                pendingReservationsElement.textContent = Math.floor(Math.random() * 20);
+                
+                // Charger l'activité récente
+                loadRecentActivity();
+            } catch (error) {
+                console.error('Erreur lors du chargement des statistiques:', error);
+            }
+        }
+        
+        // Charger l'activité récente (simulée)
+        function loadRecentActivity() {
+            const activityList = document.getElementById('activity-list');
+            
+            // Simuler des activités récentes
+            const activities = [
+                { type: 'user', action: 'Nouvel utilisateur inscrit', time: '10 minutes' },
+                { type: 'reservation', action: 'Réservation confirmée', time: '35 minutes' },
+                { type: 'agency', action: 'Nouvelle agence ajoutée', time: '1 heure' },
+                { type: 'agent', action: 'Agent assigné à une agence', time: '3 heures' },
+                { type: 'reservation', action: 'Réservation annulée', time: '5 heures' }
+            ];
+            
+            // Créer le HTML pour chaque activité
+            let activityHTML = '';
+            
+            activities.forEach(activity => {
+                let icon = '';
+                switch (activity.type) {
+                    case 'user':
+                        icon = 'fas fa-user';
+                        break;
+                    case 'reservation':
+                        icon = 'fas fa-calendar-check';
+                        break;
+                    case 'agency':
+                        icon = 'fas fa-building';
+                        break;
+                    case 'agent':
+                        icon = 'fas fa-user-tie';
+                        break;
+                }
+                
+                activityHTML += `
+                    <div style="display: flex; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #eee;">
+                        <div style="width: 40px; height: 40px; background-color: #f8f9fa; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                            <i class="${icon}" style="color: var(--primary-color);"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 500;">${activity.action}</div>
+                            <div style="font-size: 0.85rem; color: #777;">Il y a ${activity.time}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            activityList.innerHTML = activityHTML;
+        }
+        
         // Charger la liste des utilisateurs
         async function loadUsers() {
             // Afficher le loader
-            userLoader.style.display = 'block';
-            usersTable.style.display = 'none';
-            userAlert.style.display = 'none';
+            userLoader.classList.remove('hidden');
+            usersTable.classList.add('hidden');
+            userManagementAlert.classList.add('hidden');
             
             try {
                 const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
@@ -561,53 +1749,106 @@
                 });
                 
                 if (response.ok) {
-                    const users = await response.json();
+                    allUsers = await response.json();
                     
-                    // Remplir le tableau
-                    const tbody = usersTable.querySelector('tbody');
-                    tbody.innerHTML = '';
-                    
-                    users.forEach(user => {
-                        const tr = document.createElement('tr');
-                        
-                        // Définir la classe de badge selon le rôle
-                        const roleClass = `role-${user.role.toLowerCase()}`;
-                        
-                        tr.innerHTML = `
-                            <td>${user.id}</td>
-                            <td>${user.username}</td>
-                            <td>${user.email}</td>
-                            <td><span class="role-badge ${roleClass}">${user.role}</span></td>
-                            <td class="actions">
-                                <button class="btn btn-info btn-sm edit-role-btn" data-id="${user.id}" data-role="${user.role}">Modifier le rôle</button>
-                            </td>
-                        `;
-                        
-                        tbody.appendChild(tr);
-                    });
-                    
-                    // Ajouter les écouteurs d'événements aux boutons
-                    document.querySelectorAll('.edit-role-btn').forEach(button => {
-                        button.addEventListener('click', function() {
-                            const userId = this.getAttribute('data-id');
-                            const userRole = this.getAttribute('data-role');
-                            openRoleModal(userId, userRole);
-                        });
-                    });
-                    
-                    // Afficher le tableau
-                    usersTable.style.display = 'table';
+                    // Afficher les utilisateurs dans le tableau
+                    displayUsers(allUsers);
                 } else {
                     // Afficher un message d'erreur
-                    showAlert(userAlert, 'Impossible de charger la liste des utilisateurs.', 'danger');
+                    showAlert(userManagementAlert, 'Impossible de charger la liste des utilisateurs.', 'danger');
                 }
             } catch (error) {
                 console.error('Erreur lors du chargement des utilisateurs:', error);
-                showAlert(userAlert, 'Erreur de connexion au serveur.', 'danger');
+                showAlert(userManagementAlert, 'Erreur de connexion au serveur.', 'danger');
             } finally {
                 // Masquer le loader
-                userLoader.style.display = 'none';
+                userLoader.classList.add('hidden');
             }
+        }
+        
+        // Filtrer les utilisateurs par email
+        function filterUsers() {
+            const searchTerm = userSearchInput.value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                // Si la recherche est vide, afficher tous les utilisateurs
+                displayUsers(allUsers);
+                return;
+            }
+            
+            // Filtrer les utilisateurs par email
+            const filteredUsers = allUsers.filter(user => 
+                user.email.toLowerCase().includes(searchTerm)
+            );
+            
+            // Afficher les utilisateurs filtrés
+            displayUsers(filteredUsers);
+        }
+        
+        // Afficher les utilisateurs dans le tableau
+        function displayUsers(users) {
+            const tbody = usersTable.querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            if (users.length === 0) {
+                showAlert(userManagementAlert, 'Aucun utilisateur trouvé.', 'info');
+                usersTable.classList.add('hidden');
+                return;
+            }
+            
+            users.forEach(user => {
+                const tr = document.createElement('tr');
+                
+                // Définir la classe de badge selon le rôle
+                const roleClass = `badge-${user.role.toLowerCase()}`;
+                
+                // Simuler une date de dernière connexion (à remplacer par des données réelles)
+                const lastLogin = new Date();
+                lastLogin.setHours(lastLogin.getHours() - Math.floor(Math.random() * 72));
+                const lastLoginStr = lastLogin.toLocaleDateString() + ' ' + lastLogin.toLocaleString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                
+                tr.innerHTML = `
+                    <td>${user.username || 'N/A'}</td>
+                    <td>${user.email}</td>
+                    <td><span class="badge ${roleClass}">${user.role}</span></td>
+                    <td>${lastLoginStr}</td>
+                    <td class="actions">
+                        <button class="btn btn-info btn-sm edit-role-btn" data-id="${user.id}" data-role="${user.role}" title="Modifier le rôle">
+                            <i class="fas fa-user-edit"></i>
+                        </button>
+                        ${user.role !== 'AGENT' ? 
+                            `<button class="btn btn-primary btn-sm convert-agent-btn tooltip" data-id="${user.id}" title="Convertir en agent">
+                                <i class="fas fa-user-tie"></i>
+                                <span class="tooltip-text">Convertir en agent</span>
+                            </button>` : ''}
+                    </td>
+                `;
+                
+                tbody.appendChild(tr);
+            });
+            
+            // Ajouter les écouteurs d'événements aux boutons
+            document.querySelectorAll('.edit-role-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-id');
+                    const userRole = this.getAttribute('data-role');
+                    openRoleModal(userId, userRole);
+                });
+            });
+            
+            document.querySelectorAll('.convert-agent-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-id');
+                    showConfirmModal(
+                        'Convertir en agent',
+                        'Êtes-vous sûr de vouloir convertir cet utilisateur en agent ? Cette action est irréversible.',
+                        () => convertUserToAgent(userId)
+                    );
+                });
+            });
+            
+            // Afficher le tableau
+            usersTable.classList.remove('hidden');
         }
         
         // Ouvrir le modal de modification de rôle
@@ -616,7 +1857,7 @@
             document.getElementById('userRole').value = userRole;
             
             // Réinitialiser les alertes
-            modalAlert.style.display = 'none';
+            modalAlert.classList.add('hidden');
             
             // Afficher le modal
             roleModal.style.display = 'block';
@@ -646,39 +1887,769 @@
                     roleModal.style.display = 'none';
                     
                     // Afficher une notification
-                    showAlert(userAlert, 'Rôle modifié avec succès!', 'success');
+                    showAlert(userManagementAlert, 'Rôle modifié avec succès!', 'success');
                     
                     // Recharger la liste des utilisateurs
                     loadUsers();
                 } else {
-                    showModalAlert(data.message || 'Erreur lors de la modification du rôle.', 'danger');
+                    showModalAlert(modalAlert, data.message || 'Erreur lors de la modification du rôle.', 'danger');
                 }
             } catch (error) {
                 console.error('Erreur lors de la modification du rôle:', error);
-                showModalAlert('Erreur de connexion au serveur.', 'danger');
+                showModalAlert(modalAlert, 'Erreur de connexion au serveur.', 'danger');
             }
         }
         
-        // Afficher une alerte dans le container principal
-        function showAlert(element, message, type) {
-            element.className = `alert alert-${type}`;
-            element.textContent = message;
-            element.style.display = 'block';
-            
-            // Faire défiler jusqu'à l'alerte
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
-            // Masquer l'alerte après 5 secondes
-            setTimeout(() => {
-                element.style.display = 'none';
-            }, 5000);
+        // Convertir un utilisateur en agent
+        async function convertUserToAgent(userId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/users/convert-to-agent/${userId}`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Fermer le modal de confirmation
+                    confirmModal.style.display = 'none';
+                    
+                    // Afficher une notification
+                    showAlert(userManagementAlert, 'Utilisateur converti en agent avec succès!', 'success');
+                    
+                    // Recharger la liste des utilisateurs
+                    loadUsers();
+                } else {
+                    showAlert(userManagementAlert, data.message || 'Erreur lors de la conversion en agent.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la conversion en agent:', error);
+                showAlert(userManagementAlert, 'Erreur de connexion au serveur.', 'danger');
+            }
         }
         
-        // Afficher une alerte dans le modal
-        function showModalAlert(message, type) {
-            modalAlert.className = `alert alert-${type}`;
-            modalAlert.textContent = message;
-            modalAlert.style.display = 'block';
+        // Charger la liste des agences
+        async function loadAgencies() {
+            // Afficher le loader
+            agencyLoader.classList.remove('hidden');
+            agenciesTable.classList.add('hidden');
+            agencyManagementAlert.classList.add('hidden');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/agencies`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    allAgencies = await response.json();
+                    
+                    // Afficher les agences dans le tableau
+                    displayAgencies(allAgencies);
+                } else {
+                    // Afficher un message d'erreur
+                    showAlert(agencyManagementAlert, 'Impossible de charger la liste des agences.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des agences:', error);
+                showAlert(agencyManagementAlert, 'Erreur de connexion au serveur.', 'danger');
+            } finally {
+                // Masquer le loader
+                agencyLoader.classList.add('hidden');
+            }
+        }
+        
+        // Filtrer les agences par nom ou ville
+        function filterAgencies() {
+            const searchTerm = agencySearchInput.value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                // Si la recherche est vide, afficher toutes les agences
+                displayAgencies(allAgencies);
+                return;
+            }
+            
+            // Filtrer les agences par nom ou ville
+            const filteredAgencies = allAgencies.filter(agency => 
+                agency.name.toLowerCase().includes(searchTerm) || 
+                agency.city.toLowerCase().includes(searchTerm)
+            );
+            
+            // Afficher les agences filtrées
+            displayAgencies(filteredAgencies);
+        }
+        
+        // Afficher les agences dans le tableau
+        function displayAgencies(agencies) {
+            const tbody = agenciesTable.querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            if (agencies.length === 0) {
+                showAlert(agencyManagementAlert, 'Aucune agence trouvée.', 'info');
+                agenciesTable.classList.add('hidden');
+                return;
+            }
+            
+            agencies.forEach(agency => {
+                const tr = document.createElement('tr');
+                
+                // Compter le nombre d'agents assignés à cette agence
+                const agentCount = agency.agents ? agency.agents.length : 0;
+                
+                tr.innerHTML = `
+                    <td>${agency.name}</td>
+                    <td>${agency.city}</td>
+                    <td>${agency.address}</td>
+                    <td>${agency.phoneNumber}</td>
+                    <td>${agency.email || '-'}</td>
+                    <td>${agentCount}</td>
+                    <td class="actions">
+                        <button class="btn btn-info btn-sm edit-agency-btn" data-id="${agency.id}" title="Modifier l'agence">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-primary btn-sm view-agents-btn" data-id="${agency.id}" title="Voir les agents">
+                            <i class="fas fa-user-tie"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-agency-btn" data-id="${agency.id}" title="Supprimer l'agence">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tbody.appendChild(tr);
+            });
+            
+            // Ajouter les écouteurs d'événements aux boutons
+            document.querySelectorAll('.edit-agency-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const agencyId = this.getAttribute('data-id');
+                    openAgencyModal(agencyId);
+                });
+            });
+            
+            document.querySelectorAll('.view-agents-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const agencyId = this.getAttribute('data-id');
+                    loadAgencyAgents(agencyId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-agency-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const agencyId = this.getAttribute('data-id');
+                    showConfirmModal(
+                        'Supprimer l\'agence',
+                        'Êtes-vous sûr de vouloir supprimer cette agence ? Cette action est irréversible.',
+                        () => deleteAgency(agencyId)
+                    );
+                });
+            });
+            
+            // Afficher le tableau
+            agenciesTable.classList.remove('hidden');
+        }
+        
+        // Ouvrir le modal de création/modification d'agence
+        function openAgencyModal(agencyId = null) {
+            // Réinitialiser le formulaire
+            agencyForm.reset();
+            agencyModalAlert.classList.add('hidden');
+            
+            // Générer le contenu des heures d'ouverture
+            generateBusinessHoursInputs();
+            
+            if (agencyId) {
+                // Modification d'une agence existante
+                const agency = allAgencies.find(a => a.id == agencyId);
+                
+                if (agency) {
+                    document.getElementById('agencyModalTitle').textContent = 'Modifier l\'agence';
+                    document.getElementById('agencyId').value = agency.id;
+                    document.getElementById('agencyName').value = agency.name;
+                    document.getElementById('agencyCity').value = agency.city;
+                    document.getElementById('agencyAddress').value = agency.address;
+                    document.getElementById('agencyPhone').value = agency.phoneNumber;
+                    document.getElementById('agencyEmail').value = agency.email || '';
+                    document.getElementById('agencyDescription').value = agency.description || '';
+                    
+                    // Remplir les heures d'ouverture
+                    if (agency.businessHours && agency.businessHours.length > 0) {
+                        fillBusinessHours(agency.businessHours);
+                    }
+                }
+            } else {
+                // Création d'une nouvelle agence
+                document.getElementById('agencyModalTitle').textContent = 'Nouvelle agence';
+                document.getElementById('agencyId').value = '';
+            }
+            
+            // Afficher le modal
+            agencyModal.style.display = 'block';
+        }
+        
+        // Générer les inputs pour les heures d'ouverture
+        function generateBusinessHoursInputs() {
+            const daysOfWeek = [
+                { name: 'MONDAY', label: 'Lundi' },
+                { name: 'TUESDAY', label: 'Mardi' },
+                { name: 'WEDNESDAY', label: 'Mercredi' },
+                { name: 'THURSDAY', label: 'Jeudi' },
+                { name: 'FRIDAY', label: 'Vendredi' },
+                { name: 'SATURDAY', label: 'Samedi' },
+                { name: 'SUNDAY', label: 'Dimanche' }
+            ];
+            
+            let html = '';
+            
+            daysOfWeek.forEach(day => {
+                html += `
+                    <div class="business-hour-item" data-day="${day.name}">
+                        <div class="day-label">${day.label}</div>
+                        <div class="hour-inputs">
+                            <input type="time" class="hour-input opening-time" value="09:00" data-day="${day.name}">
+                            <span>à</span>
+                            <input type="time" class="hour-input closing-time" value="18:00" data-day="${day.name}">
+                        </div>
+                        <div class="closed-checkbox">
+                            <input type="checkbox" id="closed-${day.name}" class="closed-check" data-day="${day.name}">
+                            <label for="closed-${day.name}">Fermé</label>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            businessHoursContainer.innerHTML = html;
+            
+            // Ajouter les écouteurs d'événements aux checkboxes
+            document.querySelectorAll('.closed-check').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const dayName = this.getAttribute('data-day');
+                    const timeInputs = document.querySelectorAll(`.hour-input[data-day="${dayName}"]`);
+                    
+                    timeInputs.forEach(input => {
+                        input.disabled = this.checked;
+                    });
+                });
+            });
+        }
+        
+        // Remplir les heures d'ouverture avec les données de l'agence
+        function fillBusinessHours(businessHours) {
+            businessHours.forEach(hour => {
+                const dayElement = document.querySelector(`.business-hour-item[data-day="${hour.day}"]`);
+                
+                if (dayElement) {
+                    const openingTimeInput = dayElement.querySelector('.opening-time');
+                    const closingTimeInput = dayElement.querySelector('.closing-time');
+                    const closedCheckbox = dayElement.querySelector('.closed-check');
+                    
+                    if (hour.closed) {
+                        closedCheckbox.checked = true;
+                        openingTimeInput.disabled = true;
+                        closingTimeInput.disabled = true;
+                    } else {
+                        openingTimeInput.value = hour.openingTime;
+                        closingTimeInput.value = hour.closingTime;
+                    }
+                }
+            });
+        }
+        
+        // Créer ou mettre à jour une agence
+        async function saveAgency() {
+            const agencyId = document.getElementById('agencyId').value;
+            const agencyName = document.getElementById('agencyName').value;
+            const agencyCity = document.getElementById('agencyCity').value;
+            const agencyAddress = document.getElementById('agencyAddress').value;
+            const agencyPhone = document.getElementById('agencyPhone').value;
+            const agencyEmail = document.getElementById('agencyEmail').value;
+            const agencyDescription = document.getElementById('agencyDescription').value;
+            
+            // Récupérer les heures d'ouverture
+            const businessHours = [];
+            
+            document.querySelectorAll('.business-hour-item').forEach(item => {
+                const day = item.getAttribute('data-day');
+                const closedCheckbox = item.querySelector('.closed-check');
+                const openingTimeInput = item.querySelector('.opening-time');
+                const closingTimeInput = item.querySelector('.closing-time');
+                
+                businessHours.push({
+                    day: day,
+                    openingTime: openingTimeInput.value,
+                    closingTime: closingTimeInput.value,
+                    closed: closedCheckbox.checked
+                });
+            });
+            
+            const agencyData = {
+                name: agencyName,
+                city: agencyCity,
+                address: agencyAddress,
+                phoneNumber: agencyPhone,
+                email: agencyEmail,
+                description: agencyDescription,
+                businessHours: businessHours
+            };
+            
+            try {
+                let url, method;
+                
+                if (agencyId) {
+                    // Mise à jour d'une agence existante
+                    url = `${API_BASE_URL}/api/agencies/${agencyId}`;
+                    method = 'PUT';
+                } else {
+                    // Création d'une nouvelle agence
+                    url = `${API_BASE_URL}/api/agencies`;
+                    method = 'POST';
+                }
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(agencyData),
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Fermer le modal
+                    agencyModal.style.display = 'none';
+                    
+                    // Afficher une notification
+                    showAlert(agencyManagementAlert, agencyId ? 'Agence mise à jour avec succès!' : 'Nouvelle agence créée avec succès!', 'success');
+                    
+                    // Recharger la liste des agences
+                    loadAgencies();
+                } else {
+                    showModalAlert(agencyModalAlert, data.message || 'Erreur lors de l\'enregistrement de l\'agence.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'enregistrement de l\'agence:', error);
+                showModalAlert(agencyModalAlert, 'Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
+        // Supprimer une agence
+        async function deleteAgency(agencyId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/agencies/${agencyId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Fermer le modal de confirmation
+                    confirmModal.style.display = 'none';
+                    
+                    // Afficher une notification
+                    showAlert(agencyManagementAlert, 'Agence supprimée avec succès!', 'success');
+                    
+                    // Recharger la liste des agences
+                    loadAgencies();
+                } else {
+                    showAlert(agencyManagementAlert, data.message || 'Erreur lors de la suppression de l\'agence.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la suppression de l\'agence:', error);
+                showAlert(agencyManagementAlert, 'Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
+        // Charger les agents d'une agence
+        async function loadAgencyAgents(agencyId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/agencies/${agencyId}/agents`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const agents = await response.json();
+                    
+                    // Afficher les agents dans une alerte
+                    if (agents.length === 0) {
+                        showAlert(agencyManagementAlert, 'Cette agence n\'a pas d\'agents assignés.', 'info');
+                    } else {
+                        let agentsList = '';
+                        agents.forEach(agent => {
+                            agentsList += `<li>${agent.username} (${agent.email})</li>`;
+                        });
+                        
+                        const agencyName = allAgencies.find(a => a.id == agencyId).name;
+                        
+                        const message = `
+                            <h4>Agents de l'agence "${agencyName}"</h4>
+                            <ul style="margin-top: 0.5rem;">${agentsList}</ul>
+                        `;
+                        
+                        showAlert(agencyManagementAlert, message, 'info', false);
+                    }
+                } else {
+                    showAlert(agencyManagementAlert, 'Impossible de charger les agents de cette agence.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des agents de l\'agence:', error);
+                showAlert(agencyManagementAlert, 'Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
+        // Charger la liste des agents
+        async function loadAgents() {
+            // Afficher le loader
+            agentLoader.classList.remove('hidden');
+            agentsTable.classList.add('hidden');
+            agentManagementAlert.classList.add('hidden');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/agents`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    allAgents = await response.json();
+                    
+                    // Charger la liste des agences pour afficher les noms
+                    await loadAgencies();
+                    
+                    // Afficher les agents dans le tableau
+                    displayAgents(allAgents);
+                } else {
+                    // Afficher un message d'erreur
+                    showAlert(agentManagementAlert, 'Impossible de charger la liste des agents.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des agents:', error);
+                showAlert(agentManagementAlert, 'Erreur de connexion au serveur.', 'danger');
+            } finally {
+                // Masquer le loader
+                agentLoader.classList.add('hidden');
+            }
+        }
+        
+        // Filtrer les agents par nom ou email
+        function filterAgents() {
+            const searchTerm = agentSearchInput.value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                // Si la recherche est vide, afficher tous les agents
+                displayAgents(allAgents);
+                return;
+            }
+            
+            // Filtrer les agents par nom ou email
+            const filteredAgents = allAgents.filter(agent => 
+                agent.username.toLowerCase().includes(searchTerm) || 
+                agent.email.toLowerCase().includes(searchTerm)
+            );
+            
+            // Afficher les agents filtrés
+            displayAgents(filteredAgents);
+        }
+        
+        // Afficher les agents dans le tableau
+        function displayAgents(agents) {
+            const tbody = agentsTable.querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            if (agents.length === 0) {
+                showAlert(agentManagementAlert, 'Aucun agent trouvé.', 'info');
+                agentsTable.classList.add('hidden');
+                return;
+            }
+            
+            agents.forEach(agent => {
+                const tr = document.createElement('tr');
+                
+                // Trouver le nom de l'agence
+                let agencyName = 'Non assigné';
+                if (agent.agency && agent.agency.id) {
+                    const agency = allAgencies.find(a => a.id === agent.agency.id);
+                    if (agency) {
+                        agencyName = agency.name;
+                    }
+                }
+                
+                // Disponibilité de l'agent
+                const availability = agent.available ? 
+                    '<span class="badge" style="background-color: #e8f5e9; color: #1b5e20;">Disponible</span>' : 
+                    '<span class="badge" style="background-color: #ffebee; color: #b71c1c;">Indisponible</span>';
+                
+                tr.innerHTML = `
+                    <td>${agent.username}</td>
+                    <td>${agent.email}</td>
+                    <td>${agencyName}</td>
+                    <td>${availability}</td>
+                    <td class="actions">
+                        <button class="btn btn-primary btn-sm assign-agent-btn" data-id="${agent.id}" title="Assigner à une agence">
+                            <i class="fas fa-building"></i>
+                        </button>
+                        ${agent.agency && agent.agency.id ? 
+                            `<button class="btn btn-warning btn-sm remove-agent-btn" data-id="${agent.id}" title="Retirer de l'agence">
+                                <i class="fas fa-unlink"></i>
+                            </button>` : ''}
+                    </td>
+                `;
+                
+                tbody.appendChild(tr);
+            });
+            
+            // Ajouter les écouteurs d'événements aux boutons
+            document.querySelectorAll('.assign-agent-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const agentId = this.getAttribute('data-id');
+                    openAssignAgentModal(agentId);
+                });
+            });
+            
+            document.querySelectorAll('.remove-agent-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const agentId = this.getAttribute('data-id');
+                    showConfirmModal(
+                        'Retirer l\'agent de l\'agence',
+                        'Êtes-vous sûr de vouloir retirer cet agent de son agence actuelle ?',
+                        () => removeAgentFromAgency(agentId)
+                    );
+                });
+            });
+            
+            // Afficher le tableau
+            agentsTable.classList.remove('hidden');
+        }
+        
+        // Ouvrir le modal pour créer un nouvel agent
+        function openCreateAgentModal() {
+            // Réinitialiser le formulaire
+            createAgentForm.reset();
+            createAgentModalAlert.classList.add('hidden');
+            
+            // Remplir la liste des agences
+            const agentAgencySelect = document.getElementById('agentAgency');
+            agentAgencySelect.innerHTML = '<option value="">Aucune agence</option>';
+            
+            allAgencies.forEach(agency => {
+                const option = document.createElement('option');
+                option.value = agency.id;
+                option.textContent = agency.name;
+                agentAgencySelect.appendChild(option);
+            });
+            
+            // Afficher le modal
+            createAgentModal.style.display = 'block';
+        }
+        
+        // Créer un nouvel agent
+        async function createAgent() {
+            const username = document.getElementById('agentUsername').value;
+            const email = document.getElementById('agentEmail').value;
+            const password = document.getElementById('agentPassword').value;
+            const passwordConfirm = document.getElementById('agentPasswordConfirm').value;
+            const agencyId = document.getElementById('agentAgency').value;
+            
+            // Vérifier que les mots de passe correspondent
+            if (password !== passwordConfirm) {
+                showModalAlert(createAgentModalAlert, 'Les mots de passe ne correspondent pas.', 'danger');
+                return;
+            }
+            
+            const agentData = {
+                username: username,
+                email: email,
+                password: password,
+                passwordConfirm: passwordConfirm,
+                agencyId: agencyId || null
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/users/create-agent`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(agentData),
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Fermer le modal
+                    createAgentModal.style.display = 'none';
+                    
+                    // Afficher une notification
+                    showAlert(agentManagementAlert, 'Nouvel agent créé avec succès!', 'success');
+                    
+                    // Recharger la liste des agents
+                    loadAgents();
+                } else {
+                    showModalAlert(createAgentModalAlert, data.message || 'Erreur lors de la création de l\'agent.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la création de l\'agent:', error);
+                showModalAlert(createAgentModalAlert, 'Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
+        // Ouvrir le modal pour assigner un agent à une agence
+        function openAssignAgentModal(agentId) {
+            // Réinitialiser le formulaire
+            assignAgentForm.reset();
+            assignAgentModalAlert.classList.add('hidden');
+            
+            // Définir l'ID de l'agent
+            document.getElementById('assignAgentId').value = agentId;
+            
+            // Remplir la liste des agences
+            const assignAgencyIdSelect = document.getElementById('assignAgencyId');
+            assignAgencyIdSelect.innerHTML = '<option value="">Sélectionnez une agence</option>';
+            
+            allAgencies.forEach(agency => {
+                const option = document.createElement('option');
+                option.value = agency.id;
+                option.textContent = agency.name;
+                assignAgencyIdSelect.appendChild(option);
+            });
+            
+            // Afficher le modal
+            assignAgentModal.style.display = 'block';
+        }
+        
+        // Assigner un agent à une agence
+        async function assignAgentToAgency() {
+            const agentId = document.getElementById('assignAgentId').value;
+            const agencyId = document.getElementById('assignAgencyId').value;
+            
+            if (!agencyId) {
+                showModalAlert(assignAgentModalAlert, 'Veuillez sélectionner une agence.', 'danger');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/agencies/${agencyId}/assign-agent/${agentId}`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Fermer le modal
+                    assignAgentModal.style.display = 'none';
+                    
+                    // Afficher une notification
+                    showAlert(agentManagementAlert, 'Agent assigné à l\'agence avec succès!', 'success');
+                    
+                    // Recharger la liste des agents
+                    loadAgents();
+                } else {
+                    showModalAlert(assignAgentModalAlert, data.message || 'Erreur lors de l\'assignation de l\'agent.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'assignation de l\'agent:', error);
+                showModalAlert(assignAgentModalAlert, 'Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
+        // Retirer un agent d'une agence
+        async function removeAgentFromAgency(agentId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/agencies/remove-agent/${agentId}`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Fermer le modal de confirmation
+                    confirmModal.style.display = 'none';
+                    
+                    // Afficher une notification
+                    showAlert(agentManagementAlert, 'Agent retiré de l\'agence avec succès!', 'success');
+                    
+                    // Recharger la liste des agents
+                    loadAgents();
+                } else {
+                    showAlert(agentManagementAlert, data.message || 'Erreur lors du retrait de l\'agent.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors du retrait de l\'agent:', error);
+                showAlert(agentManagementAlert, 'Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
+        // Afficher une alerte dans le conteneur principal
+        function showAlert(container, message, type, autoHide = true) {
+            container.className = `alert alert-${type}`;
+            
+            // Déterminer l'icône en fonction du type
+            let icon = '';
+            if (type === 'success') icon = '<i class="fas fa-check-circle"></i>';
+            else if (type === 'danger') icon = '<i class="fas fa-exclamation-circle"></i>';
+            else if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle"></i>';
+            else if (type === 'info') icon = '<i class="fas fa-info-circle"></i>';
+            
+            container.innerHTML = `${icon} ${message}`;
+            container.classList.remove('hidden');
+            
+            // Faire défiler jusqu'à l'alerte
+            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Masquer l'alerte après 5 secondes si autoHide est true
+            if (autoHide) {
+                setTimeout(() => {
+                    container.classList.add('hidden');
+                }, 5000);
+            }
+        }
+        
+        // Afficher une alerte dans un modal
+        function showModalAlert(container, message, type) {
+            container.className = `alert alert-${type}`;
+            
+            // Déterminer l'icône en fonction du type
+            let icon = '';
+            if (type === 'success') icon = '<i class="fas fa-check-circle"></i>';
+            else if (type === 'danger') icon = '<i class="fas fa-exclamation-circle"></i>';
+            else if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle"></i>';
+            else if (type === 'info') icon = '<i class="fas fa-info-circle"></i>';
+            
+            container.innerHTML = `${icon} ${message}`;
+            container.classList.remove('hidden');
+        }
+        
+        // Afficher le modal de confirmation
+        function showConfirmModal(title, message, callback) {
+            confirmModalTitle.textContent = title;
+            confirmModalMessage.textContent = message;
+            
+            // Définir la fonction de rappel
+            currentConfirmCallback = callback;
+            
+            // Ajouter l'écouteur d'événement au bouton de confirmation
+            confirmModalBtn.onclick = function() {
+                if (currentConfirmCallback) {
+                    currentConfirmCallback();
+                }
+            };
+            
+            // Afficher le modal
+            confirmModal.style.display = 'block';
+        }
+        
+        // Fermer tous les modals
+        function closeAllModals() {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.style.display = 'none';
+            });
         }
         
         // Déconnexion

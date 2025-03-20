@@ -929,8 +929,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" data-section="reservation-section">
-                            <i class="fas fa-calendar-check"></i> Réservations
+                        <a href="#" data-section="service-management-section">
+                            <i class="fas fa-concierge-bell"></i> Gestion des services
                         </a>
                     </li>
                     <li>
@@ -983,19 +983,6 @@
                         
                         <div class="stat-card">
                             <div class="stat-header">
-                                <div class="stat-icon" style="background-color: #fff8e1;">
-                                    <i class="fas fa-calendar-check" style="color: var(--warning-color);"></i>
-                                </div>
-                                <h3 class="stat-title">Réservations</h3>
-                            </div>
-                            <p class="stat-value" id="total-reservations">0</p>
-                            <div class="stat-footer">
-                                <span id="pending-reservations">0</span> en attente
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-header">
                                 <div class="stat-icon" style="background-color: #ffebee;">
                                     <i class="fas fa-user-tie" style="color: var(--danger-color);"></i>
                                 </div>
@@ -1004,6 +991,19 @@
                             <p class="stat-value" id="total-agents">0</p>
                             <div class="stat-footer">
                                 <span id="available-agents">0</span> agents disponibles
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon" style="background-color: #e8f5e9;">
+                                    <i class="fas fa-concierge-bell" style="color: var(--primary-color);"></i>
+                                </div>
+                                <h3 class="stat-title">Services</h3>
+                            </div>
+                            <p class="stat-value" id="total-services">0</p>
+                            <div class="stat-footer">
+                                <span id="active-services">0</span> services actifs
                             </div>
                         </div>
                     </div>
@@ -1038,9 +1038,6 @@
                         <div class="action-buttons">
                             <button class="btn btn-primary" id="refreshUsersBtn">
                                 <i class="fas fa-sync"></i> Actualiser
-                            </button>
-                            <button class="btn btn-primary" id="createUserBtn">
-                                <i class="fas fa-user-plus"></i> Nouvel utilisateur
                             </button>
                         </div>
                     </div>
@@ -1103,6 +1100,7 @@
                                 <th>Téléphone</th>
                                 <th>Email</th>
                                 <th>Agents</th>
+                                <th>Services</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -1156,16 +1154,46 @@
                     </table>
                 </section>
                 
-                <!-- Reservation Section (Placeholder) -->
-                <section id="reservation-section" class="hidden">
+                <!-- Service Management Section -->
+                <section id="service-management-section" class="hidden">
                     <div class="section-title">
-                        <h2><i class="fas fa-calendar-check"></i> Réservations</h2>
+                        <h2><i class="fas fa-concierge-bell"></i> Gestion des services</h2>
                     </div>
                     
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Cette fonctionnalité sera disponible prochainement.</span>
+                    <div id="serviceManagementAlert" class="alert hidden"></div>
+                    
+                    <div class="controls">
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="serviceSearchInput" class="search-input" placeholder="Rechercher par nom de service...">
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" id="refreshServicesBtn">
+                                <i class="fas fa-sync"></i> Actualiser
+                            </button>
+                            <button class="btn btn-primary" id="createServiceBtn">
+                                <i class="fas fa-plus"></i> Nouveau service
+                            </button>
+                        </div>
                     </div>
+                    
+                    <div id="serviceLoader" class="loader">
+                        <div class="spinner"></div>
+                        <p>Chargement des services...</p>
+                    </div>
+                    
+                    <table id="servicesTable" class="data-table hidden">
+                        <thead>
+                            <tr>
+                                <th>Nom du service</th>
+                                <th>Nombre d'agences</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Les services seront ajoutés ici dynamiquement -->
+                        </tbody>
+                    </table>
                 </section>
                 
                 <!-- System Stats Section (Placeholder) -->
@@ -1273,6 +1301,11 @@
                     <div class="form-group">
                         <label class="form-label" for="agencyDescription">Description</label>
                         <textarea id="agencyDescription" class="form-control"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Services proposés</label>
+                        <div id="serviceCheckboxes" class="mt-2"></div>
                     </div>
                     
                     <div class="form-group">
@@ -1385,6 +1418,36 @@
             </div>
         </div>
     </div>
+    
+    <!-- Modal pour créer/modifier un service -->
+    <div id="serviceModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title" id="serviceModalTitle">Nouveau service</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="serviceModalAlert" class="alert hidden"></div>
+            <form id="serviceForm">
+                <div class="modal-body">
+                    <input type="hidden" id="serviceId">
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="serviceName">Nom du service *</label>
+                        <input type="text" id="serviceName" class="form-control" required>
+                    </div>
+                    
+                    <div id="agencyAssignSection" class="form-group hidden">
+                        <label class="form-label">Agences proposant ce service</label>
+                        <div id="agencyCheckboxes" class="mt-2"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline cancel-modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script>
         // Base URL pour l'API
@@ -1401,10 +1464,10 @@
         const newUsersCountElement = document.getElementById('new-users-count');
         const totalAgenciesElement = document.getElementById('total-agencies');
         const activeAgenciesElement = document.getElementById('active-agencies');
-        const totalReservationsElement = document.getElementById('total-reservations');
-        const pendingReservationsElement = document.getElementById('pending-reservations');
         const totalAgentsElement = document.getElementById('total-agents');
         const availableAgentsElement = document.getElementById('available-agents');
+        const totalServicesElement = document.getElementById('total-services');
+        const activeServicesElement = document.getElementById('active-services');
         
         // Éléments de la gestion des utilisateurs
         const userSearchInput = document.getElementById('userSearchInput');
@@ -1431,6 +1494,7 @@
         const agencyForm = document.getElementById('agencyForm');
         const agencyModalAlert = document.getElementById('agencyModalAlert');
         const businessHoursContainer = document.getElementById('businessHoursContainer');
+        const serviceCheckboxes = document.getElementById('serviceCheckboxes');
         
         // Éléments de la gestion des agents
         const agentSearchInput = document.getElementById('agentSearchInput');
@@ -1450,6 +1514,21 @@
         const assignAgentForm = document.getElementById('assignAgentForm');
         const assignAgentModalAlert = document.getElementById('assignAgentModalAlert');
         
+        // Éléments de la gestion des services
+        const serviceSearchInput = document.getElementById('serviceSearchInput');
+        const refreshServicesBtn = document.getElementById('refreshServicesBtn');
+        const createServiceBtn = document.getElementById('createServiceBtn');
+        const serviceLoader = document.getElementById('serviceLoader');
+        const servicesTable = document.getElementById('servicesTable');
+        const serviceManagementAlert = document.getElementById('serviceManagementAlert');
+        
+        // Éléments du modal de service
+        const serviceModal = document.getElementById('serviceModal');
+        const serviceForm = document.getElementById('serviceForm');
+        const serviceModalAlert = document.getElementById('serviceModalAlert');
+        const agencyCheckboxes = document.getElementById('agencyCheckboxes');
+        const agencyAssignSection = document.getElementById('agencyAssignSection');
+        
         // Éléments du modal de confirmation
         const confirmModal = document.getElementById('confirmModal');
         const confirmModalTitle = document.getElementById('confirmModalTitle');
@@ -1460,6 +1539,7 @@
         let allUsers = [];
         let allAgencies = [];
         let allAgents = [];
+        let allServices = [];
         let currentConfirmCallback = null;
         
         // Vérifier la session au chargement de la page
@@ -1497,6 +1577,8 @@
                         loadAgencies();
                     } else if (sectionId === 'agent-management-section') {
                         loadAgents();
+                    } else if (sectionId === 'service-management-section') {
+                        loadServices();
                     } else if (sectionId === 'dashboard-section') {
                         loadDashboardStats();
                     }
@@ -1548,6 +1630,21 @@
                 openCreateAgentModal();
             });
             
+            // Recherche de services
+            serviceSearchInput.addEventListener('input', function() {
+                filterServices();
+            });
+            
+            // Actualiser la liste des services
+            refreshServicesBtn.addEventListener('click', function() {
+                loadServices();
+            });
+            
+            // Créer un nouveau service
+            createServiceBtn.addEventListener('click', function() {
+                openServiceModal();
+            });
+            
             // Formulaire de modification de rôle
             roleForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -1570,6 +1667,12 @@
             assignAgentForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 assignAgentToAgency();
+            });
+            
+            // Formulaire de création/modification de service
+            serviceForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveService();
             });
             
             // Fermer les modals
@@ -1675,9 +1778,17 @@
                     availableAgentsElement.textContent = availableAgents;
                 }
                 
-                // Simuler le nombre de réservations (à remplacer par une API réelle)
-                totalReservationsElement.textContent = Math.floor(Math.random() * 100);
-                pendingReservationsElement.textContent = Math.floor(Math.random() * 20);
+                // Charger le nombre de services
+                const servicesResponse = await fetch(`${API_BASE_URL}/api/services`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (servicesResponse.ok) {
+                    const services = await servicesResponse.json();
+                    totalServicesElement.textContent = services.length;
+                    activeServicesElement.textContent = services.length;
+                }
                 
                 // Charger l'activité récente
                 loadRecentActivity();
@@ -1693,10 +1804,10 @@
             // Simuler des activités récentes
             const activities = [
                 { type: 'user', action: 'Nouvel utilisateur inscrit', time: '10 minutes' },
-                { type: 'reservation', action: 'Réservation confirmée', time: '35 minutes' },
+                { type: 'service', action: 'Nouveau service ajouté', time: '25 minutes' },
                 { type: 'agency', action: 'Nouvelle agence ajoutée', time: '1 heure' },
                 { type: 'agent', action: 'Agent assigné à une agence', time: '3 heures' },
-                { type: 'reservation', action: 'Réservation annulée', time: '5 heures' }
+                { type: 'service', action: 'Service attribué à une agence', time: '5 heures' }
             ];
             
             // Créer le HTML pour chaque activité
@@ -1708,8 +1819,8 @@
                     case 'user':
                         icon = 'fas fa-user';
                         break;
-                    case 'reservation':
-                        icon = 'fas fa-calendar-check';
+                    case 'service':
+                        icon = 'fas fa-concierge-bell';
                         break;
                     case 'agency':
                         icon = 'fas fa-building';
@@ -1946,6 +2057,9 @@
                     
                     // Afficher les agences dans le tableau
                     displayAgencies(allAgencies);
+                    
+                    // Charger également les services pour référence
+                    loadServicesForReference();
                 } else {
                     // Afficher un message d'erreur
                     showAlert(agencyManagementAlert, 'Impossible de charger la liste des agences.', 'danger');
@@ -1956,6 +2070,22 @@
             } finally {
                 // Masquer le loader
                 agencyLoader.classList.add('hidden');
+            }
+        }
+        
+        // Charger les services pour référence
+        async function loadServicesForReference() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/services`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    allServices = await response.json();
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des services:', error);
             }
         }
         
@@ -1996,6 +2126,9 @@
                 // Compter le nombre d'agents assignés à cette agence
                 const agentCount = agency.agents ? agency.agents.length : 0;
                 
+                // Compter le nombre de services proposés
+                const serviceCount = agency.services ? agency.services.length : 0;
+                
                 tr.innerHTML = `
                     <td>${agency.name}</td>
                     <td>${agency.city}</td>
@@ -2003,12 +2136,16 @@
                     <td>${agency.phoneNumber}</td>
                     <td>${agency.email || '-'}</td>
                     <td>${agentCount}</td>
+                    <td>${serviceCount}</td>
                     <td class="actions">
                         <button class="btn btn-info btn-sm edit-agency-btn" data-id="${agency.id}" title="Modifier l'agence">
                             <i class="fas fa-edit"></i>
                         </button>
                         <button class="btn btn-primary btn-sm view-agents-btn" data-id="${agency.id}" title="Voir les agents">
                             <i class="fas fa-user-tie"></i>
+                        </button>
+                        <button class="btn btn-warning btn-sm view-services-btn" data-id="${agency.id}" title="Voir les services">
+                            <i class="fas fa-concierge-bell"></i>
                         </button>
                         <button class="btn btn-danger btn-sm delete-agency-btn" data-id="${agency.id}" title="Supprimer l'agence">
                             <i class="fas fa-trash"></i>
@@ -2031,6 +2168,13 @@
                 button.addEventListener('click', function() {
                     const agencyId = this.getAttribute('data-id');
                     loadAgencyAgents(agencyId);
+                });
+            });
+            
+            document.querySelectorAll('.view-services-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const agencyId = this.getAttribute('data-id');
+                    loadAgencyServices(agencyId);
                 });
             });
             
@@ -2058,6 +2202,9 @@
             // Générer le contenu des heures d'ouverture
             generateBusinessHoursInputs();
             
+            // Générer les checkboxes de services
+            generateServiceCheckboxes();
+            
             if (agencyId) {
                 // Modification d'une agence existante
                 const agency = allAgencies.find(a => a.id == agencyId);
@@ -2076,6 +2223,16 @@
                     if (agency.businessHours && agency.businessHours.length > 0) {
                         fillBusinessHours(agency.businessHours);
                     }
+                    
+                    // Cocher les services associés
+                    if (agency.services && agency.services.length > 0) {
+                        agency.services.forEach(service => {
+                            const checkbox = document.getElementById(`service-${service.id}`);
+                            if (checkbox) {
+                                checkbox.checked = true;
+                            }
+                        });
+                    }
                 }
             } else {
                 // Création d'une nouvelle agence
@@ -2085,6 +2242,30 @@
             
             // Afficher le modal
             agencyModal.style.display = 'block';
+        }
+        
+        // Générer les checkboxes pour les services
+        function generateServiceCheckboxes() {
+            let html = '';
+            
+            if (allServices.length === 0) {
+                html = '<p>Aucun service disponible. Veuillez d\'abord créer des services.</p>';
+            } else {
+                html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.5rem;">';
+                
+                allServices.forEach(service => {
+                    html += `
+                        <div class="form-check">
+                            <input type="checkbox" id="service-${service.id}" class="service-checkbox" value="${service.id}" style="margin-right: 0.5rem;">
+                            <label for="service-${service.id}">${service.name}</label>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+            }
+            
+            serviceCheckboxes.innerHTML = html;
         }
         
         // Générer les inputs pour les heures d'ouverture
@@ -2165,6 +2346,12 @@
             const agencyEmail = document.getElementById('agencyEmail').value;
             const agencyDescription = document.getElementById('agencyDescription').value;
             
+            // Récupérer les services sélectionnés
+            const serviceIds = [];
+            document.querySelectorAll('.service-checkbox:checked').forEach(checkbox => {
+                serviceIds.push(parseInt(checkbox.value));
+            });
+            
             // Récupérer les heures d'ouverture
             const businessHours = [];
             
@@ -2189,7 +2376,8 @@
                 phoneNumber: agencyPhone,
                 email: agencyEmail,
                 description: agencyDescription,
-                businessHours: businessHours
+                businessHours: businessHours,
+                serviceIds: serviceIds
             };
             
             try {
@@ -2296,6 +2484,37 @@
                 }
             } catch (error) {
                 console.error('Erreur lors du chargement des agents de l\'agence:', error);
+                showAlert(agencyManagementAlert, 'Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
+        // Charger les services d'une agence
+        async function loadAgencyServices(agencyId) {
+            try {
+                const agency = allAgencies.find(a => a.id == agencyId);
+                
+                if (agency && agency.services) {
+                    // Afficher les services dans une alerte
+                    if (agency.services.length === 0) {
+                        showAlert(agencyManagementAlert, 'Cette agence ne propose aucun service.', 'info');
+                    } else {
+                        let servicesList = '';
+                        agency.services.forEach(service => {
+                            servicesList += `<li>${service.name}</li>`;
+                        });
+                        
+                        const message = `
+                            <h4>Services proposés par l'agence "${agency.name}"</h4>
+                            <ul style="margin-top: 0.5rem;">${servicesList}</ul>
+                        `;
+                        
+                        showAlert(agencyManagementAlert, message, 'info', false);
+                    }
+                } else {
+                    showAlert(agencyManagementAlert, 'Impossible de charger les services de cette agence.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des services de l\'agence:', error);
                 showAlert(agencyManagementAlert, 'Erreur de connexion au serveur.', 'danger');
             }
         }
@@ -2585,6 +2804,366 @@
             }
         }
         
+        // Charger la liste des services
+        async function loadServices() {
+            // Afficher le loader
+            serviceLoader.classList.remove('hidden');
+            servicesTable.classList.add('hidden');
+            serviceManagementAlert.classList.add('hidden');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/services`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    allServices = await response.json();
+                    
+                    // Charger la liste des agences pour référence
+                    await loadAgencies();
+                    
+                    // Afficher les services dans le tableau
+                    displayServices(allServices);
+                } else {
+                    // Afficher un message d'erreur
+                    showAlert(serviceManagementAlert, 'Impossible de charger la liste des services.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des services:', error);
+                showAlert(serviceManagementAlert, 'Erreur de connexion au serveur.', 'danger');
+            } finally {
+                // Masquer le loader
+                serviceLoader.classList.add('hidden');
+            }
+        }
+        
+        // Filtrer les services par nom
+        function filterServices() {
+            const searchTerm = serviceSearchInput.value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                // Si la recherche est vide, afficher tous les services
+                displayServices(allServices);
+                return;
+            }
+            
+            // Filtrer les services par nom
+            const filteredServices = allServices.filter(service => 
+                service.name.toLowerCase().includes(searchTerm)
+            );
+            
+            // Afficher les services filtrés
+            displayServices(filteredServices);
+        }
+        
+        // Afficher les services dans le tableau
+        function displayServices(services) {
+            const tbody = servicesTable.querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            if (services.length === 0) {
+                showAlert(serviceManagementAlert, 'Aucun service trouvé.', 'info');
+                servicesTable.classList.add('hidden');
+                return;
+            }
+            
+            services.forEach(service => {
+                const tr = document.createElement('tr');
+                
+                // Compter le nombre d'agences proposant ce service
+                const agencyCount = service.agencies ? service.agencies.length : 0;
+                
+                tr.innerHTML = `
+                    <td>${service.name}</td>
+                    <td>${agencyCount}</td>
+                    <td class="actions">
+                        <button class="btn btn-info btn-sm edit-service-btn" data-id="${service.id}" title="Modifier le service">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-primary btn-sm view-agencies-btn" data-id="${service.id}" title="Voir les agences">
+                            <i class="fas fa-building"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-service-btn" data-id="${service.id}" title="Supprimer le service">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tbody.appendChild(tr);
+            });
+            
+            // Ajouter les écouteurs d'événements aux boutons
+            document.querySelectorAll('.edit-service-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const serviceId = this.getAttribute('data-id');
+                    openServiceModal(serviceId);
+                });
+            });
+            
+            document.querySelectorAll('.view-agencies-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const serviceId = this.getAttribute('data-id');
+                    loadServiceAgencies(serviceId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-service-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const serviceId = this.getAttribute('data-id');
+                    showConfirmModal(
+                        'Supprimer le service',
+                        'Êtes-vous sûr de vouloir supprimer ce service ? Cette action est irréversible.',
+                        () => deleteService(serviceId)
+                    );
+                });
+            });
+            
+            // Afficher le tableau
+            servicesTable.classList.remove('hidden');
+        }
+        
+        // Ouvrir le modal de création/modification de service
+        function openServiceModal(serviceId = null) {
+            // Réinitialiser le formulaire
+            serviceForm.reset();
+            serviceModalAlert.classList.add('hidden');
+            
+            // Masquer initialement la section d'assignation d'agences
+            agencyAssignSection.classList.add('hidden');
+            
+            if (serviceId) {
+                // Modification d'un service existant
+                const service = allServices.find(s => s.id == serviceId);
+                
+                if (service) {
+                    document.getElementById('serviceModalTitle').textContent = 'Modifier le service';
+                    document.getElementById('serviceId').value = service.id;
+                    document.getElementById('serviceName').value = service.name;
+                    
+                    // Afficher la section d'assignation d'agences
+                    agencyAssignSection.classList.remove('hidden');
+                    
+                    // Générer les checkboxes d'agences
+                    generateAgencyCheckboxes(service);
+                }
+            } else {
+                // Création d'un nouveau service
+                document.getElementById('serviceModalTitle').textContent = 'Nouveau service';
+                document.getElementById('serviceId').value = '';
+            }
+            
+            // Afficher le modal
+            serviceModal.style.display = 'block';
+        }
+        
+        // Générer les checkboxes pour les agences
+        function generateAgencyCheckboxes(service = null) {
+            let html = '';
+            
+            if (allAgencies.length === 0) {
+                html = '<p>Aucune agence disponible.</p>';
+            } else {
+                html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.5rem;">';
+                
+                allAgencies.forEach(agency => {
+                    // Vérifier si le service est déjà associé à cette agence
+                    let checked = '';
+                    if (service && service.agencies) {
+                        const isAssigned = service.agencies.some(a => a.id === agency.id);
+                        if (isAssigned) {
+                            checked = 'checked';
+                        }
+                    }
+                    
+                    html += `
+                        <div class="form-check">
+                            <input type="checkbox" id="agency-${agency.id}" class="agency-checkbox" value="${agency.id}" ${checked} style="margin-right: 0.5rem;">
+                            <label for="agency-${agency.id}">${agency.name}</label>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+            }
+            
+            agencyCheckboxes.innerHTML = html;
+        }
+        
+        // Créer ou mettre à jour un service
+        async function saveService() {
+            const serviceId = document.getElementById('serviceId').value;
+            const serviceName = document.getElementById('serviceName').value;
+            
+            // Créer l'objet de données
+            const serviceData = {
+                name: serviceName
+            };
+            
+            try {
+                let url, method;
+                
+                if (serviceId) {
+                    // Mise à jour d'un service existant
+                    url = `${API_BASE_URL}/api/services/${serviceId}`;
+                    method = 'PUT';
+                } else {
+                    // Création d'un nouveau service
+                    url = `${API_BASE_URL}/api/services`;
+                    method = 'POST';
+                }
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(serviceData),
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Si c'est une modification, également mettre à jour les agences assignées
+                    if (serviceId && !agencyAssignSection.classList.contains('hidden')) {
+                        await updateServiceAgencies(serviceId);
+                    }
+                    
+                    // Fermer le modal
+                    serviceModal.style.display = 'none';
+                    
+                    // Afficher une notification
+                    showAlert(serviceManagementAlert, serviceId ? 'Service mis à jour avec succès!' : 'Nouveau service créé avec succès!', 'success');
+                    
+                    // Recharger la liste des services
+                    loadServices();
+                } else {
+                    showModalAlert(serviceModalAlert, data.message || 'Erreur lors de l\'enregistrement du service.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'enregistrement du service:', error);
+                showModalAlert(serviceModalAlert, 'Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
+        // Mettre à jour les agences assignées à un service
+        async function updateServiceAgencies(serviceId) {
+            try {
+                // Récupérer les agences sélectionnées
+                const selectedAgencies = document.querySelectorAll('.agency-checkbox:checked');
+                
+                // Récupérer le service actuel
+                const service = allServices.find(s => s.id == serviceId);
+                
+                if (service && service.agencies) {
+                    // Pour chaque agence actuellement assignée, vérifier si elle est toujours sélectionnée
+                    for (const currentAgency of service.agencies) {
+                        const isStillSelected = Array.from(selectedAgencies).some(checkbox => 
+                            checkbox.value == currentAgency.id
+                        );
+                        
+                        if (!isStillSelected) {
+                            // Retirer le service de cette agence
+                            await fetch(`${API_BASE_URL}/api/services/${serviceId}/remove-agency/${currentAgency.id}`, {
+                                method: 'POST',
+                                credentials: 'include'
+                            });
+                        }
+                    }
+                    
+                    // Pour chaque agence sélectionnée, vérifier si elle n'était pas déjà assignée
+                    for (const checkbox of selectedAgencies) {
+                        const agencyId = checkbox.value;
+                        const wasAlreadyAssigned = service.agencies.some(a => a.id == agencyId);
+                        
+                        if (!wasAlreadyAssigned) {
+                            // Assigner le service à cette agence
+                            await fetch(`${API_BASE_URL}/api/services/${serviceId}/assign-agency/${agencyId}`, {
+                                method: 'POST',
+                                credentials: 'include'
+                            });
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur lors de la mise à jour des agences:', error);
+                throw error;
+            }
+        }
+        
+        // Supprimer un service
+        async function deleteService(serviceId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/services/${serviceId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Fermer le modal de confirmation
+                    confirmModal.style.display = 'none';
+                    
+                    // Afficher une notification
+                    showAlert(serviceManagementAlert, 'Service supprimé avec succès!', 'success');
+                    
+                    // Recharger la liste des services
+                    loadServices();
+                } else {
+                    showAlert(serviceManagementAlert, data.message || 'Erreur lors de la suppression du service.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la suppression du service:', error);
+                showAlert(serviceManagementAlert, 'Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
+        // Charger les agences proposant un service
+        async function loadServiceAgencies(serviceId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/services/${serviceId}/agencies`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const agencies = await response.json();
+                    
+                    // Récupérer le nom du service
+                    const service = allServices.find(s => s.id == serviceId);
+                    
+                    if (!service) {
+                        showAlert(serviceManagementAlert, 'Service non trouvé.', 'danger');
+                        return;
+                    }
+                    
+                    // Afficher les agences dans une alerte
+                    if (agencies.length === 0) {
+                        showAlert(serviceManagementAlert, `Aucune agence ne propose le service "${service.name}".`, 'info');
+                    } else {
+                        let agenciesList = '';
+                        agencies.forEach(agency => {
+                            agenciesList += `<li>${agency.name} (${agency.city})</li>`;
+                        });
+                        
+                        const message = `
+                            <h4>Agences proposant le service "${service.name}"</h4>
+                            <ul style="margin-top: 0.5rem;">${agenciesList}</ul>
+                        `;
+                        
+                        showAlert(serviceManagementAlert, message, 'info', false);
+                    }
+                } else {
+                    showAlert(serviceManagementAlert, 'Impossible de charger les agences pour ce service.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des agences pour ce service:', error);
+                showAlert(serviceManagementAlert, 'Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
         // Afficher une alerte dans le conteneur principal
         function showAlert(container, message, type, autoHide = true) {
             container.className = `alert alert-${type}`;
@@ -2671,3 +3250,5 @@
             }
         }
     </script>
+</body>
+</html>

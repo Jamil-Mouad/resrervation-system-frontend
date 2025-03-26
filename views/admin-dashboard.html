@@ -236,7 +236,6 @@
             border-radius: 8px;
             box-shadow: var(--shadow);
             padding: 1.5rem;
-            overflow-x: auto;
             min-height: calc(100vh - 100px);
         }
         
@@ -301,44 +300,6 @@
             gap: 0.5rem;
         }
         
-        /* Table Styles */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 1.5rem;
-            border-radius: 4px;
-            overflow: hidden;
-            box-shadow: 0 0 0 1px var(--border-color);
-        }
-        
-        .data-table th, 
-        .data-table td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .data-table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            color: var(--dark-color);
-            white-space: nowrap;
-        }
-        
-        .data-table tr:hover {
-            background-color: #f5f5f5;
-        }
-        
-        .data-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-        
-        .data-table .actions {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: flex-end;
-        }
-        
         /* Badges */
         .badge {
             display: inline-block;
@@ -352,6 +313,11 @@
         .badge-user {
             background-color: #e3f2fd;
             color: #0d47a1;
+        }
+        
+        .badge-client {
+            background-color: #f1f8e9;
+            color: #33691e;
         }
         
         .badge-agent {
@@ -813,6 +779,220 @@
             transform: translateX(26px);
         }
         
+        /* Cards Grid Styles */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .data-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .data-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* En-tête de carte */
+        .card-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+        }
+        
+        .card-avatar i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .card-title-container {
+            flex: 1;
+        }
+        
+        .card-title {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .card-subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+        
+        .card-badge {
+            margin-left: auto;
+        }
+        
+        /* Corps de la carte */
+        .card-body {
+            flex: 1;
+            padding: 1.25rem;
+        }
+        
+        .card-detail {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .card-detail:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .card-detail i {
+            width: 20px;
+            margin-right: 0.75rem;
+            color: #666;
+            text-align: center;
+        }
+        
+        .detail-label {
+            font-weight: 500;
+            color: #666;
+            margin-right: 0.5rem;
+            width: 120px;
+        }
+        
+        .detail-value {
+            flex: 1;
+        }
+        
+        /* Statistiques */
+        .card-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .card-stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            display: block;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        /* Pied de carte */
+        .card-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            background-color: #f8f9fa;
+        }
+        
+        /* Animation pour nouvelles cartes */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .data-card {
+            animation: fadeInUp 0.3s ease-out;
+        }
+        
+        /* Modifications spécifiques aux types de cartes */
+        /* Cartes utilisateurs */
+        .user-card .card-avatar {
+            background-color: #e3f2fd;
+        }
+        
+        .user-card .card-avatar i {
+            color: #1976d2;
+        }
+        
+        /* Cartes clients */
+        .client-card .card-avatar {
+            background-color: #f1f8e9;
+        }
+        
+        .client-card .card-avatar i {
+            color: #33691e;
+        }
+        
+        /* Cartes agences */
+        .agency-card .card-avatar {
+            background-color: #e8f5e9;
+        }
+        
+        .agency-card .card-avatar i {
+            color: #388e3c;
+        }
+        
+        /* Cartes agents */
+        .agent-card .card-avatar {
+            background-color: #fff8e1;
+        }
+        
+        .agent-card .card-avatar i {
+            color: #ffa000;
+        }
+        
+        /* Cartes services */
+        .service-card .card-avatar {
+            background-color: #f3e5f5;
+        }
+        
+        .service-card .card-avatar i {
+            color: #8e24aa;
+        }
+        
+        /* Cartes administrateurs */
+        .admin-card .card-avatar {
+            background-color: #fce4ec;
+        }
+        
+        .admin-card .card-avatar i {
+            color: #c2185b;
+        }
+        
         /* Utility Classes */
         .text-right {
             text-align: right;
@@ -827,6 +1007,12 @@
         }
         
         /* Responsive Adjustments */
+        @media (max-width: 1200px) {
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+        
         @media (max-width: 992px) {
             .dashboard {
                 flex-direction: column;
@@ -842,6 +1028,10 @@
             
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             }
         }
         
@@ -874,9 +1064,18 @@
                 margin-top: 0.5rem;
             }
             
-            .data-table {
-                display: block;
-                overflow-x: auto;
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card-detail {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .detail-label {
+                width: 100%;
+                margin-bottom: 0.25rem;
             }
         }
     </style>
@@ -970,6 +1169,45 @@
                         
                         <div class="stat-card">
                             <div class="stat-header">
+                                <div class="stat-icon" style="background-color: #f1f8e9;">
+                                    <i class="fas fa-user" style="color: #33691e;"></i>
+                                </div>
+                                <h3 class="stat-title">Clients</h3>
+                            </div>
+                            <p class="stat-value" id="total-clients">0</p>
+                            <div class="stat-footer">
+                                <span id="active-clients">0</span> clients actifs
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon" style="background-color: #fff8e1;">
+                                    <i class="fas fa-user-tie" style="color: #ffa000;"></i>
+                                </div>
+                                <h3 class="stat-title">Agents</h3>
+                            </div>
+                            <p class="stat-value" id="total-agents">0</p>
+                            <div class="stat-footer">
+                                <span id="available-agents">0</span> agents disponibles
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon" style="background-color: #fce4ec;">
+                                    <i class="fas fa-user-shield" style="color: #c2185b;"></i>
+                                </div>
+                                <h3 class="stat-title">Administrateurs</h3>
+                            </div>
+                            <p class="stat-value" id="total-admins">0</p>
+                            <div class="stat-footer">
+                                <span id="active-admins">0</span> administrateurs actifs
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
                                 <div class="stat-icon" style="background-color: #e3f2fd;">
                                     <i class="fas fa-building" style="color: var(--info-color);"></i>
                                 </div>
@@ -978,19 +1216,6 @@
                             <p class="stat-value" id="total-agencies">0</p>
                             <div class="stat-footer">
                                 <span id="active-agencies">0</span> agences actives
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-header">
-                                <div class="stat-icon" style="background-color: #ffebee;">
-                                    <i class="fas fa-user-tie" style="color: var(--danger-color);"></i>
-                                </div>
-                                <h3 class="stat-title">Agents</h3>
-                            </div>
-                            <p class="stat-value" id="total-agents">0</p>
-                            <div class="stat-footer">
-                                <span id="available-agents">0</span> agents disponibles
                             </div>
                         </div>
                         
@@ -1027,8 +1252,9 @@
                 <section id="user-management-section" class="hidden">
                     <div class="section-title">
                         <h2><i class="fas fa-users"></i> Gestion des utilisateurs</h2>
-                        <div id="userManagementAlert" class="alert hidden"></div>
                     </div>
+                    
+                    <div id="userManagementAlert" class="alert hidden"></div>
                     
                     <div class="controls">
                         <div class="search-container">
@@ -1047,20 +1273,9 @@
                         <p>Chargement des utilisateurs...</p>
                     </div>
                     
-                    <table id="usersTable" class="data-table hidden">
-                        <thead>
-                            <tr>
-                                <th>Nom d'utilisateur</th>
-                                <th>Email</th>
-                                <th>Rôle</th>
-                                <th>Dernière connexion</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Les utilisateurs seront ajoutés ici dynamiquement -->
-                        </tbody>
-                    </table>
+                    <div id="usersCards" class="cards-grid">
+                        <!-- Les cartes utilisateurs seront ajoutées ici dynamiquement -->
+                    </div>
                 </section>
                 
                 <!-- Agency Management Section -->
@@ -1091,23 +1306,9 @@
                         <p>Chargement des agences...</p>
                     </div>
                     
-                    <table id="agenciesTable" class="data-table hidden">
-                        <thead>
-                            <tr>
-                                <th>Nom</th>
-                                <th>Ville</th>
-                                <th>Adresse</th>
-                                <th>Téléphone</th>
-                                <th>Email</th>
-                                <th>Agents</th>
-                                <th>Services</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Les agences seront ajoutées ici dynamiquement -->
-                        </tbody>
-                    </table>
+                    <div id="agenciesCards" class="cards-grid">
+                        <!-- Les cartes agences seront ajoutées ici dynamiquement -->
+                    </div>
                 </section>
                 
                 <!-- Agent Management Section -->
@@ -1138,20 +1339,9 @@
                         <p>Chargement des agents...</p>
                     </div>
                     
-                    <table id="agentsTable" class="data-table hidden">
-                        <thead>
-                            <tr>
-                                <th>Nom d'utilisateur</th>
-                                <th>Email</th>
-                                <th>Agence assignée</th>
-                                <th>Disponibilité</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Les agents seront ajoutés ici dynamiquement -->
-                        </tbody>
-                    </table>
+                    <div id="agentsCards" class="cards-grid">
+                        <!-- Les cartes agents seront ajoutées ici dynamiquement -->
+                    </div>
                 </section>
                 
                 <!-- Service Management Section -->
@@ -1182,18 +1372,9 @@
                         <p>Chargement des services...</p>
                     </div>
                     
-                    <table id="servicesTable" class="data-table hidden">
-                        <thead>
-                            <tr>
-                                <th>Nom du service</th>
-                                <th>Nombre d'agences</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Les services seront ajoutés ici dynamiquement -->
-                        </tbody>
-                    </table>
+                    <div id="servicesCards" class="cards-grid">
+                        <!-- Les cartes services seront ajoutées ici dynamiquement -->
+                    </div>
                 </section>
                 
                 <!-- System Stats Section (Placeholder) -->
@@ -1462,10 +1643,14 @@
         // Éléments statistiques
         const totalUsersElement = document.getElementById('total-users');
         const newUsersCountElement = document.getElementById('new-users-count');
-        const totalAgenciesElement = document.getElementById('total-agencies');
-        const activeAgenciesElement = document.getElementById('active-agencies');
+        const totalClientsElement = document.getElementById('total-clients');
+        const activeClientsElement = document.getElementById('active-clients');
         const totalAgentsElement = document.getElementById('total-agents');
         const availableAgentsElement = document.getElementById('available-agents');
+        const totalAdminsElement = document.getElementById('total-admins');
+        const activeAdminsElement = document.getElementById('active-admins');
+        const totalAgenciesElement = document.getElementById('total-agencies');
+        const activeAgenciesElement = document.getElementById('active-agencies');
         const totalServicesElement = document.getElementById('total-services');
         const activeServicesElement = document.getElementById('active-services');
         
@@ -1473,7 +1658,7 @@
         const userSearchInput = document.getElementById('userSearchInput');
         const refreshUsersBtn = document.getElementById('refreshUsersBtn');
         const userLoader = document.getElementById('userLoader');
-        const usersTable = document.getElementById('usersTable');
+        const usersCards = document.getElementById('usersCards');
         const userManagementAlert = document.getElementById('userManagementAlert');
         
         // Éléments du modal de rôle
@@ -1486,7 +1671,7 @@
         const refreshAgenciesBtn = document.getElementById('refreshAgenciesBtn');
         const createAgencyBtn = document.getElementById('createAgencyBtn');
         const agencyLoader = document.getElementById('agencyLoader');
-        const agenciesTable = document.getElementById('agenciesTable');
+        const agenciesCards = document.getElementById('agenciesCards');
         const agencyManagementAlert = document.getElementById('agencyManagementAlert');
         
         // Éléments du modal d'agence
@@ -1501,7 +1686,7 @@
         const refreshAgentsBtn = document.getElementById('refreshAgentsBtn');
         const createAgentBtn = document.getElementById('createAgentBtn');
         const agentLoader = document.getElementById('agentLoader');
-        const agentsTable = document.getElementById('agentsTable');
+        const agentsCards = document.getElementById('agentsCards');
         const agentManagementAlert = document.getElementById('agentManagementAlert');
         
         // Éléments du modal de création d'agent
@@ -1519,7 +1704,7 @@
         const refreshServicesBtn = document.getElementById('refreshServicesBtn');
         const createServiceBtn = document.getElementById('createServiceBtn');
         const serviceLoader = document.getElementById('serviceLoader');
-        const servicesTable = document.getElementById('servicesTable');
+        const servicesCards = document.getElementById('servicesCards');
         const serviceManagementAlert = document.getElementById('serviceManagementAlert');
         
         // Éléments du modal de service
@@ -1745,10 +1930,22 @@
                 
                 if (usersResponse.ok) {
                     const users = await usersResponse.json();
-                    totalUsersElement.textContent = users.length;
                     
-                    // Simuler le nombre de nouveaux utilisateurs (à remplacer par une API réelle)
+                    // Compter les différents types d'utilisateurs
+                    const clients = users.filter(user => user.role === 'USER').length;
+                    const agents = users.filter(user => user.role === 'AGENT').length;
+                    const admins = users.filter(user => user.role === 'ADMIN').length;
+                    
+                    totalUsersElement.textContent = users.length;
+                    totalClientsElement.textContent = clients;
+                    totalAgentsElement.textContent = agents;
+                    totalAdminsElement.textContent = admins;
+                    
+                    // Simuler d'autres statistiques pour l'interface
                     newUsersCountElement.textContent = Math.floor(Math.random() * 10);
+                    activeClientsElement.textContent = clients;
+                    availableAgentsElement.textContent = Math.floor(agents * 0.8);
+                    activeAdminsElement.textContent = admins;
                 }
                 
                 // Charger le nombre d'agences
@@ -1761,21 +1958,6 @@
                     const agencies = await agenciesResponse.json();
                     totalAgenciesElement.textContent = agencies.length;
                     activeAgenciesElement.textContent = agencies.length;
-                }
-                
-                // Charger le nombre d'agents
-                const agentsResponse = await fetch(`${API_BASE_URL}/api/admin/agents`, {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-                
-                if (agentsResponse.ok) {
-                    const agents = await agentsResponse.json();
-                    totalAgentsElement.textContent = agents.length;
-                    
-                    // Calculer le nombre d'agents disponibles
-                    const availableAgents = agents.filter(agent => agent.available).length;
-                    availableAgentsElement.textContent = availableAgents;
                 }
                 
                 // Charger le nombre de services
@@ -1850,7 +2032,7 @@
         async function loadUsers() {
             // Afficher le loader
             userLoader.classList.remove('hidden');
-            usersTable.classList.add('hidden');
+            usersCards.classList.add('hidden');
             userManagementAlert.classList.add('hidden');
             
             try {
@@ -1862,7 +2044,7 @@
                 if (response.ok) {
                     allUsers = await response.json();
                     
-                    // Afficher les utilisateurs dans le tableau
+                    // Afficher les utilisateurs en cartes
                     displayUsers(allUsers);
                 } else {
                     // Afficher un message d'erreur
@@ -1896,50 +2078,65 @@
             displayUsers(filteredUsers);
         }
         
-        // Afficher les utilisateurs dans le tableau
+        // Afficher les utilisateurs en cartes
         function displayUsers(users) {
-            const tbody = usersTable.querySelector('tbody');
-            tbody.innerHTML = '';
+            // Vider le conteneur de cartes
+            usersCards.innerHTML = '';
             
             if (users.length === 0) {
                 showAlert(userManagementAlert, 'Aucun utilisateur trouvé.', 'info');
-                usersTable.classList.add('hidden');
                 return;
             }
             
             users.forEach(user => {
-                const tr = document.createElement('tr');
-                
                 // Définir la classe de badge selon le rôle
                 const roleClass = `badge-${user.role.toLowerCase()}`;
                 
-                // Simuler une date de dernière connexion (à remplacer par des données réelles)
+                // Simuler une date de dernière connexion
                 const lastLogin = new Date();
                 lastLogin.setHours(lastLogin.getHours() - Math.floor(Math.random() * 72));
                 const lastLoginStr = lastLogin.toLocaleDateString() + ' ' + lastLogin.toLocaleString('fr-FR', { hour: '2-digit', minute: '2-digit' });
                 
-                tr.innerHTML = `
-                    <td>${user.username || 'N/A'}</td>
-                    <td>${user.email}</td>
-                    <td><span class="badge ${roleClass}">${user.role}</span></td>
-                    <td>${lastLoginStr}</td>
-                    <td class="actions">
+                // Créer la carte
+                const card = document.createElement('div');
+                card.className = 'data-card user-card';
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="card-title-container">
+                            <h3 class="card-title">${user.username || 'N/A'}</h3>
+                            <div class="card-subtitle">${user.email}</div>
+                        </div>
+                        <div class="card-badge">
+                            <span class="badge ${roleClass}">${user.role}</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-detail">
+                            <i class="fas fa-clock"></i>
+                            <span class="detail-label">Dernière connexion:</span>
+                            <span class="detail-value">${lastLoginStr}</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
                         <button class="btn btn-info btn-sm edit-role-btn" data-id="${user.id}" data-role="${user.role}" title="Modifier le rôle">
                             <i class="fas fa-user-edit"></i>
                         </button>
                         ${user.role !== 'AGENT' ? 
-                            `<button class="btn btn-primary btn-sm convert-agent-btn tooltip" data-id="${user.id}" title="Convertir en agent">
+                            `<button class="btn btn-primary btn-sm convert-agent-btn" data-id="${user.id}" title="Convertir en agent">
                                 <i class="fas fa-user-tie"></i>
-                                <span class="tooltip-text">Convertir en agent</span>
                             </button>` : ''}
-                    </td>
+                    </div>
                 `;
                 
-                tbody.appendChild(tr);
+                usersCards.appendChild(card);
             });
             
             // Ajouter les écouteurs d'événements aux boutons
-            document.querySelectorAll('.edit-role-btn').forEach(button => {
+            document.querySelectorAll('#usersCards .edit-role-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const userId = this.getAttribute('data-id');
                     const userRole = this.getAttribute('data-role');
@@ -1947,7 +2144,7 @@
                 });
             });
             
-            document.querySelectorAll('.convert-agent-btn').forEach(button => {
+            document.querySelectorAll('#usersCards .convert-agent-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const userId = this.getAttribute('data-id');
                     showConfirmModal(
@@ -1958,8 +2155,8 @@
                 });
             });
             
-            // Afficher le tableau
-            usersTable.classList.remove('hidden');
+            // Rendre visible le conteneur de cartes
+            usersCards.classList.remove('hidden');
         }
         
         // Ouvrir le modal de modification de rôle
@@ -2043,7 +2240,7 @@
         async function loadAgencies() {
             // Afficher le loader
             agencyLoader.classList.remove('hidden');
-            agenciesTable.classList.add('hidden');
+            agenciesCards.classList.add('hidden');
             agencyManagementAlert.classList.add('hidden');
             
             try {
@@ -2055,7 +2252,7 @@
                 if (response.ok) {
                     allAgencies = await response.json();
                     
-                    // Afficher les agences dans le tableau
+                    // Afficher les agences en cartes
                     displayAgencies(allAgencies);
                     
                     // Charger également les services pour référence
@@ -2109,35 +2306,62 @@
             displayAgencies(filteredAgencies);
         }
         
-        // Afficher les agences dans le tableau
+        // Afficher les agences en cartes
         function displayAgencies(agencies) {
-            const tbody = agenciesTable.querySelector('tbody');
-            tbody.innerHTML = '';
+            // Vider le conteneur de cartes
+            agenciesCards.innerHTML = '';
             
             if (agencies.length === 0) {
                 showAlert(agencyManagementAlert, 'Aucune agence trouvée.', 'info');
-                agenciesTable.classList.add('hidden');
                 return;
             }
             
             agencies.forEach(agency => {
-                const tr = document.createElement('tr');
-                
                 // Compter le nombre d'agents assignés à cette agence
                 const agentCount = agency.agents ? agency.agents.length : 0;
                 
                 // Compter le nombre de services proposés
                 const serviceCount = agency.services ? agency.services.length : 0;
                 
-                tr.innerHTML = `
-                    <td>${agency.name}</td>
-                    <td>${agency.city}</td>
-                    <td>${agency.address}</td>
-                    <td>${agency.phoneNumber}</td>
-                    <td>${agency.email || '-'}</td>
-                    <td>${agentCount}</td>
-                    <td>${serviceCount}</td>
-                    <td class="actions">
+                // Créer la carte
+                const card = document.createElement('div');
+                card.className = 'data-card agency-card';
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-avatar">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="card-title-container">
+                            <h3 class="card-title">${agency.name}</h3>
+                            <div class="card-subtitle"><i class="fas fa-map-marker-alt"></i> ${agency.city}</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-detail">
+                            <i class="fas fa-map-pin"></i>
+                            <span class="detail-value">${agency.address}</span>
+                        </div>
+                        <div class="card-detail">
+                            <i class="fas fa-phone"></i>
+                            <span class="detail-value">${agency.phoneNumber}</span>
+                        </div>
+                        <div class="card-detail">
+                            <i class="fas fa-envelope"></i>
+                            <span class="detail-value">${agency.email || '-'}</span>
+                        </div>
+                        <div class="card-stats">
+                            <div class="card-stat">
+                                <span class="stat-value">${agentCount}</span>
+                                <span class="stat-label">Agents</span>
+                            </div>
+                            <div class="card-stat">
+                                <span class="stat-value">${serviceCount}</span>
+                                <span class="stat-label">Services</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
                         <button class="btn btn-info btn-sm edit-agency-btn" data-id="${agency.id}" title="Modifier l'agence">
                             <i class="fas fa-edit"></i>
                         </button>
@@ -2150,35 +2374,35 @@
                         <button class="btn btn-danger btn-sm delete-agency-btn" data-id="${agency.id}" title="Supprimer l'agence">
                             <i class="fas fa-trash"></i>
                         </button>
-                    </td>
+                    </div>
                 `;
                 
-                tbody.appendChild(tr);
+                agenciesCards.appendChild(card);
             });
             
             // Ajouter les écouteurs d'événements aux boutons
-            document.querySelectorAll('.edit-agency-btn').forEach(button => {
+            document.querySelectorAll('#agenciesCards .edit-agency-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const agencyId = this.getAttribute('data-id');
                     openAgencyModal(agencyId);
                 });
             });
             
-            document.querySelectorAll('.view-agents-btn').forEach(button => {
+            document.querySelectorAll('#agenciesCards .view-agents-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const agencyId = this.getAttribute('data-id');
                     loadAgencyAgents(agencyId);
                 });
             });
             
-            document.querySelectorAll('.view-services-btn').forEach(button => {
+            document.querySelectorAll('#agenciesCards .view-services-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const agencyId = this.getAttribute('data-id');
                     loadAgencyServices(agencyId);
                 });
             });
             
-            document.querySelectorAll('.delete-agency-btn').forEach(button => {
+            document.querySelectorAll('#agenciesCards .delete-agency-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const agencyId = this.getAttribute('data-id');
                     showConfirmModal(
@@ -2189,8 +2413,8 @@
                 });
             });
             
-            // Afficher le tableau
-            agenciesTable.classList.remove('hidden');
+            // Rendre visible le conteneur de cartes
+            agenciesCards.classList.remove('hidden');
         }
         
         // Ouvrir le modal de création/modification d'agence
@@ -2300,7 +2524,6 @@
             });
             
             businessHoursContainer.innerHTML = html;
-            
             // Ajouter les écouteurs d'événements aux checkboxes
             document.querySelectorAll('.closed-check').forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
@@ -2523,7 +2746,7 @@
         async function loadAgents() {
             // Afficher le loader
             agentLoader.classList.remove('hidden');
-            agentsTable.classList.add('hidden');
+            agentsCards.classList.add('hidden');
             agentManagementAlert.classList.add('hidden');
             
             try {
@@ -2538,7 +2761,7 @@
                     // Charger la liste des agences pour afficher les noms
                     await loadAgencies();
                     
-                    // Afficher les agents dans le tableau
+                    // Afficher les agents en cartes
                     displayAgents(allAgents);
                 } else {
                     // Afficher un message d'erreur
@@ -2573,23 +2796,25 @@
             displayAgents(filteredAgents);
         }
         
-        // Afficher les agents dans le tableau
+        // Afficher les agents en cartes
         function displayAgents(agents) {
-            const tbody = agentsTable.querySelector('tbody');
-            tbody.innerHTML = '';
+            // Vider le conteneur de cartes
+            agentsCards.innerHTML = '';
             
             if (agents.length === 0) {
                 showAlert(agentManagementAlert, 'Aucun agent trouvé.', 'info');
-                agentsTable.classList.add('hidden');
                 return;
             }
             
             agents.forEach(agent => {
-                const tr = document.createElement('tr');
-                
-                // Trouver le nom de l'agence
+                // CODE CORRIGÉ pour trouver le nom de l'agence
                 let agencyName = 'Non assigné';
-                if (agent.agency && agent.agency.id) {
+                if (agent.agencyId) {
+                    const agency = allAgencies.find(a => a.id === agent.agencyId);
+                    if (agency) {
+                        agencyName = agency.name;
+                    }
+                } else if (agent.agency && agent.agency.id) {
                     const agency = allAgencies.find(a => a.id === agent.agency.id);
                     if (agency) {
                         agencyName = agency.name;
@@ -2601,34 +2826,55 @@
                     '<span class="badge" style="background-color: #e8f5e9; color: #1b5e20;">Disponible</span>' : 
                     '<span class="badge" style="background-color: #ffebee; color: #b71c1c;">Indisponible</span>';
                 
-                tr.innerHTML = `
-                    <td>${agent.username}</td>
-                    <td>${agent.email}</td>
-                    <td>${agencyName}</td>
-                    <td>${availability}</td>
-                    <td class="actions">
+                // Créer la carte
+                const card = document.createElement('div');
+                card.className = 'data-card agent-card';
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-avatar">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="card-title-container">
+                            <h3 class="card-title">${agent.username}</h3>
+                            <div class="card-subtitle">${agent.email}</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-detail">
+                            <i class="fas fa-building"></i>
+                            <span class="detail-label">Agence:</span>
+                            <span class="detail-value">${agencyName}</span>
+                        </div>
+                        <div class="card-detail">
+                            <i class="fas fa-circle"></i>
+                            <span class="detail-label">Statut:</span>
+                            <span class="detail-value">${availability}</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
                         <button class="btn btn-primary btn-sm assign-agent-btn" data-id="${agent.id}" title="Assigner à une agence">
                             <i class="fas fa-building"></i>
                         </button>
-                        ${agent.agency && agent.agency.id ? 
+                        ${(agent.agencyId || (agent.agency && agent.agency.id)) ? 
                             `<button class="btn btn-warning btn-sm remove-agent-btn" data-id="${agent.id}" title="Retirer de l'agence">
                                 <i class="fas fa-unlink"></i>
                             </button>` : ''}
-                    </td>
+                    </div>
                 `;
                 
-                tbody.appendChild(tr);
+                agentsCards.appendChild(card);
             });
             
             // Ajouter les écouteurs d'événements aux boutons
-            document.querySelectorAll('.assign-agent-btn').forEach(button => {
+            document.querySelectorAll('#agentsCards .assign-agent-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const agentId = this.getAttribute('data-id');
                     openAssignAgentModal(agentId);
                 });
             });
             
-            document.querySelectorAll('.remove-agent-btn').forEach(button => {
+            document.querySelectorAll('#agentsCards .remove-agent-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const agentId = this.getAttribute('data-id');
                     showConfirmModal(
@@ -2639,8 +2885,8 @@
                 });
             });
             
-            // Afficher le tableau
-            agentsTable.classList.remove('hidden');
+            // Rendre visible le conteneur de cartes
+            agentsCards.classList.remove('hidden');
         }
         
         // Ouvrir le modal pour créer un nouvel agent
@@ -2808,7 +3054,7 @@
         async function loadServices() {
             // Afficher le loader
             serviceLoader.classList.remove('hidden');
-            servicesTable.classList.add('hidden');
+            servicesCards.classList.add('hidden');
             serviceManagementAlert.classList.add('hidden');
             
             try {
@@ -2823,7 +3069,7 @@
                     // Charger la liste des agences pour référence
                     await loadAgencies();
                     
-                    // Afficher les services dans le tableau
+                    // Afficher les services en cartes
                     displayServices(allServices);
                 } else {
                     // Afficher un message d'erreur
@@ -2857,27 +3103,46 @@
             displayServices(filteredServices);
         }
         
-        // Afficher les services dans le tableau
+        // Afficher les services en cartes
         function displayServices(services) {
-            const tbody = servicesTable.querySelector('tbody');
-            tbody.innerHTML = '';
+            // Vider le conteneur de cartes
+            servicesCards.innerHTML = '';
             
             if (services.length === 0) {
                 showAlert(serviceManagementAlert, 'Aucun service trouvé.', 'info');
-                servicesTable.classList.add('hidden');
                 return;
             }
             
             services.forEach(service => {
-                const tr = document.createElement('tr');
-                
                 // Compter le nombre d'agences proposant ce service
-                const agencyCount = service.agencies ? service.agencies.length : 0;
+                // Solution pour corriger le comptage des agences
+                let agencyCount = 0;
+                if (service.agencies && Array.isArray(service.agencies)) {
+                    agencyCount = service.agencies.length;
+                }
                 
-                tr.innerHTML = `
-                    <td>${service.name}</td>
-                    <td>${agencyCount}</td>
-                    <td class="actions">
+                // Créer la carte
+                const card = document.createElement('div');
+                card.className = 'data-card service-card';
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-avatar">
+                            <i class="fas fa-concierge-bell"></i>
+                        </div>
+                        <div class="card-title-container">
+                            <h3 class="card-title">${service.name}</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-stats">
+                            <div class="card-stat">
+                                <span class="stat-value">${agencyCount}</span>
+                                <span class="stat-label">Agences</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
                         <button class="btn btn-info btn-sm edit-service-btn" data-id="${service.id}" title="Modifier le service">
                             <i class="fas fa-edit"></i>
                         </button>
@@ -2887,28 +3152,28 @@
                         <button class="btn btn-danger btn-sm delete-service-btn" data-id="${service.id}" title="Supprimer le service">
                             <i class="fas fa-trash"></i>
                         </button>
-                    </td>
+                    </div>
                 `;
                 
-                tbody.appendChild(tr);
+                servicesCards.appendChild(card);
             });
             
             // Ajouter les écouteurs d'événements aux boutons
-            document.querySelectorAll('.edit-service-btn').forEach(button => {
+            document.querySelectorAll('#servicesCards .edit-service-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const serviceId = this.getAttribute('data-id');
                     openServiceModal(serviceId);
                 });
             });
             
-            document.querySelectorAll('.view-agencies-btn').forEach(button => {
+            document.querySelectorAll('#servicesCards .view-agencies-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const serviceId = this.getAttribute('data-id');
                     loadServiceAgencies(serviceId);
                 });
             });
             
-            document.querySelectorAll('.delete-service-btn').forEach(button => {
+            document.querySelectorAll('#servicesCards .delete-service-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const serviceId = this.getAttribute('data-id');
                     showConfirmModal(
@@ -2919,8 +3184,8 @@
                 });
             });
             
-            // Afficher le tableau
-            servicesTable.classList.remove('hidden');
+            // Rendre visible le conteneur de cartes
+            servicesCards.classList.remove('hidden');
         }
         
         // Ouvrir le modal de création/modification de service

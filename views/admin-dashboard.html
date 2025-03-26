@@ -437,12 +437,16 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            background-color: var(--info-color);
+            color: white;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
         }
         
         .modal-title {
             margin: 0;
             font-size: 1.25rem;
-            color: var(--dark-color);
+            color: white;
         }
         
         .modal-body {
@@ -455,6 +459,9 @@
             display: flex;
             justify-content: flex-end;
             gap: 0.5rem;
+            background-color: #f8f9fa;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
         }
         
         .close-modal {
@@ -462,12 +469,75 @@
             border: none;
             font-size: 1.5rem;
             font-weight: 700;
-            color: #aaa;
+            color: white;
             cursor: pointer;
         }
         
         .close-modal:hover {
-            color: #000;
+            color: #f0f0f0;
+        }
+        
+        /* Info Modal specific styles */
+        #infoModal .modal-header {
+            background: linear-gradient(135deg, #2196F3 0%, #0d47a1 100%);
+            color: white;
+        }
+
+        #infoModal .modal-body {
+            padding: 1.5rem;
+        }
+
+        #infoModal ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #infoModal ul li {
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            position: relative;
+            padding-left: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+        }
+
+        #infoModal ul li:hover {
+            background-color: #e3f2fd;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+
+        #infoModal ul li:before {
+            font-family: "Font Awesome 5 Free";
+            content: "\f0da";
+            font-weight: 900;
+            position: absolute;
+            left: 0.75rem;
+            color: var(--info-color);
+        }
+
+        #infoModal h4 {
+            font-size: 1.2rem;
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        #infoModal p {
+            color: #666;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        #infoModal .info-icon {
+            margin-right: 0.5rem;
+            color: var(--info-color);
         }
         
         /* Alert Styles */
@@ -1404,6 +1474,22 @@
         </div>
     </div>
     
+    <!-- Modal d'information amélioré -->
+    <div id="infoModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title" id="infoModalTitle">Information</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="infoModalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary close-modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+    
     <!-- Modal pour modifier le rôle d'un utilisateur -->
     <div id="roleModal" class="modal">
         <div class="modal-dialog">
@@ -1660,6 +1746,11 @@
         const userLoader = document.getElementById('userLoader');
         const usersCards = document.getElementById('usersCards');
         const userManagementAlert = document.getElementById('userManagementAlert');
+        
+        // Éléments du modal d'information
+        const infoModal = document.getElementById('infoModal');
+        const infoModalTitle = document.getElementById('infoModalTitle');
+        const infoModalContent = document.getElementById('infoModalContent');
         
         // Éléments du modal de rôle
         const roleModal = document.getElementById('roleModal');
@@ -2171,6 +2262,23 @@
             roleModal.style.display = 'block';
         }
         
+        // Afficher le modal d'information
+        function showInfoModal(title, content) {
+            infoModalTitle.textContent = title;
+            
+            // Formater le contenu avec des icônes si nécessaire
+            if (content.includes('<ul>')) {
+                // Format pour les listes
+                content = content.replace(/<li>/g, '<li>');
+            } else if (content.includes('<p>')) {
+                // Format pour les messages simples
+                content = content.replace(/<p>/g, '<p><i class="fas fa-info-circle info-icon"></i>');
+            }
+            
+            infoModalContent.innerHTML = content;
+            infoModal.style.display = 'block';
+        }
+        
         // Modifier le rôle d'un utilisateur
         async function changeUserRole() {
             const userId = document.getElementById('userId').value;
@@ -2428,7 +2536,6 @@
             
             // Générer les checkboxes de services
             generateServiceCheckboxes();
-            
             if (agencyId) {
                 // Modification d'une agence existante
                 const agency = allAgencies.find(a => a.id == agencyId);
@@ -2448,12 +2555,23 @@
                         fillBusinessHours(agency.businessHours);
                     }
                     
-                    // Cocher les services associés
+                    // Cocher les services associés - Logique améliorée
                     if (agency.services && agency.services.length > 0) {
                         agency.services.forEach(service => {
-                            const checkbox = document.getElementById(`service-${service.id}`);
-                            if (checkbox) {
-                                checkbox.checked = true;
+                            let serviceId;
+                            
+                            // Gestion des différents formats de services
+                            if (typeof service === 'object' && service !== null) {
+                                serviceId = service.id;
+                            } else if (typeof service === 'number') {
+                                serviceId = service;
+                            }
+                            
+                            if (serviceId) {
+                                const checkbox = document.getElementById(`service-${serviceId}`);
+                                if (checkbox) {
+                                    checkbox.checked = true;
+                                }
                             }
                         });
                     }
@@ -2683,24 +2801,26 @@
                 
                 if (response.ok) {
                     const agents = await response.json();
+                    const agency = allAgencies.find(a => a.id == agencyId);
+                    const agencyName = agency ? agency.name : 'Agence inconnue';
                     
-                    // Afficher les agents dans une alerte
+                    // Afficher les agents dans une fenêtre modale
                     if (agents.length === 0) {
-                        showAlert(agencyManagementAlert, 'Cette agence n\'a pas d\'agents assignés.', 'info');
+                        showInfoModal(
+                            `Agents de l'agence "${agencyName}"`,
+                            '<p>Cette agence n\'a pas d\'agents assignés.</p>'
+                        );
                     } else {
-                        let agentsList = '';
+                        let agentsList = '<ul>';
                         agents.forEach(agent => {
                             agentsList += `<li>${agent.username} (${agent.email})</li>`;
                         });
+                        agentsList += '</ul>';
                         
-                        const agencyName = allAgencies.find(a => a.id == agencyId).name;
-                        
-                        const message = `
-                            <h4>Agents de l'agence "${agencyName}"</h4>
-                            <ul style="margin-top: 0.5rem;">${agentsList}</ul>
-                        `;
-                        
-                        showAlert(agencyManagementAlert, message, 'info', false);
+                        showInfoModal(
+                            `Agents de l'agence "${agencyName}"`,
+                            agentsList
+                        );
                     }
                 } else {
                     showAlert(agencyManagementAlert, 'Impossible de charger les agents de cette agence.', 'danger');
@@ -2716,23 +2836,39 @@
             try {
                 const agency = allAgencies.find(a => a.id == agencyId);
                 
-                if (agency && agency.services) {
-                    // Afficher les services dans une alerte
-                    if (agency.services.length === 0) {
-                        showAlert(agencyManagementAlert, 'Cette agence ne propose aucun service.', 'info');
-                    } else {
-                        let servicesList = '';
-                        agency.services.forEach(service => {
-                            servicesList += `<li>${service.name}</li>`;
-                        });
-                        
-                        const message = `
-                            <h4>Services proposés par l'agence "${agency.name}"</h4>
-                            <ul style="margin-top: 0.5rem;">${servicesList}</ul>
-                        `;
-                        
-                        showAlert(agencyManagementAlert, message, 'info', false);
+                if (agency) {
+                    // Vérification améliorée pour les services
+                    if (!agency.services || !Array.isArray(agency.services) || agency.services.length === 0) {
+                        showInfoModal(
+                            `Services de l'agence "${agency.name}"`,
+                            '<p>Cette agence ne propose aucun service.</p>'
+                        );
+                        return;
                     }
+                    
+                    // Construction de la liste des services
+                    let servicesList = '<ul>';
+                    agency.services.forEach(service => {
+                        // Gestion correcte des différents formats de services
+                        let serviceName = "Service inconnu";
+                        
+                        if (typeof service === 'object' && service !== null) {
+                            serviceName = service.name || "Sans nom";
+                        } else if (typeof service === 'number') {
+                            // Si on a juste l'ID, chercher le nom dans allServices
+                            const foundService = allServices.find(s => s.id === service);
+                            serviceName = foundService ? foundService.name : `Service #${service}`;
+                        }
+                        
+                        servicesList += `<li>${serviceName}</li>`;
+                    });
+                    servicesList += '</ul>';
+                    
+                    // Afficher dans le modal
+                    showInfoModal(
+                        `Services proposés par l'agence "${agency.name}"`,
+                        servicesList
+                    );
                 } else {
                     showAlert(agencyManagementAlert, 'Impossible de charger les services de cette agence.', 'danger');
                 }
@@ -2909,7 +3045,6 @@
             // Afficher le modal
             createAgentModal.style.display = 'block';
         }
-        
         // Créer un nouvel agent
         async function createAgent() {
             const username = document.getElementById('agentUsername').value;
@@ -3103,7 +3238,7 @@
             displayServices(filteredServices);
         }
         
-        // Afficher les services en cartes
+        // Afficher les services en cartes avec comptage correct d'agences
         function displayServices(services) {
             // Vider le conteneur de cartes
             servicesCards.innerHTML = '';
@@ -3114,11 +3249,23 @@
             }
             
             services.forEach(service => {
-                // Compter le nombre d'agences proposant ce service
-                // Solution pour corriger le comptage des agences
+                // Amélioration du comptage des agences pour chaque service
                 let agencyCount = 0;
+                
+                // Méthode 1: Compter à partir de la propriété agencies du service
                 if (service.agencies && Array.isArray(service.agencies)) {
                     agencyCount = service.agencies.length;
+                } 
+                // Méthode 2: Si la méthode 1 ne fonctionne pas, compter manuellement
+                else {
+                    agencyCount = allAgencies.filter(agency => 
+                        agency.services && 
+                        Array.isArray(agency.services) && 
+                        agency.services.some(s => 
+                            (typeof s === 'object' && s.id === service.id) || 
+                            s === service.id
+                        )
+                    ).length;
                 }
                 
                 // Créer la carte
@@ -3388,40 +3535,57 @@
         // Charger les agences proposant un service
         async function loadServiceAgencies(serviceId) {
             try {
-                const response = await fetch(`${API_BASE_URL}/api/services/${serviceId}/agencies`, {
-                    method: 'GET',
-                    credentials: 'include'
-                });
+                const service = allServices.find(s => s.id == serviceId);
                 
-                if (response.ok) {
-                    const agencies = await response.json();
+                if (!service) {
+                    showAlert(serviceManagementAlert, 'Service non trouvé.', 'danger');
+                    return;
+                }
+                
+                let agenciesList = '';
+                let agenciesFound = false;
+                
+                // Méthode 1: Si le service a une liste d'agences
+                if (service.agencies && Array.isArray(service.agencies) && service.agencies.length > 0) {
+                    agenciesFound = true;
+                    agenciesList = '<ul>';
+                    service.agencies.forEach(agency => {
+                        agenciesList += `<li>${agency.name} (${agency.city || 'Ville non spécifiée'})</li>`;
+                    });
+                    agenciesList += '</ul>';
+                } 
+                // Méthode 2: Rechercher les agences qui proposent ce service
+                else {
+                    const agenciesWithService = allAgencies.filter(agency => 
+                        agency.services && 
+                        Array.isArray(agency.services) && 
+                        agency.services.some(s => 
+                            (typeof s === 'object' && s.id === service.id) || 
+                            s === service.id
+                        )
+                    );
                     
-                    // Récupérer le nom du service
-                    const service = allServices.find(s => s.id == serviceId);
-                    
-                    if (!service) {
-                        showAlert(serviceManagementAlert, 'Service non trouvé.', 'danger');
-                        return;
-                    }
-                    
-                    // Afficher les agences dans une alerte
-                    if (agencies.length === 0) {
-                        showAlert(serviceManagementAlert, `Aucune agence ne propose le service "${service.name}".`, 'info');
-                    } else {
-                        let agenciesList = '';
-                        agencies.forEach(agency => {
-                            agenciesList += `<li>${agency.name} (${agency.city})</li>`;
+                    if (agenciesWithService.length > 0) {
+                        agenciesFound = true;
+                        agenciesList = '<ul>';
+                        agenciesWithService.forEach(agency => {
+                            agenciesList += `<li>${agency.name} (${agency.city || 'Ville non spécifiée'})</li>`;
                         });
-                        
-                        const message = `
-                            <h4>Agences proposant le service "${service.name}"</h4>
-                            <ul style="margin-top: 0.5rem;">${agenciesList}</ul>
-                        `;
-                        
-                        showAlert(serviceManagementAlert, message, 'info', false);
+                        agenciesList += '</ul>';
                     }
+                }
+                
+                // Afficher le message approprié dans un modal d'information
+                if (!agenciesFound) {
+                    showInfoModal(
+                        `Agences proposant le service "${service.name}"`,
+                        `<p>Aucune agence ne propose le service "${service.name}".</p>`
+                    );
                 } else {
-                    showAlert(serviceManagementAlert, 'Impossible de charger les agences pour ce service.', 'danger');
+                    showInfoModal(
+                        `Agences proposant le service "${service.name}"`,
+                        agenciesList
+                    );
                 }
             } catch (error) {
                 console.error('Erreur lors du chargement des agences pour ce service:', error);

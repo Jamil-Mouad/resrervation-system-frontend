@@ -550,45 +550,147 @@
             font-size: 0.9rem;
         }
         
-        .time-slots {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-        
-        .time-slot {
-            padding: 0.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .time-slot:hover {
-            background-color: var(--primary-light);
-            border-color: var(--primary-color);
-        }
-        
-        .time-slot.selected {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-        
-        .time-slot.unavailable {
-            background-color: #f8f9fa;
-            color: #aaa;
-            cursor: not-allowed;
-            text-decoration: line-through;
-        }
-        
         .form-actions {
             display: flex;
             justify-content: flex-end;
             gap: 1rem;
             margin-top: 2rem;
+        }
+        
+        /* Availability Calendar Styles */
+        .date-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .current-week-label {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .availability-calendar {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background-color: var(--primary-light);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .calendar-day {
+            text-align: center;
+            padding: 0.75rem 0.5rem;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .calendar-day.today {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .calendar-day .day-name {
+            display: block;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .calendar-day .day-date {
+            display: block;
+            font-size: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        .calendar-day.today .day-name,
+        .calendar-day.today .day-date {
+            color: white;
+        }
+
+        .calendar-slots {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background-color: var(--border-color);
+            padding: 1px;
+        }
+
+        .day-slots {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            background-color: var(--border-color);
+        }
+
+        .time-slot {
+            padding: 0.5rem;
+            text-align: center;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .time-slot:hover {
+            background-color: var(--primary-light);
+        }
+
+        .time-slot.available {
+            background-color: #e8f5e9;
+        }
+
+        .time-slot.available:hover {
+            background-color: #c8e6c9;
+        }
+
+        .time-slot.booked {
+            background-color: #ffebee;
+            cursor: not-allowed;
+            color: #999;
+        }
+
+        .time-slot.selected {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .time-slot.selected:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .time-slot.no-slots {
+            background-color: #f5f5f5;
+            cursor: default;
+            color: #999;
+            padding: 1rem;
+        }
+
+        .selected-time-display {
+            padding: 0.75rem;
+            background-color: var(--primary-light);
+            border-radius: 4px;
+            margin-top: 1rem;
+            font-weight: 500;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 1rem;
+            grid-column: 1 / -1;
+            color: #666;
+        }
+
+        .error {
+            text-align: center;
+            padding: 1rem;
+            grid-column: 1 / -1;
+            color: var(--accent-color);
         }
         
         /* Reservation history */
@@ -1097,8 +1199,32 @@
                 gap: 0;
             }
             
-            .time-slots {
-                grid-template-columns: repeat(2, 1fr);
+            .calendar-days, .calendar-slots {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .calendar-day, .day-slots {
+                min-height: 60px;
+            }
+            
+            .calendar-day .day-name {
+                font-size: 0.75rem;
+            }
+            
+            .calendar-day .day-date {
+                font-size: 0.9rem;
+            }
+            
+            .date-navigation {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: stretch;
+            }
+            
+            .current-week-label {
+                order: -1;
+                text-align: center;
+                margin-bottom: 0.5rem;
             }
             
             .form-actions {
@@ -1265,15 +1391,40 @@
                                 <textarea id="description" name="description" class="form-control" placeholder="Décrivez vos besoins en détail..." required></textarea>
                             </div>
                             
-                            <div class="form-group">
-                                <label class="form-label">Date et horaire souhaités</label>
-                                <div>
-                                    <input type="date" id="preferredDate" name="preferredDate" class="form-control" min="" required>
+                            <!-- Nouvelle section de disponibilité en temps réel -->
+                            <div class="form-group" id="availabilitySection">
+                                <label class="form-label">Sélectionnez une date et un créneau horaire</label>
+                                
+                                <!-- Navigation de date -->
+                                <div class="date-navigation">
+                                    <button type="button" class="btn btn-outline btn-sm" id="prevWeekBtn">
+                                        <i class="fas fa-chevron-left"></i> Semaine précédente
+                                    </button>
+                                    <span id="currentWeekLabel" class="current-week-label">Semaine du 01/01/2025</span>
+                                    <button type="button" class="btn btn-outline btn-sm" id="nextWeekBtn">
+                                        Semaine suivante <i class="fas fa-chevron-right"></i>
+                                    </button>
                                 </div>
-                                <div class="time-slots" id="timeSlots">
-                                    <!-- Les créneaux horaires seront ajoutés ici dynamiquement -->
+                                
+                                <!-- Calendrier de disponibilité -->
+                                <div class="availability-calendar">
+                                    <div class="calendar-days">
+                                        <!-- Jours de la semaine générés par JS -->
+                                    </div>
+                                    <div class="calendar-slots">
+                                        <!-- Créneaux horaires générés par JS -->
+                                    </div>
+                                </div>
+                                
+                                <!-- Créneau sélectionné -->
+                                <input type="hidden" id="selectedDateTimeInput" name="selectedDateTime">
+                                <div class="selected-time-display">
+                                    <span>Créneau sélectionné: </span>
+                                    <span id="selectedDateTimeDisplay">Aucun créneau sélectionné</span>
                                 </div>
                             </div>
+                            
+                            <input type="hidden" id="preferredDate" name="preferredDate">
                             
                             <div class="form-actions">
                                 <button type="button" class="btn btn-outline" id="cancelReservationBtn">Annuler</button>
@@ -1591,8 +1742,12 @@
         const reservationAlert = document.getElementById('reservationAlert');
         const cancelReservationBtn = document.getElementById('cancelReservationBtn');
         const serviceSelect = document.getElementById('service');
-        const timeSlots = document.getElementById('timeSlots');
         const preferredDate = document.getElementById('preferredDate');
+        const selectedDateTimeInput = document.getElementById('selectedDateTimeInput');
+        const selectedDateTimeDisplay = document.getElementById('selectedDateTimeDisplay');
+        const prevWeekBtn = document.getElementById('prevWeekBtn');
+        const nextWeekBtn = document.getElementById('nextWeekBtn');
+        const currentWeekLabel = document.getElementById('currentWeekLabel');
         
         // Éléments de la section Historique
         const historyLoader = document.getElementById('historyLoader');
@@ -1677,22 +1832,25 @@
             cityFilter.addEventListener('change', filterAgencies);
             serviceFilter.addEventListener('change', filterAgencies);
             
-            // Date préférée pour la réservation
-            preferredDate.addEventListener('change', function() {
-                generateTimeSlots();
+            // Navigation dans le calendrier de disponibilité
+            prevWeekBtn.addEventListener('click', function() {
+                availabilityCalendar.navigateWeek(-7);
+            });
+            
+            nextWeekBtn.addEventListener('click', function() {
+                availabilityCalendar.navigateWeek(7);
             });
             
             // Retour à la liste des agences
             backToAgenciesBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                showSection('agencies-section');
+                cancelReservationForm();
             });
             
             // Annulation de la réservation
             cancelReservationBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                showSection('agencies-section');
-                newReservationForm.reset();
+                cancelReservationForm();
             });
             
             // Soumission du formulaire de réservation
@@ -2100,631 +2258,935 @@
                 });
             }
             
-            // Définir la date par défaut à aujourd'hui
-            const today = new Date().toISOString().split('T')[0];
-            preferredDate.value = today;
-            
-            // Générer les créneaux horaires disponibles
-            generateTimeSlots();
+            // Initialiser le calendrier de disponibilité
+            availabilityCalendar.initialize(agency.id);
             
             // Afficher la section du formulaire de réservation
             showSection('reservation-form-section');
         }
         
-        // Générer les créneaux horaires
-        function generateTimeSlots() {
-            timeSlots.innerHTML = '';
-            selectedTimeSlot = null;
+        // Availability Calendar Management
+        const availabilityCalendar = {
+            currentStartDate: null,
+            selectedAgencyId: null,
+            selectedDateTime: null,
+            stompClient: null,
             
-            // Simuler des créneaux horaires
-            const startHour = 9; // 9h
-            const endHour = 18;  // 18h
-            
-            // Créer un tableau simulé d'heures réservées
-            const bookedSlots = [10, 14, 16]; // Simuler des créneaux déjà réservés
-            
-            for (let hour = startHour; hour < endHour; hour++) {
-                const timeSlotElement = document.createElement('div');
-                timeSlotElement.className = 'time-slot';
-                timeSlotElement.textContent = `${hour}:00`;
-                timeSlotElement.dataset.time = `${hour}:00`;
+            // Initialize the calendar
+            initialize: function(agencyId) {
+                this.selectedAgencyId = agencyId;
+                this.currentStartDate = this.getStartOfWeek(new Date());
+                this.selectedDateTime = null;
                 
-                // Si le créneau est déjà réservé, le marquer comme indisponible
-                if (bookedSlots.includes(hour)) {
-                    timeSlotElement.classList.add('unavailable');
-                } else {
-                    // Ajouter un écouteur d'événement pour sélectionner le créneau
-                    timeSlotElement.addEventListener('click', function() {
-                        // Désélectionner tous les créneaux
-                        document.querySelectorAll('.time-slot').forEach(slot => {
-                            slot.classList.remove('selected');
-                        });
+                // Connect to WebSocket for real-time updates
+                this.connectWebSocket();
+                
+                // Load initial data
+                this.loadWeekAvailability();
+            },
+            
+            // Get the start date of the week (Monday) for a given date
+            getStartOfWeek: function(date) {
+                const day = date.getDay();
+                const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
+                return new Date(date.setDate(diff));
+            },
+            
+            // Navigate weeks
+            navigateWeek: function(daysToAdd) {
+                const newDate = new Date(this.currentStartDate);
+                newDate.setDate(newDate.getDate() + daysToAdd);
+                this.currentStartDate = newDate;
+                this.loadWeekAvailability();
+            },
+            
+            // Format date to YYYY-MM-DD
+            formatDate: function(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            },
+            
+            // Format date to display
+            formatDateDisplay: function(date) {
+                return date.toLocaleDateString('fr-FR', { 
+                    weekday: 'short', 
+                    day: 'numeric', 
+                    month: 'short' 
+                });
+            },
+            
+            // Check if date is today
+            isToday: function(date) {
+                const today = new Date();
+                return date.getDate() === today.getDate() && 
+                       date.getMonth() === today.getMonth() && 
+                       date.getFullYear() === today.getFullYear();
+            },
+            
+            // Load availability data for the week
+            loadWeekAvailability: function() {
+                const startDateStr = this.formatDate(this.currentStartDate);
+                
+                // Update week label
+                currentWeekLabel.textContent = `Semaine du ${this.currentStartDate.toLocaleDateString('fr-FR')}`;
+                
+                // Clear any existing selection
+                this.clearSelection();
+                
+                // Show loading state
+                this.showLoadingState();
+                
+                // Fetch availability data
+                fetch(`${API_BASE_URL}/api/availability/${this.selectedAgencyId}/week?startDate=${startDateStr}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erreur lors du chargement des disponibilités');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    this.renderCalendar(data);
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    // Show error message
+                    this.renderCalendarError();
+                });
+            },
+            
+            // Show loading state
+            showLoadingState: function() {
+                const calendarDays = document.querySelector('.calendar-days');
+                const calendarSlots = document.querySelector('.calendar-slots');
+                
+                calendarDays.innerHTML = '<div class="loading">Chargement...</div>';
+                calendarSlots.innerHTML = '';
+            },
+            
+            // Render calendar error
+            renderCalendarError: function() {
+                const calendarDays = document.querySelector('.calendar-days');
+                calendarDays.innerHTML = '<div class="error">Impossible de charger les disponibilités</div>';
+            },
+            
+            // Render the calendar with availability data
+            renderCalendar: function(availabilityData) {
+                const calendarDays = document.querySelector('.calendar-days');
+                const calendarSlots = document.querySelector('.calendar-slots');
+                
+                // Clear previous content
+                calendarDays.innerHTML = '';
+                calendarSlots.innerHTML = '';
+                
+                // Generate 7 days from the current start date
+                for (let i = 0; i < 7; i++) {
+                    const currentDate = new Date(this.currentStartDate);
+                    currentDate.setDate(currentDate.getDate() + i);
+                    
+                    // Find availability data for this date
+                    const dateStr = this.formatDate(currentDate);
+                    const dayAvailability = availabilityData.find(day => day.date === dateStr) || {
+                        date: dateStr,
+                        availableTimeSlots: [],
+                        bookedTimeSlots: []
+                    };
+                    
+                    // Create day header
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day';
+                    if (this.isToday(currentDate)) {
+                        dayElement.classList.add('today');
+                    }
+                    
+                    dayElement.innerHTML = `
+                        <span class="day-name">${currentDate.toLocaleDateString('fr-FR', { weekday: 'short' })}</span>
+                        <span class="day-date">${currentDate.getDate()}</span>
+                    `;
+                    calendarDays.appendChild(dayElement);
+                    
+                    // Create slots container for this day
+                    const daySlotsElement = document.createElement('div');
+                    daySlotsElement.className = 'day-slots';
+                    calendarSlots.appendChild(daySlotsElement);
+                    
+                    // Add time slots
+                    if (dayAvailability.availableTimeSlots.length === 0 && dayAvailability.bookedTimeSlots.length === 0) {
+                        // No slots available
+                        const noSlotsElement = document.createElement('div');
+                        noSlotsElement.className = 'time-slot no-slots';
+                        noSlotsElement.textContent = 'Pas de créneaux';
+                        daySlotsElement.appendChild(noSlotsElement);
+                    } else {
+                        // Combine and sort all time slots
+                        const allSlots = [...new Set([
+                            ...dayAvailability.availableTimeSlots,
+                            ...dayAvailability.bookedTimeSlots
+                        ])].sort();
                         
-                        // Sélectionner le créneau cliqué
-                        this.classList.add('selected');
-                        selectedTimeSlot = this.dataset.time;
-                    });
+                        allSlots.forEach(timeStr => {
+                            const isAvailable = dayAvailability.availableTimeSlots.includes(timeStr);
+                            const isBooked = dayAvailability.bookedTimeSlots.includes(timeStr);
+                            
+                            const timeSlotElement = document.createElement('div');
+                            timeSlotElement.className = 'time-slot';
+                            
+                            if (isAvailable) {
+                                timeSlotElement.classList.add('available');
+                                
+                                // Format time for display (e.g., "09:00" to "9h00")
+                                const [hours, minutes] = timeStr.split(':');
+                                timeSlotElement.textContent = `${parseInt(hours)}h${minutes}`;
+                                
+                                // Set data attributes for selection
+                                timeSlotElement.dataset.date = dateStr;
+                                timeSlotElement.dataset.time = timeStr;
+                                
+                                // Add click event for selection
+                                timeSlotElement.addEventListener('click', () => {
+                                    this.selectTimeSlot(timeSlotElement, dateStr, timeStr);
+                                });
+                            } else if (isBooked) {
+                                timeSlotElement.classList.add('booked');
+                                
+                                // Format time for display
+                                const [hours, minutes] = timeStr.split(':');
+                                timeSlotElement.textContent = `${parseInt(hours)}h${minutes}`;
+                            }
+                            
+                            daySlotsElement.appendChild(timeSlotElement);
+                        });
+                    }
                 }
+            },
+            
+            // Select a time slot
+            selectTimeSlot: function(element, dateStr, timeStr) {
+                // Clear previous selection
+                document.querySelectorAll('.time-slot.selected').forEach(slot => {
+                    slot.classList.remove('selected');
+                });
                 
-                timeSlots.appendChild(timeSlotElement);
+                // Mark as selected
+                element.classList.add('selected');
+                
+                // Save selected datetime
+                this.selectedDateTime = `${dateStr}T${timeStr}`;
+                
+                // Update hidden input
+                selectedDateTimeInput.value = this.selectedDateTime;
+                
+                // Update display
+                const displayDate = new Date(dateStr + 'T' + timeStr);
+                const formattedDisplay = `${displayDate.toLocaleDateString('fr-FR')} à ${timeStr.replace(':', 'h')}`;
+                selectedDateTimeDisplay.textContent = formattedDisplay;
+                
+                // Update preferred date field
+                preferredDate.value = dateStr;
+            },
+            
+            // Clear selection
+            clearSelection: function() {
+                document.querySelectorAll('.time-slot.selected').forEach(slot => {
+                    slot.classList.remove('selected');
+                });
+                
+                this.selectedDateTime = null;
+                selectedDateTimeInput.value = '';
+                selectedDateTimeDisplay.textContent = 'Aucun créneau sélectionné';
+            },
+            
+            // Connect to WebSocket for real-time updates
+            connectWebSocket: function() {
+                // Charger les bibliothèques SockJS et STOMP
+                if (typeof SockJS === 'undefined' || typeof Stomp === 'undefined') {
+                    const sockjs = document.createElement('script');
+                    sockjs.src = 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js';
+                    sockjs.async = true;
+                    
+                    const stomp = document.createElement('script');
+                    stomp.src = 'https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js';
+                    stomp.async = true;
+                    
+                    document.head.appendChild(sockjs);
+                    document.head.appendChild(stomp);
+                    
+                    // After scripts are loaded
+                    stomp.onload = () => {
+                        this.initializeWebSocketConnection();
+                    };
+                } else {
+                    this.initializeWebSocketConnection();
+                }
+            },
+            
+            // Initialize WebSocket connection
+            initializeWebSocketConnection: function() {
+                const socket = new SockJS(`${API_BASE_URL}/reservation-websocket`);
+                this.stompClient = Stomp.over(socket);
+                
+                // Disable debug logs
+                this.stompClient.debug = null;
+                
+                this.stompClient.connect({}, frame => {
+                    console.log('Connected to WebSocket for Availability');
+                    
+                    // Subscribe to availability updates for the selected agency
+                    this.stompClient.subscribe(`/topic/availability/${this.selectedAgencyId}`, message => {
+                        try {
+                            const updatedAvailability = JSON.parse(message.body);
+                            this.handleAvailabilityUpdate(updatedAvailability);
+                        } catch (e) {
+                            console.error('Error processing WebSocket message:', e);
+                        }
+                    });
+                }, error => {
+                    console.error('WebSocket connection error:', error);
+                    // Will fallback to regular AJAX updates
+                });
+            },
+            
+            // Handle availability update from WebSocket
+            handleAvailabilityUpdate: function(updatedAvailability) {
+                // If we're viewing the week that contains this date, reload the calendar
+                const updateDate = new Date(updatedAvailability.date);
+                const weekStart = new Date(this.currentStartDate);
+                const weekEnd = new Date(this.currentStartDate);
+                weekEnd.setDate(weekEnd.getDate() + 6);
+                
+                if (updateDate >= weekStart && updateDate <= weekEnd) {
+                    this.loadWeekAvailability();
+                }
+            },
+            
+            // Disconnect WebSocket
+            disconnect: function() {
+                if (this.stompClient && this.stompClient.connected) {
+                    this.stompClient.disconnect();
+                }
             }
+        };
+        
+        // Function to be called when leaving the reservation form
+        function cancelReservationForm() {
+            // Disconnect the WebSocket connection
+            availabilityCalendar.disconnect();
+            
+            // Go back to agencies section
+            showSection('agencies-section');
+            newReservationForm.reset();
         }
         
         // Créer une nouvelle réservation
-        async function createReservation() {
-            const service = document.getElementById('service').value;
-            const description = document.getElementById('description').value;
-            const preferredDate = document.getElementById('preferredDate').value;
-            const agencyId = agencyIdInput.value;
-            
-            // Vérification des champs
-            if (!service) {
-                showReservationAlert('Veuillez sélectionner un service.', 'warning');
-                return;
-            }
-            
-            if (!description) {
-                showReservationAlert('Veuillez fournir une description de votre besoin.', 'warning');
-                return;
-            }
-            
-            if (!preferredDate) {
-                showReservationAlert('Veuillez sélectionner une date.', 'warning');
-                return;
-            }
-            
-            if (!selectedTimeSlot) {
-                showReservationAlert('Veuillez sélectionner un créneau horaire.', 'warning');
-                return;
-            }
-            
-            // Formater la date préférée avec l'heure sélectionnée
-            const formattedDate = `${preferredDate} ${selectedTimeSlot}`;
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/user/reservation`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        service,
-                        description,
-                        preferredDate: formattedDate,
-                        agencyId: parseInt(agencyId)
-                    }),
-                    credentials: 'include'
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    showReservationAlert('Votre demande de réservation a été créée avec succès!', 'success');
-                    
-                    // Réinitialiser le formulaire
-                    newReservationForm.reset();
-                    
-                    // Rediriger vers l'historique des réservations après 2 secondes
-                    setTimeout(() => {
-                        showSection('reservation-history-section');
-                        menuItems.forEach(item => {
-                            if (item.getAttribute('data-section') === 'reservation-history-section') {
-                                item.classList.add('active');
-                            } else {
-                                item.classList.remove('active');
-                            }
-                        });
-                        loadReservations();
-                    }, 2000);
-                } else {
-                    showReservationAlert(data.message || 'Une erreur est survenue lors de la création de la réservation.', 'danger');
-                }
-            } catch (error) {
-                console.error('Erreur lors de la création de la réservation:', error);
-                showReservationAlert('Erreur de connexion au serveur.', 'danger');
-            }
-        }
+        // Créer une nouvelle réservation
+async function createReservation() {
+    const service = document.getElementById('service').value;
+    const description = document.getElementById('description').value;
+    const selectedDateTime = selectedDateTimeInput.value;
+    const agencyId = agencyIdInput.value;
+    
+    // Vérification des champs
+    if (!service) {
+        showReservationAlert('Veuillez sélectionner un service.', 'warning');
+        return;
+    }
+    
+    if (!description) {
+        showReservationAlert('Veuillez fournir une description de votre besoin.', 'warning');
+        return;
+    }
+    
+    if (!selectedDateTime) {
+        showReservationAlert('Veuillez sélectionner un créneau horaire.', 'warning');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/user/reservation`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                service,
+                description,
+                preferredDate: selectedDateTime,
+                agencyId: parseInt(agencyId)
+            }),
+            credentials: 'include'
+        });
         
-        // Charger les réservations de l'utilisateur
-        async function loadReservations() {
-            // Afficher le loader
-            historyLoader.classList.remove('hidden');
-            noReservations.classList.add('hidden');
-            historyAlert.classList.add('hidden');
-            reservationList.innerHTML = '';
+        const data = await response.json();
+        
+        if (response.ok) {
+            showReservationAlert('Votre demande de réservation a été créée avec succès!', 'success');
             
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/user/reservations`, {
-                    method: 'GET',
-                    credentials: 'include'
-                });
+            // Réinitialiser le formulaire
+            newReservationForm.reset();
+            
+            // Rediriger vers l'historique des réservations après 2 secondes
+            setTimeout(() => {
+                // Disconnect the WebSocket connection
+                availabilityCalendar.disconnect();
                 
-                if (response.ok) {
-                    const reservations = await response.json();
-                    
-                    if (reservations.length === 0) {
-                        // Aucune réservation trouvée
-                        noReservations.classList.remove('hidden');
+                showSection('reservation-history-section');
+                menuItems.forEach(item => {
+                    if (item.getAttribute('data-section') === 'reservation-history-section') {
+                        item.classList.add('active');
                     } else {
-                        // Afficher les réservations
-                        displayReservations(reservations);
+                        item.classList.remove('active');
                     }
-                } else {
-                    // Erreur lors du chargement des réservations
-                    showHistoryAlert('Une erreur est survenue lors du chargement des réservations.', 'danger');
-                }
-            } catch (error) {
-                console.error('Erreur lors du chargement des réservations:', error);
-                showHistoryAlert('Erreur de connexion au serveur.', 'danger');
-            } finally {
-                // Masquer le loader
-                historyLoader.classList.add('hidden');
-            }
-        }
-        
-        // Afficher les réservations dans la liste
-        function displayReservations(reservations) {
-            reservationList.innerHTML = '';
-            
-            // Trier les réservations par date de création (plus récentes en premier)
-            reservations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            
-            reservations.forEach(reservation => {
-                const listItem = document.createElement('div');
-                listItem.className = 'reservation-item';
-                
-                // Formater les dates
-                const createdDate = new Date(reservation.createdAt).toLocaleDateString('fr-FR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
                 });
-                
-                const statusClass = `status-${reservation.status.toLowerCase()}`;
-                const statusText = formatStatus(reservation.status);
-                
-                // Trouver l'agence correspondante
-                let agencyName = "Agence";
-                if (reservation.agency && reservation.agency.name) {
-                    agencyName = reservation.agency.name;
-                }
-                
-                let html = `
-                    <div class="reservation-header">
-                        <h3 class="reservation-title">
-                            <i class="fas fa-calendar-check"></i>
-                            ${reservation.service}
-                        </h3>
-                        <span class="reservation-status ${statusClass}">${statusText}</span>
-                    </div>
-                    
-                    <div class="reservation-details">
-                        <div class="reservation-detail">
-                            <span class="detail-label">Agence:</span>
-                            <span class="detail-value">${agencyName}</span>
-                        </div>
-                        <div class="reservation-detail">
-                            <span class="detail-label">Créée le:</span>
-                            <span class="detail-value">${createdDate}</span>
-                        </div>
-                `;
-                
-                // Ajouter les dates de début et de fin si elles existent
-                if (reservation.startDateTime) {
-                    const startDate = new Date(reservation.startDateTime).toLocaleDateString('fr-FR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                    
-                    html += `
-                        <div class="reservation-detail">
-                            <span class="detail-label">Date de début:</span>
-                            <span class="detail-value">${startDate}</span>
-                        </div>
-                    `;
-                }
-                
-                if (reservation.endDateTime) {
-                    const endDate = new Date(reservation.endDateTime).toLocaleDateString('fr-FR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                    
-                    html += `
-                        <div class="reservation-detail">
-                            <span class="detail-label">Date de fin:</span>
-                            <span class="detail-value">${endDate}</span>
-                        </div>
-                    `;
-                }
-                
-                if (reservation.preferredDate) {
-                    html += `
-                        <div class="reservation-detail">
-                            <span class="detail-label">Date souhaitée:</span>
-                            <span class="detail-value">${reservation.preferredDate}</span>
-                        </div>
-                    `;
-                }
-                
-                html += `
-                    </div>
-                    
-                    <div class="reservation-description">
-                        ${reservation.description}
-                    </div>
-                `;
-                
-                listItem.innerHTML = html;
-                reservationList.appendChild(listItem);
-            });
+                loadReservations();
+            }, 2000);
+        } else {
+            showReservationAlert(data.message || 'Une erreur est survenue lors de la création de la réservation.', 'danger');
         }
+    } catch (error) {
+        console.error('Erreur lors de la création de la réservation:', error);
+        showReservationAlert('Erreur de connexion au serveur.', 'danger');
+    }
+}
+
+// Charger les réservations de l'utilisateur
+async function loadReservations() {
+    // Afficher le loader
+    historyLoader.classList.remove('hidden');
+    noReservations.classList.add('hidden');
+    historyAlert.classList.add('hidden');
+    reservationList.innerHTML = '';
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/user/reservations`, {
+            method: 'GET',
+            credentials: 'include'
+        });
         
-        // Formater le statut de la réservation
-        function formatStatus(status) {
-            switch (status) {
-                case 'PENDING':
-                    return 'En attente';
-                case 'CONFIRMED':
-                    return 'Confirmée';
-                case 'CANCELED':
-                    return 'Annulée';
-                case 'COMPLETED':
-                    return 'Terminée';
-                default:
-                    return status;
+        if (response.ok) {
+            const reservations = await response.json();
+            
+            if (reservations.length === 0) {
+                // Aucune réservation trouvée
+                noReservations.classList.remove('hidden');
+            } else {
+                // Afficher les réservations
+                displayReservations(reservations);
             }
+        } else {
+            // Erreur lors du chargement des réservations
+            showHistoryAlert('Une erreur est survenue lors du chargement des réservations.', 'danger');
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des réservations:', error);
+        showHistoryAlert('Erreur de connexion au serveur.', 'danger');
+    } finally {
+        // Masquer le loader
+        historyLoader.classList.add('hidden');
+    }
+}
+
+// Afficher les réservations dans la liste
+function displayReservations(reservations) {
+    reservationList.innerHTML = '';
+    
+    // Trier les réservations par date de création (plus récentes en premier)
+    reservations.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    reservations.forEach(reservation => {
+        const listItem = document.createElement('div');
+        listItem.className = 'reservation-item';
+        
+        // Formater les dates
+        const createdDate = new Date(reservation.createdAt).toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        const statusClass = `status-${reservation.status.toLowerCase()}`;
+        const statusText = formatStatus(reservation.status);
+        
+        // Trouver l'agence correspondante
+        let agencyName = "Agence";
+        if (reservation.agency && reservation.agency.name) {
+            agencyName = reservation.agency.name;
         }
         
-        // Charger les informations du profil utilisateur
-        function loadUserProfile() {
-            if (!userData) {
-                return;
-            }
+        let html = `
+            <div class="reservation-header">
+                <h3 class="reservation-title">
+                    <i class="fas fa-calendar-check"></i>
+                    ${reservation.service}
+                </h3>
+                <span class="reservation-status ${statusClass}">${statusText}</span>
+            </div>
             
-            // Afficher les informations de l'utilisateur
-            profileUsername.textContent = userData.username;
-            profileEmail.textContent = userData.email;
-            
-            personalInfoUsername.textContent = userData.username;
-            personalInfoEmail.textContent = userData.email;
-            personalInfoRole.textContent = userData.role === 'ROLE_USER' ? 'Utilisateur' : userData.role;
-        }
+            <div class="reservation-details">
+                <div class="reservation-detail">
+                    <span class="detail-label">Agence:</span>
+                    <span class="detail-value">${agencyName}</span>
+                </div>
+                <div class="reservation-detail">
+                    <span class="detail-label">Créée le:</span>
+                    <span class="detail-value">${createdDate}</span>
+                </div>
+        `;
         
-        // Ouvrir le modal de modification du nom d'utilisateur
-        function openEditUsernameModal() {
-            newUsername.value = userData.username;
-            editUsernameAlert.classList.add('hidden');
-            editUsernameModal.style.display = 'block';
-        }
-        
-        // Mettre à jour le nom d'utilisateur
-        async function updateUsername() {
-            const usernameValue = newUsername.value.trim();
-            
-            if (!usernameValue) {
-                showAlert(editUsernameAlert, 'Le nom d\'utilisateur ne peut pas être vide.', 'warning');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/user/update-username`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username: usernameValue
-                    }),
-                    credentials: 'include'
-                });
-                
-                // Simuler une réponse positive
-                // Dans un environnement réel, vous devriez utiliser la réponse du serveur
-                const data = { success: true, message: 'Nom d\'utilisateur mis à jour avec succès' };
-                
-                if (true) { // Simuler une réponse réussie
-                    // Mettre à jour les données utilisateur en local
-                    userData.username = usernameValue;
-                    
-                    // Mettre à jour l'interface
-                    usernameElement.textContent = usernameValue;
-                    profileUsername.textContent = usernameValue;
-                    personalInfoUsername.textContent = usernameValue;
-                    
-                    // Fermer le modal
-                    editUsernameModal.style.display = 'none';
-                    
-                    // Afficher une notification
-                    showAlert(profileAlert, 'Nom d\'utilisateur mis à jour avec succès!', 'success');
-                } else {
-                    showAlert(editUsernameAlert, data.message || 'Erreur lors de la mise à jour du nom d\'utilisateur.', 'danger');
-                }
-            } catch (error) {
-                console.error('Erreur lors de la mise à jour du nom d\'utilisateur:', error);
-                showAlert(editUsernameAlert, 'Erreur de connexion au serveur.', 'danger');
-            }
-        }
-        
-        // Changer le mot de passe
-        async function changePassword() {
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            // Vérifier que les mots de passe correspondent
-            if (newPassword !== confirmPassword) {
-                showAlert(profileAlert, 'Les mots de passe ne correspondent pas.', 'warning');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/user/change-password`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        currentPassword,
-                        newPassword
-                    }),
-                    credentials: 'include'
-                });
-                
-                // Simuler une réponse positive
-                const data = { success: true, message: 'Mot de passe modifié avec succès' };
-                
-                if (true) { // Simuler une réponse réussie
-                    // Réinitialiser le formulaire
-                    changePasswordForm.reset();
-                    
-                    // Afficher une notification
-                    showAlert(profileAlert, 'Mot de passe modifié avec succès!', 'success');
-                } else {
-                    showAlert(profileAlert, data.message || 'Erreur lors de la modification du mot de passe.', 'danger');
-                }
-            } catch (error) {
-                console.error('Erreur lors de la modification du mot de passe:', error);
-                showAlert(profileAlert, 'Erreur de connexion au serveur.', 'danger');
-            }
-        }
-        
-        // Supprimer le compte
-        async function deleteAccount() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/user/delete-account`, {
-                    method: 'POST',
-                    credentials: 'include'
-                });
-                
-                // Simuler une réponse positive
-                const data = { success: true };
-                
-                if (true) { // Simuler une réponse réussie
-                    // Rediriger vers la page de connexion
-                    window.location.href = 'auth.html';
-                } else {
-                    showAlert(profileAlert, data.message || 'Erreur lors de la suppression du compte.', 'danger');
-                }
-            } catch (error) {
-                console.error('Erreur lors de la suppression du compte:', error);
-                showAlert(profileAlert, 'Erreur de connexion au serveur.', 'danger');
-            }
-        }
-        
-        // Soumettre le formulaire de contact
-        async function submitContactForm() {
-            const subject = document.getElementById('contactSubject').value;
-            const message = document.getElementById('contactMessage').value;
-            
-            // Vérifier les champs
-            if (!subject) {
-                showAlert(helpAlert, 'Veuillez sélectionner un sujet.', 'warning');
-                return;
-            }
-            
-            if (!message) {
-                showAlert(helpAlert, 'Veuillez saisir votre message.', 'warning');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/user/contact`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        subject,
-                        message
-                    }),
-                    credentials: 'include'
-                });
-                
-                // Simuler une réponse positive
-                const data = { success: true };
-                
-                if (true) { // Simuler une réponse réussie
-                    // Réinitialiser le formulaire
-                    contactForm.reset();
-                    
-                    // Afficher une notification
-                    showAlert(helpAlert, 'Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.', 'success');
-                } else {
-                    showAlert(helpAlert, data.message || 'Erreur lors de l\'envoi du message.', 'danger');
-                }
-            } catch (error) {
-                console.error('Erreur lors de l\'envoi du message:', error);
-                showAlert(helpAlert, 'Erreur de connexion au serveur.', 'danger');
-            }
-        }
-        
-        // Afficher une alerte dans un conteneur spécifique
-        function showAlert(container, message, type, autoHide = true) {
-            container.className = `alert alert-${type}`;
-            
-            // Déterminer l'icône en fonction du type
-            let icon = '';
-            if (type === 'success') icon = '<i class="fas fa-check-circle"></i>';
-            else if (type === 'danger') icon = '<i class="fas fa-exclamation-circle"></i>';
-            else if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle"></i>';
-            else if (type === 'info') icon = '<i class="fas fa-info-circle"></i>';
-            
-            container.innerHTML = `${icon} ${message}`;
-            container.classList.remove('hidden');
-            
-            // Faire défiler jusqu'à l'alerte
-            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            
-            // Masquer l'alerte après 5 secondes si autoHide est true
-            if (autoHide) {
-                setTimeout(() => {
-                    container.classList.add('hidden');
-                }, 5000);
-            }
-        }
-        
-        // Afficher une alerte dans le conteneur principal
-        function showAlert(message, type) {
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type}`;
-            
-            // Déterminer l'icône en fonction du type
-            let icon = '';
-            if (type === 'success') icon = '<i class="fas fa-check-circle"></i>';
-            else if (type === 'danger') icon = '<i class="fas fa-exclamation-circle"></i>';
-            else if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle"></i>';
-            else if (type === 'info') icon = '<i class="fas fa-info-circle"></i>';
-            
-            alertDiv.innerHTML = `${icon} ${message}`;
-            
-            alertContainer.appendChild(alertDiv);
-            
-            // Faire défiler jusqu'à l'alerte
-            alertDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            
-            // Masquer l'alerte après 5 secondes
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 5000);
-        }
-        
-        // Afficher une alerte dans la section de réservation
-        function showReservationAlert(message, type) {
-            reservationAlert.className = `alert alert-${type}`;
-            
-            // Déterminer l'icône en fonction du type
-            let icon = '';
-            if (type === 'success') icon = '<i class="fas fa-check-circle"></i>';
-            else if (type === 'danger') icon = '<i class="fas fa-exclamation-circle"></i>';
-            else if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle"></i>';
-            else if (type === 'info') icon = '<i class="fas fa-info-circle"></i>';
-            
-            reservationAlert.innerHTML = `${icon} ${message}`;
-            reservationAlert.classList.remove('hidden');
-            
-            // Faire défiler jusqu'à l'alerte
-            reservationAlert.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            
-            // Masquer l'alerte après 5 secondes si ce n'est pas un succès
-            if (type !== 'success') {
-                setTimeout(() => {
-                    reservationAlert.classList.add('hidden');
-                }, 5000);
-            }
-        }
-        
-        // Afficher une alerte dans la section d'historique
-        function showHistoryAlert(message, type) {
-            historyAlert.className = `alert alert-${type}`;
-            
-            // Déterminer l'icône en fonction du type
-            let icon = '';
-            if (type === 'success') icon = '<i class="fas fa-check-circle"></i>';
-            else if (type === 'danger') icon = '<i class="fas fa-exclamation-circle"></i>';
-            else if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle"></i>';
-            else if (type === 'info') icon = '<i class="fas fa-info-circle"></i>';
-            
-            historyAlert.innerHTML = `${icon} ${message}`;
-            historyAlert.classList.remove('hidden');
-            
-            // Masquer l'alerte après 5 secondes
-            setTimeout(() => {
-                historyAlert.classList.add('hidden');
-            }, 5000);
-        }
-        
-        // Afficher le modal de confirmation
-        function showConfirmModal(title, message, callback) {
-            confirmModalTitle.textContent = title;
-            confirmModalMessage.textContent = message;
-            
-            // Définir la fonction de rappel
-            currentConfirmCallback = callback;
-            
-            // Ajouter l'écouteur d'événement au bouton de confirmation
-            confirmModalBtn.onclick = function() {
-                if (currentConfirmCallback) {
-                    currentConfirmCallback();
-                }
-                confirmModal.style.display = 'none';
-            };
-            
-            // Afficher le modal
-            confirmModal.style.display = 'block';
-        }
-        
-        // Fermer tous les modals
-        function closeAllModals() {
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.style.display = 'none';
-            });
-        }
-        
-        // Afficher une section et masquer les autres
-        function showSection(sectionId) {
-            sections.forEach(section => {
-                section.classList.add('hidden');
+        // Ajouter les dates de début et de fin si elles existent
+        if (reservation.startDateTime) {
+            const startDate = new Date(reservation.startDateTime).toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
             });
             
-            document.getElementById(sectionId).classList.remove('hidden');
-            
-            // Mettre à jour le menu latéral
-            menuItems.forEach(item => {
-                if (item.getAttribute('data-section') === sectionId) {
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
-                }
-            });
+            html += `
+                <div class="reservation-detail">
+                    <span class="detail-label">Date de début:</span>
+                    <span class="detail-value">${startDate}</span>
+                </div>
+            `;
         }
         
-        // Déconnexion
-        async function logout() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/auth/logout`, {
-                    method: 'POST',
-                    credentials: 'include'
-                });
-                
-                if (response.ok) {
-                    // Rediriger vers la page de connexion
-                    window.location.href = 'auth.html';
-                }
-            } catch (error) {
-                console.error('Erreur lors de la déconnexion:', error);
-                // Rediriger quand même vers la page de connexion
-                window.location.href = 'auth.html';
-            }
+        if (reservation.endDateTime) {
+            const endDate = new Date(reservation.endDateTime).toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            html += `
+                <div class="reservation-detail">
+                    <span class="detail-label">Date de fin:</span>
+                    <span class="detail-value">${endDate}</span>
+                </div>
+            `;
         }
+        
+        if (reservation.preferredDate) {
+            // Handle both string format and ISO date format
+            let displayDate = reservation.preferredDate;
+            if (displayDate.includes('T')) {
+                const date = new Date(displayDate);
+                displayDate = date.toLocaleDateString('fr-FR') + ' à ' + 
+                              date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+            }
+            
+            html += `
+                <div class="reservation-detail">
+                    <span class="detail-label">Date souhaitée:</span>
+                    <span class="detail-value">${displayDate}</span>
+                </div>
+            `;
+        }
+        
+        html += `
+            </div>
+            
+            <div class="reservation-description">
+                ${reservation.description}
+            </div>
+        `;
+        
+        // Add cancel button if reservation is in pending status
+        if (reservation.status === 'PENDING') {
+            html += `
+                <div class="text-right mt-2">
+                    <button class="btn btn-outline btn-sm cancel-reservation-btn" data-id="${reservation.id}">
+                        <i class="fas fa-times"></i> Annuler la demande
+                    </button>
+                </div>
+            `;
+        }
+        
+        listItem.innerHTML = html;
+        reservationList.appendChild(listItem);
+        
+        // Ajouter l'écouteur d'événement pour le bouton d'annulation si nécessaire
+        if (reservation.status === 'PENDING') {
+            const cancelBtn = listItem.querySelector('.cancel-reservation-btn');
+            cancelBtn.addEventListener('click', function() {
+                const reservationId = this.getAttribute('data-id');
+                showConfirmModal(
+                    'Annuler la réservation',
+                    'Êtes-vous sûr de vouloir annuler cette demande de réservation ?',
+                    () => cancelReservation(reservationId)
+                );
+            });
+        }
+    });
+}
+
+// Annuler une réservation
+async function cancelReservation(reservationId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/user/reservation/cancel/${reservationId}`, {
+            method: 'POST',
+            credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            showHistoryAlert('Votre demande de réservation a été annulée avec succès.', 'success');
+            loadReservations(); // Recharger la liste des réservations
+        } else {
+            showHistoryAlert(data.message || 'Erreur lors de l\'annulation de la réservation.', 'danger');
+        }
+    } catch (error) {
+        console.error('Erreur lors de l\'annulation de la réservation:', error);
+        showHistoryAlert('Erreur de connexion au serveur.', 'danger');
+    }
+}
+
+// Formater le statut de la réservation
+function formatStatus(status) {
+    switch (status) {
+        case 'PENDING':
+            return 'En attente';
+        case 'CONFIRMED':
+            return 'Confirmée';
+        case 'CANCELED':
+            return 'Annulée';
+        case 'COMPLETED':
+            return 'Terminée';
+        default:
+            return status;
+    }
+}
+
+// Charger les informations du profil utilisateur
+function loadUserProfile() {
+    if (!userData) {
+        return;
+    }
+    
+    // Afficher les informations de l'utilisateur
+    profileUsername.textContent = userData.username;
+    profileEmail.textContent = userData.email;
+    
+    personalInfoUsername.textContent = userData.username;
+    personalInfoEmail.textContent = userData.email;
+    personalInfoRole.textContent = userData.role === 'ROLE_USER' ? 'Utilisateur' : userData.role;
+}
+
+// Ouvrir le modal de modification du nom d'utilisateur
+function openEditUsernameModal() {
+    newUsername.value = userData.username;
+    editUsernameAlert.classList.add('hidden');
+    editUsernameModal.style.display = 'block';
+}
+
+// Mettre à jour le nom d'utilisateur
+async function updateUsername() {
+    const usernameValue = newUsername.value.trim();
+    
+    if (!usernameValue) {
+        showAlert(editUsernameAlert, 'Le nom d\'utilisateur ne peut pas être vide.', 'warning');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/user/update-username`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: usernameValue
+            }),
+            credentials: 'include'
+        });
+        
+        // Simuler une réponse positive
+        // Dans un environnement réel, vous devriez utiliser la réponse du serveur
+        const data = { success: true, message: 'Nom d\'utilisateur mis à jour avec succès' };
+        
+        if (true) { // Simuler une réponse réussie
+            // Mettre à jour les données utilisateur en local
+            userData.username = usernameValue;
+            
+            // Mettre à jour l'interface
+            usernameElement.textContent = usernameValue;
+            profileUsername.textContent = usernameValue;
+            personalInfoUsername.textContent = usernameValue;
+            
+            // Fermer le modal
+            editUsernameModal.style.display = 'none';
+            
+            // Afficher une notification
+            showAlert(profileAlert, 'Nom d\'utilisateur mis à jour avec succès!', 'success');
+        } else {
+            showAlert(editUsernameAlert, data.message || 'Erreur lors de la mise à jour du nom d\'utilisateur.', 'danger');
+        }
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour du nom d\'utilisateur:', error);
+        showAlert(editUsernameAlert, 'Erreur de connexion au serveur.', 'danger');
+    }
+}
+
+// Changer le mot de passe
+async function changePassword() {
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    // Vérifier que les mots de passe correspondent
+    if (newPassword !== confirmPassword) {
+        showAlert(profileAlert, 'Les mots de passe ne correspondent pas.', 'warning');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/user/change-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                currentPassword,
+                newPassword
+            }),
+            credentials: 'include'
+        });
+        
+        // Simuler une réponse positive
+        const data = { success: true, message: 'Mot de passe modifié avec succès' };
+        
+        if (true) { // Simuler une réponse réussie
+            // Réinitialiser le formulaire
+            changePasswordForm.reset();
+            
+            // Afficher une notification
+            showAlert(profileAlert, 'Mot de passe modifié avec succès!', 'success');
+        } else {
+            showAlert(profileAlert, data.message || 'Erreur lors de la modification du mot de passe.', 'danger');
+        }
+    } catch (error) {
+        console.error('Erreur lors de la modification du mot de passe:', error);
+        showAlert(profileAlert, 'Erreur de connexion au serveur.', 'danger');
+    }
+}
+
+// Supprimer le compte
+async function deleteAccount() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/user/delete-account`, {
+            method: 'POST',
+            credentials: 'include'
+        });
+        
+        // Simuler une réponse positive
+        const data = { success: true };
+        
+        if (true) { // Simuler une réponse réussie
+            // Rediriger vers la page de connexion
+            window.location.href = 'auth.html';
+        } else {
+            showAlert(profileAlert, data.message || 'Erreur lors de la suppression du compte.', 'danger');
+        }
+    } catch (error) {
+        console.error('Erreur lors de la suppression du compte:', error);
+        showAlert(profileAlert, 'Erreur de connexion au serveur.', 'danger');
+    }
+}
+
+// Soumettre le formulaire de contact
+async function submitContactForm() {
+    const subject = document.getElementById('contactSubject').value;
+    const message = document.getElementById('contactMessage').value;
+    
+    // Vérifier les champs
+    if (!subject) {
+        showAlert(helpAlert, 'Veuillez sélectionner un sujet.', 'warning');
+        return;
+    }
+    
+    if (!message) {
+        showAlert(helpAlert, 'Veuillez saisir votre message.', 'warning');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/user/contact`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                subject,
+                message
+            }),
+            credentials: 'include'
+        });
+        
+        // Simuler une réponse positive
+        const data = { success: true };
+        
+        if (true) { // Simuler une réponse réussie
+            // Réinitialiser le formulaire
+            contactForm.reset();
+            
+            // Afficher une notification
+            showAlert(helpAlert, 'Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.', 'success');
+        } else {
+            showAlert(helpAlert, data.message || 'Erreur lors de l\'envoi du message.', 'danger');
+        }
+    } catch (error) {
+        console.error('Erreur lors de l\'envoi du message:', error);
+        showAlert(helpAlert, 'Erreur de connexion au serveur.', 'danger');
+    }
+}
+
+// Afficher une alerte dans un conteneur spécifique
+function showAlert(container, message, type, autoHide = true) {
+    container.className = `alert alert-${type}`;
+    
+    // Déterminer l'icône en fonction du type
+    let icon = '';
+    if (type === 'success') icon = '<i class="fas fa-check-circle"></i>';
+    else if (type === 'danger') icon = '<i class="fas fa-exclamation-circle"></i>';
+    else if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle"></i>';
+    else if (type === 'info') icon = '<i class="fas fa-info-circle"></i>';
+    
+    container.innerHTML = `${icon} ${message}`;
+    container.classList.remove('hidden');
+    
+    // Faire défiler jusqu'à l'alerte
+    container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    
+    // Masquer l'alerte après 5 secondes si autoHide est true
+    if (autoHide) {
+        setTimeout(() => {
+            container.classList.add('hidden');
+        }, 5000);
+    }
+}
+
+// Afficher une alerte dans la section de réservation
+function showReservationAlert(message, type) {
+    reservationAlert.className = `alert alert-${type}`;
+    
+    // Déterminer l'icône en fonction du type
+    let icon = '';
+    if (type === 'success') icon = '<i class="fas fa-check-circle"></i>';
+    else if (type === 'danger') icon = '<i class="fas fa-exclamation-circle"></i>';
+    else if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle"></i>';
+    else if (type === 'info') icon = '<i class="fas fa-info-circle"></i>';
+    
+    reservationAlert.innerHTML = `${icon} ${message}`;
+    reservationAlert.classList.remove('hidden');
+    
+    // Faire défiler jusqu'à l'alerte
+    reservationAlert.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    
+    // Masquer l'alerte après 5 secondes si ce n'est pas un succès
+    if (type !== 'success') {
+        setTimeout(() => {
+            reservationAlert.classList.add('hidden');
+        }, 5000);
+    }
+}
+
+// Afficher une alerte dans la section d'historique
+function showHistoryAlert(message, type) {
+    historyAlert.className = `alert alert-${type}`;
+    
+    // Déterminer l'icône en fonction du type
+    let icon = '';
+    if (type === 'success') icon = '<i class="fas fa-check-circle"></i>';
+    else if (type === 'danger') icon = '<i class="fas fa-exclamation-circle"></i>';
+    else if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle"></i>';
+    else if (type === 'info') icon = '<i class="fas fa-info-circle"></i>';
+    
+    historyAlert.innerHTML = `${icon} ${message}`;
+    historyAlert.classList.remove('hidden');
+    
+    // Masquer l'alerte après 5 secondes
+    setTimeout(() => {
+        historyAlert.classList.add('hidden');
+    }, 5000);
+}
+
+// Afficher le modal de confirmation
+function showConfirmModal(title, message, callback) {
+    confirmModalTitle.textContent = title;
+    confirmModalMessage.textContent = message;
+    
+    // Définir la fonction de rappel
+    currentConfirmCallback = callback;
+    
+    // Ajouter l'écouteur d'événement au bouton de confirmation
+    confirmModalBtn.onclick = function() {
+        if (currentConfirmCallback) {
+            currentConfirmCallback();
+        }
+        confirmModal.style.display = 'none';
+    };
+    
+    // Afficher le modal
+    confirmModal.style.display = 'block';
+}
+
+// Fermer tous les modals
+function closeAllModals() {
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.style.display = 'none';
+    });
+}
+
+// Afficher une section et masquer les autres
+function showSection(sectionId) {
+    sections.forEach(section => {
+        section.classList.add('hidden');
+    });
+    
+    document.getElementById(sectionId).classList.remove('hidden');
+    
+    // Mettre à jour le menu latéral
+    menuItems.forEach(item => {
+        if (item.getAttribute('data-section') === sectionId) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+}
+
+// Déconnexion
+async function logout() {
+    try {
+        // Disconnect any active WebSocket connections
+        if (availabilityCalendar.stompClient && availabilityCalendar.stompClient.connected) {
+            availabilityCalendar.disconnect();
+        }
+        
+        const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+            method: 'POST',
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            // Rediriger vers la page de connexion
+            window.location.href = 'auth.html';
+        }
+    } catch (error) {
+        console.error('Erreur lors de la déconnexion:', error);
+        // Rediriger quand même vers la page de connexion
+        window.location.href = 'auth.html';
+    }
+}
     </script>
 </body>
 </html>
+

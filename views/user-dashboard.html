@@ -1706,883 +1706,894 @@
     </div>
     
     <script>
-        // Base URL pour l'API
-        const API_BASE_URL = 'http://localhost:8082';
-        
-        // Variables globales
-        let allAgencies = [];
-        let allServices = [];
-        let currentAgencyId = null;
-        let currentAgencyServices = [];
-        let userData = null;
-        let selectedTimeSlot = null;
-        let currentConfirmCallback = null;
-        
-        // Éléments du DOM
-        const usernameElement = document.getElementById('username');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const menuItems = document.querySelectorAll('.sidebar-menu a');
-        const sections = document.querySelectorAll('main section');
-        
-        // Éléments de la section Agences
-        const searchInput = document.getElementById('searchInput');
-        const cityFilter = document.getElementById('cityFilter');
-        const serviceFilter = document.getElementById('serviceFilter');
-        const agenciesLoader = document.getElementById('agenciesLoader');
-        const noAgencies = document.getElementById('noAgencies');
-        const agenciesGrid = document.getElementById('agenciesGrid');
-        const alertContainer = document.getElementById('alertContainer');
-        
-        // Éléments de la section Formulaire de Réservation
-        const backToAgenciesBtn = document.getElementById('backToAgenciesBtn');
-        const newReservationForm = document.getElementById('newReservationForm');
-        const selectedAgencyName = document.getElementById('selectedAgencyName');
-        const selectedAgencyAddress = document.getElementById('selectedAgencyAddress');
-        const agencyIdInput = document.getElementById('agencyId');
-        const reservationAlert = document.getElementById('reservationAlert');
-        const cancelReservationBtn = document.getElementById('cancelReservationBtn');
-        const serviceSelect = document.getElementById('service');
-        const preferredDate = document.getElementById('preferredDate');
-        const selectedDateTimeInput = document.getElementById('selectedDateTimeInput');
-        const selectedDateTimeDisplay = document.getElementById('selectedDateTimeDisplay');
-        const prevWeekBtn = document.getElementById('prevWeekBtn');
-        const nextWeekBtn = document.getElementById('nextWeekBtn');
-        const currentWeekLabel = document.getElementById('currentWeekLabel');
-        
-        // Éléments de la section Historique
-        const historyLoader = document.getElementById('historyLoader');
-        const historyAlert = document.getElementById('historyAlert');
-        const noReservations = document.getElementById('noReservations');
-        const reservationList = document.getElementById('reservationList');
-        
-        // Éléments de la section Profil
-        const profileAlert = document.getElementById('profileAlert');
-        const profileUsername = document.getElementById('profileUsername');
-        const profileEmail = document.getElementById('profileEmail');
-        const personalInfoUsername = document.getElementById('personalInfoUsername');
-        const personalInfoEmail = document.getElementById('personalInfoEmail');
-        const personalInfoRole = document.getElementById('personalInfoRole');
-        const profileTabs = document.querySelectorAll('.profile-tab');
-        const profileSections = document.querySelectorAll('.profile-section');
-        const editUsernameBtn = document.getElementById('editUsernameBtn');
-        const changePasswordForm = document.getElementById('changePasswordForm');
-        const deleteAccountForm = document.getElementById('deleteAccountForm');
-        
-        // Éléments du modal de modification du nom d'utilisateur
-        const editUsernameModal = document.getElementById('editUsernameModal');
-        const editUsernameForm = document.getElementById('editUsernameForm');
-        const newUsername = document.getElementById('newUsername');
-        const saveUsernameBtn = document.getElementById('saveUsernameBtn');
-        const editUsernameAlert = document.getElementById('editUsernameAlert');
-        
-        // Éléments de la section Aide
-        const helpAlert = document.getElementById('helpAlert');
-        const contactForm = document.getElementById('contactForm');
-        
-        // Éléments du modal de confirmation
-        const confirmModal = document.getElementById('confirmModal');
-        const confirmModalTitle = document.getElementById('confirmModalTitle');
-        const confirmModalMessage = document.getElementById('confirmModalMessage');
-        const confirmModalBtn = document.getElementById('confirmModalBtn');
-        
-        // Initialisation au chargement de la page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Définir la date minimale pour le sélecteur de date à aujourd'hui
-            const today = new Date().toISOString().split('T')[0];
-            preferredDate.min = today;
+// Base URL pour l'API
+const API_BASE_URL = 'http://localhost:8082';
+
+// Variables globales
+let allAgencies = [];
+let allServices = [];
+let currentAgencyId = null;
+let currentAgencyServices = [];
+let userData = null;
+let selectedTimeSlot = null;
+let currentConfirmCallback = null;
+
+// Éléments du DOM
+const usernameElement = document.getElementById('username');
+const logoutBtn = document.getElementById('logoutBtn');
+const menuItems = document.querySelectorAll('.sidebar-menu a');
+const sections = document.querySelectorAll('main section');
+
+// Éléments de la section Agences
+const searchInput = document.getElementById('searchInput');
+const cityFilter = document.getElementById('cityFilter');
+const serviceFilter = document.getElementById('serviceFilter');
+const agenciesLoader = document.getElementById('agenciesLoader');
+const noAgencies = document.getElementById('noAgencies');
+const agenciesGrid = document.getElementById('agenciesGrid');
+const alertContainer = document.getElementById('alertContainer');
+
+// Éléments de la section Formulaire de Réservation
+const backToAgenciesBtn = document.getElementById('backToAgenciesBtn');
+const newReservationForm = document.getElementById('newReservationForm');
+const selectedAgencyName = document.getElementById('selectedAgencyName');
+const selectedAgencyAddress = document.getElementById('selectedAgencyAddress');
+const agencyIdInput = document.getElementById('agencyId');
+const reservationAlert = document.getElementById('reservationAlert');
+const cancelReservationBtn = document.getElementById('cancelReservationBtn');
+const serviceSelect = document.getElementById('service');
+const preferredDate = document.getElementById('preferredDate');
+const selectedDateTimeInput = document.getElementById('selectedDateTimeInput');
+const selectedDateTimeDisplay = document.getElementById('selectedDateTimeDisplay');
+const prevWeekBtn = document.getElementById('prevWeekBtn');
+const nextWeekBtn = document.getElementById('nextWeekBtn');
+const currentWeekLabel = document.getElementById('currentWeekLabel');
+
+// Éléments de la section Historique
+const historyLoader = document.getElementById('historyLoader');
+const historyAlert = document.getElementById('historyAlert');
+const noReservations = document.getElementById('noReservations');
+const reservationList = document.getElementById('reservationList');
+
+// Éléments de la section Profil
+const profileAlert = document.getElementById('profileAlert');
+const profileUsername = document.getElementById('profileUsername');
+const profileEmail = document.getElementById('profileEmail');
+const personalInfoUsername = document.getElementById('personalInfoUsername');
+const personalInfoEmail = document.getElementById('personalInfoEmail');
+const personalInfoRole = document.getElementById('personalInfoRole');
+const profileTabs = document.querySelectorAll('.profile-tab');
+const profileSections = document.querySelectorAll('.profile-section');
+const editUsernameBtn = document.getElementById('editUsernameBtn');
+const changePasswordForm = document.getElementById('changePasswordForm');
+const deleteAccountForm = document.getElementById('deleteAccountForm');
+
+// Éléments du modal de modification du nom d'utilisateur
+const editUsernameModal = document.getElementById('editUsernameModal');
+const editUsernameForm = document.getElementById('editUsernameForm');
+const newUsername = document.getElementById('newUsername');
+const saveUsernameBtn = document.getElementById('saveUsernameBtn');
+const editUsernameAlert = document.getElementById('editUsernameAlert');
+
+// Éléments de la section Aide
+const helpAlert = document.getElementById('helpAlert');
+const contactForm = document.getElementById('contactForm');
+
+// Éléments du modal de confirmation
+const confirmModal = document.getElementById('confirmModal');
+const confirmModalTitle = document.getElementById('confirmModalTitle');
+const confirmModalMessage = document.getElementById('confirmModalMessage');
+const confirmModalBtn = document.getElementById('confirmModalBtn');
+
+// Initialisation au chargement de la page
+document.addEventListener('DOMContentLoaded', function() {
+    // Définir la date minimale pour le sélecteur de date à aujourd'hui
+    const today = new Date().toISOString().split('T')[0];
+    preferredDate.min = today;
+    
+    // Vérifier la session
+    checkSession();
+    
+    // Initialiser les écouteurs d'événements
+    initializeEventListeners();
+});
+
+// Initialiser les écouteurs d'événements
+function initializeEventListeners() {
+    // Navigation dans le menu latéral
+    menuItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
             
-            // Vérifier la session
-            checkSession();
+            // Supprimer la classe active de tous les liens
+            menuItems.forEach(menuItem => menuItem.classList.remove('active'));
             
-            // Initialiser les écouteurs d'événements
-            initializeEventListeners();
+            // Ajouter la classe active au lien cliqué
+            this.classList.add('active');
+            
+            // Afficher la section correspondante
+            const sectionId = this.getAttribute('data-section');
+            sections.forEach(section => section.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+            
+            // Charger les données si nécessaire
+            if (sectionId === 'agencies-section') {
+                loadAgencies();
+            } else if (sectionId === 'reservation-history-section') {
+                loadReservations();
+            } else if (sectionId === 'profile-section') {
+                loadUserProfile();
+            }
+        });
+    });
+    
+    // Recherche et filtres
+    searchInput.addEventListener('input', filterAgencies);
+    cityFilter.addEventListener('change', filterAgencies);
+    serviceFilter.addEventListener('change', filterAgencies);
+    
+    // Navigation dans le calendrier de disponibilité
+    prevWeekBtn.addEventListener('click', function() {
+        availabilityCalendar.navigateWeek(-7);
+    });
+    
+    nextWeekBtn.addEventListener('click', function() {
+        availabilityCalendar.navigateWeek(7);
+    });
+    
+    // Retour à la liste des agences
+    backToAgenciesBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        cancelReservationForm();
+    });
+    
+    // Annulation de la réservation
+    cancelReservationBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        cancelReservationForm();
+    });
+    
+    // Soumission du formulaire de réservation
+    newReservationForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        createReservation();
+    });
+    
+    // Navigation dans les onglets du profil
+    profileTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabName = this.getAttribute('data-tab');
+            
+            // Activer l'onglet
+            profileTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Afficher la section correspondante
+            profileSections.forEach(section => section.classList.remove('active'));
+            document.getElementById(`${tabName}-section`).classList.add('active');
+        });
+    });
+    
+    // Modifier le nom d'utilisateur
+    editUsernameBtn.addEventListener('click', function() {
+        openEditUsernameModal();
+    });
+    
+    // Enregistrer le nouveau nom d'utilisateur
+    saveUsernameBtn.addEventListener('click', function() {
+        updateUsername();
+    });
+    
+    // Formulaire de changement de mot de passe
+    changePasswordForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        changePassword();
+    });
+    
+    // Formulaire de suppression de compte
+    deleteAccountForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        showConfirmModal(
+            'Supprimer mon compte',
+            'Cette action est définitive. Êtes-vous vraiment sûr de vouloir supprimer votre compte?',
+            deleteAccount
+        );
+    });
+    
+    // Formulaire de contact
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        submitContactForm();
+    });
+    
+    // Déconnexion
+    logoutBtn.addEventListener('click', logout);
+    
+    // Fermer les modals
+    document.querySelectorAll('.close-modal, .cancel-modal').forEach(button => {
+        button.addEventListener('click', function() {
+            closeAllModals();
+        });
+    });
+    
+    // Fermer les modals quand on clique en dehors
+    window.addEventListener('click', function(event) {
+        if (event.target.classList.contains('modal')) {
+            closeAllModals();
+        }
+    });
+}
+
+// Vérifier la session utilisateur
+async function checkSession() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/check-session`, {
+            method: 'GET',
+            credentials: 'include'
         });
         
-        // Initialiser les écouteurs d'événements
-        function initializeEventListeners() {
-            // Navigation dans le menu latéral
-            menuItems.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Supprimer la classe active de tous les liens
-                    menuItems.forEach(menuItem => menuItem.classList.remove('active'));
-                    
-                    // Ajouter la classe active au lien cliqué
-                    this.classList.add('active');
-                    
-                    // Afficher la section correspondante
-                    const sectionId = this.getAttribute('data-section');
-                    sections.forEach(section => section.classList.add('hidden'));
-                    document.getElementById(sectionId).classList.remove('hidden');
-                    
-                    // Charger les données si nécessaire
-                    if (sectionId === 'agencies-section') {
-                        loadAgencies();
-                    } else if (sectionId === 'reservation-history-section') {
-                        loadReservations();
-                    } else if (sectionId === 'profile-section') {
-                        loadUserProfile();
-                    }
-                });
-            });
-            
-            // Recherche et filtres
-            searchInput.addEventListener('input', filterAgencies);
-            cityFilter.addEventListener('change', filterAgencies);
-            serviceFilter.addEventListener('change', filterAgencies);
-            
-            // Navigation dans le calendrier de disponibilité
-            prevWeekBtn.addEventListener('click', function() {
-                availabilityCalendar.navigateWeek(-7);
-            });
-            
-            nextWeekBtn.addEventListener('click', function() {
-                availabilityCalendar.navigateWeek(7);
-            });
-            
-            // Retour à la liste des agences
-            backToAgenciesBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                cancelReservationForm();
-            });
-            
-            // Annulation de la réservation
-            cancelReservationBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                cancelReservationForm();
-            });
-            
-            // Soumission du formulaire de réservation
-            newReservationForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                createReservation();
-            });
-            
-            // Navigation dans les onglets du profil
-            profileTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const tabName = this.getAttribute('data-tab');
-                    
-                    // Activer l'onglet
-                    profileTabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Afficher la section correspondante
-                    profileSections.forEach(section => section.classList.remove('active'));
-                    document.getElementById(`${tabName}-section`).classList.add('active');
-                });
-            });
-            
-            // Modifier le nom d'utilisateur
-            editUsernameBtn.addEventListener('click', function() {
-                openEditUsernameModal();
-            });
-            
-            // Enregistrer le nouveau nom d'utilisateur
-            saveUsernameBtn.addEventListener('click', function() {
-                updateUsername();
-            });
-            
-            // Formulaire de changement de mot de passe
-            changePasswordForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                changePassword();
-            });
-            
-            // Formulaire de suppression de compte
-            deleteAccountForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                showConfirmModal(
-                    'Supprimer mon compte',
-                    'Cette action est définitive. Êtes-vous vraiment sûr de vouloir supprimer votre compte?',
-                    deleteAccount
-                );
-            });
-            
-            // Formulaire de contact
-            contactForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                submitContactForm();
-            });
-            
-            // Déconnexion
-            logoutBtn.addEventListener('click', logout);
-            
-            // Fermer les modals
-            document.querySelectorAll('.close-modal, .cancel-modal').forEach(button => {
-                button.addEventListener('click', function() {
-                    closeAllModals();
-                });
-            });
-            
-            // Fermer les modals quand on clique en dehors
-            window.addEventListener('click', function(event) {
-                if (event.target.classList.contains('modal')) {
-                    closeAllModals();
-                }
-            });
-        }
+        const data = await response.json();
         
-        // Vérifier la session utilisateur
-        async function checkSession() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/auth/check-session`, {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok && data.success) {
-                    // Extraire les informations de l'utilisateur
-                    const parts = data.message.split('|');
-                    const email = parts[0];
-                    const role = parts[1];
-                    const username = parts.length > 2 ? parts[2] : email.split('@')[0];
-                    
-                    // Vérifier si l'utilisateur a le rôle USER
-                    if (!role.includes('ROLE_USER')) {
-                        // Rediriger vers la page appropriée
-                        if (role.includes('ROLE_ADMIN')) {
-                            window.location.href = 'admin-dashboard.html';
-                        } else if (role.includes('ROLE_AGENT')) {
-                            window.location.href = 'agent-dashboard.html';
-                        } else {
-                            // Utilisateur sans rôle valide, rediriger vers la page de connexion
-                            window.location.href = 'auth.html';
-                        }
-                        return;
-                    }
-                    
-                    // Stocker les informations de l'utilisateur
-                    userData = {
-                        email: email,
-                        role: role,
-                        username: username
-                    };
-                    
-                    // Afficher le nom d'utilisateur
-                    usernameElement.textContent = username;
-                    
-                    // Charger les agences
-                    loadAgencies();
+        if (response.ok && data.success) {
+            // Extraire les informations de l'utilisateur
+            const parts = data.message.split('|');
+            const email = parts[0];
+            const role = parts[1];
+            const username = parts.length > 2 ? parts[2] : email.split('@')[0];
+            
+            // Vérifier si l'utilisateur a le rôle USER
+            if (!role.includes('ROLE_USER')) {
+                // Rediriger vers la page appropriée
+                if (role.includes('ROLE_ADMIN')) {
+                    window.location.href = 'admin-dashboard.html';
+                } else if (role.includes('ROLE_AGENT')) {
+                    window.location.href = 'agent-dashboard.html';
                 } else {
-                    // Session non active, rediriger vers la page de connexion
+                    // Utilisateur sans rôle valide, rediriger vers la page de connexion
                     window.location.href = 'auth.html';
                 }
-            } catch (error) {
-                console.error('Erreur lors de la vérification de la session:', error);
-                // En cas d'erreur, rediriger vers la page de connexion
-                window.location.href = 'auth.html';
-            }
-        }
-        
-        // Charger les agences
-        async function loadAgencies() {
-            // Afficher le loader
-            agenciesLoader.classList.remove('hidden');
-            noAgencies.classList.add('hidden');
-            agenciesGrid.innerHTML = '';
-            
-            try {
-                // Charger les services pour les filtres
-                const servicesResponse = await fetch(`${API_BASE_URL}/api/services`, {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-                
-                if (servicesResponse.ok) {
-                    allServices = await servicesResponse.json();
-                    
-                    // Remplir le filtre de services
-                    serviceFilter.innerHTML = '<option value="">Tous les services</option>';
-                    allServices.forEach(service => {
-                        const option = document.createElement('option');
-                        option.value = service.id;
-                        option.textContent = service.name;
-                        serviceFilter.appendChild(option);
-                    });
-                }
-                
-                // Charger les agences
-                const agenciesResponse = await fetch(`${API_BASE_URL}/api/agencies/public`, {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-                
-                if (agenciesResponse.ok) {
-                    allAgencies = await agenciesResponse.json();
-                    
-                    if (allAgencies.length === 0) {
-                        // Aucune agence trouvée
-                        noAgencies.classList.remove('hidden');
-                    } else {
-                        // Remplir le filtre de villes
-                        const cities = [...new Set(allAgencies.map(agency => agency.city))];
-                        cityFilter.innerHTML = '<option value="">Toutes les villes</option>';
-                        cities.forEach(city => {
-                            const option = document.createElement('option');
-                            option.value = city;
-                            option.textContent = city;
-                            cityFilter.appendChild(option);
-                        });
-                        
-                        // Afficher les agences
-                        displayAgencies(allAgencies);
-                    }
-                } else {
-                    // Erreur lors du chargement des agences
-                    showAlert('Une erreur est survenue lors du chargement des agences.', 'danger');
-                }
-            } catch (error) {
-                console.error('Erreur lors du chargement des agences:', error);
-                showAlert('Erreur de connexion au serveur.', 'danger');
-            } finally {
-                // Masquer le loader
-                agenciesLoader.classList.add('hidden');
-            }
-        }
-        
-        // Filtrer les agences
-        function filterAgencies() {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            const selectedCity = cityFilter.value;
-            const selectedService = serviceFilter.value;
-            
-            let filteredAgencies = allAgencies;
-            
-            // Filtrer par terme de recherche
-            if (searchTerm) {
-                filteredAgencies = filteredAgencies.filter(agency => 
-                    agency.name.toLowerCase().includes(searchTerm) || 
-                    agency.city.toLowerCase().includes(searchTerm)
-                );
-            }
-            
-            // Filtrer par ville
-            if (selectedCity) {
-                filteredAgencies = filteredAgencies.filter(agency => agency.city === selectedCity);
-            }
-            
-            // Filtrer par service
-            if (selectedService) {
-                filteredAgencies = filteredAgencies.filter(agency => {
-                    if (!agency.services || !Array.isArray(agency.services)) {
-                        return false;
-                    }
-                    
-                    return agency.services.some(service => {
-                        if (typeof service === 'object' && service !== null) {
-                            return service.id == selectedService;
-                        } else if (typeof service === 'number') {
-                            return service == selectedService;
-                        }
-                        return false;
-                    });
-                });
-            }
-            
-            // Afficher les résultats
-            if (filteredAgencies.length === 0) {
-                agenciesGrid.innerHTML = '';
-                noAgencies.classList.remove('hidden');
-            } else {
-                displayAgencies(filteredAgencies);
-                noAgencies.classList.add('hidden');
-            }
-        }
-        
-        // Afficher les agences dans la grille
-        function displayAgencies(agencies) {
-            agenciesGrid.innerHTML = '';
-            
-            agencies.forEach(agency => {
-                // Formater les services
-                let servicesHtml = '<p>Aucun service disponible</p>';
-                if (agency.services && Array.isArray(agency.services) && agency.services.length > 0) {
-                    servicesHtml = '<div class="services-list">';
-                    agency.services.forEach(service => {
-                        let serviceName = "Service inconnu";
-                        
-                        if (typeof service === 'object' && service !== null) {
-                            serviceName = service.name || "Sans nom";
-                        } else if (typeof service === 'number') {
-                            const foundService = allServices.find(s => s.id === service);
-                            serviceName = foundService ? foundService.name : `Service #${service}`;
-                        }
-                        
-                        servicesHtml += `<span class="service-item">${serviceName}</span>`;
-                    });
-                    servicesHtml += '</div>';
-                }
-                
-                // Déterminer les heures d'ouverture aujourd'hui
-                const businessHoursText = getBusinessHoursText(agency.businessHours);
-                
-                // Créer la carte
-                const card = document.createElement('div');
-                card.className = 'agency-card';
-                
-                card.innerHTML = `
-                    <div class="card-header">
-                        <div class="card-avatar">
-                            <i class="fas fa-building"></i>
-                        </div>
-                        <div class="card-title-container">
-                            <h3 class="card-title">${agency.name}</h3>
-                            <div class="card-subtitle"><i class="fas fa-map-marker-alt"></i> ${agency.city}</div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-details">
-                            <div class="card-detail">
-                                <i class="fas fa-map-pin"></i>
-                                <div class="detail-value">${agency.address}</div>
-                            </div>
-                            <div class="card-detail">
-                                <i class="fas fa-phone"></i>
-                                <div class="detail-value">${agency.phoneNumber}</div>
-                            </div>
-                            <div class="card-detail">
-                                <i class="fas fa-envelope"></i>
-                                <div class="detail-value">${agency.email || 'Non disponible'}</div>
-                            </div>
-                            ${agency.description ? `
-                            <div class="card-detail">
-                                <i class="fas fa-info-circle"></i>
-                                <div class="detail-value">${agency.description}</div>
-                            </div>
-                            ` : ''}
-                        </div>
-                        <div class="card-services">
-                            <div class="services-title">
-                                <i class="fas fa-concierge-bell"></i> Services proposés
-                            </div>
-                            ${servicesHtml}
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="hours-open">
-                            <i class="fas fa-clock"></i>
-                            <span>${businessHoursText}</span>
-                        </div>
-                        <button class="btn btn-primary book-agency-btn" data-id="${agency.id}">
-                            <i class="fas fa-calendar-plus"></i> Réserver
-                        </button>
-                    </div>
-                `;
-                
-                agenciesGrid.appendChild(card);
-                
-                // Ajouter l'écouteur d'événement pour le bouton de réservation
-                card.querySelector('.book-agency-btn').addEventListener('click', function() {
-                    const agencyId = this.getAttribute('data-id');
-                    openReservationForm(agencyId);
-                });
-            });
-        }
-        
-        // Obtenir le texte des heures d'ouverture
-        function getBusinessHoursText(businessHours) {
-            if (!businessHours || businessHours.length === 0) {
-                return 'Horaires non disponibles';
-            }
-            
-            // Obtenir le jour actuel (0 = Dimanche, 1 = Lundi, etc.)
-            const today = new Date().getDay();
-            const daysOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
-            const todayName = daysOfWeek[today];
-            
-            // Trouver les heures d'ouverture pour aujourd'hui
-            const todayHours = businessHours.find(hour => hour.day === todayName);
-            
-            if (!todayHours) {
-                return 'Horaires non disponibles';
-            }
-            
-            if (todayHours.closed) {
-                return 'Fermé aujourd\'hui';
-            }
-            
-            return `Ouvert aujourd'hui: ${todayHours.openingTime} - ${todayHours.closingTime}`;
-        }
-        
-        // Ouvrir le formulaire de réservation
-        function openReservationForm(agencyId) {
-            const agency = allAgencies.find(a => a.id == agencyId);
-            
-            if (!agency) {
-                showAlert('Agence non trouvée.', 'danger');
                 return;
             }
             
-            // Mettre à jour les informations de l'agence sélectionnée
-            selectedAgencyName.textContent = agency.name;
-            selectedAgencyAddress.textContent = agency.address;
-            agencyIdInput.value = agency.id;
-            currentAgencyId = agency.id;
+            // Stocker les informations de l'utilisateur
+            userData = {
+                email: email,
+                role: role,
+                username: username
+            };
             
-            // Réinitialiser le formulaire
-            newReservationForm.reset();
-            reservationAlert.classList.add('hidden');
+            // Afficher le nom d'utilisateur
+            usernameElement.textContent = username;
             
-            // Charger les services de l'agence dans le select
-            serviceSelect.innerHTML = '<option value="">Sélectionnez un service</option>';
-            currentAgencyServices = [];
+            // Charger les agences
+            loadAgencies();
+        } else {
+            // Session non active, rediriger vers la page de connexion
+            window.location.href = 'auth.html';
+        }
+    } catch (error) {
+        console.error('Erreur lors de la vérification de la session:', error);
+        // En cas d'erreur, rediriger vers la page de connexion
+        window.location.href = 'auth.html';
+    }
+}
+
+// Charger les agences
+async function loadAgencies() {
+    // Afficher le loader
+    agenciesLoader.classList.remove('hidden');
+    noAgencies.classList.add('hidden');
+    agenciesGrid.innerHTML = '';
+    
+    try {
+        // Charger les services pour les filtres
+        const servicesResponse = await fetch(`${API_BASE_URL}/api/services`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+        
+        if (servicesResponse.ok) {
+            allServices = await servicesResponse.json();
             
-            if (agency.services && Array.isArray(agency.services)) {
-                agency.services.forEach(service => {
-                    let serviceId, serviceName;
-                    
-                    if (typeof service === 'object' && service !== null) {
-                        serviceId = service.id;
-                        serviceName = service.name;
-                    } else if (typeof service === 'number') {
-                        serviceId = service;
-                        const foundService = allServices.find(s => s.id === service);
-                        serviceName = foundService ? foundService.name : `Service #${service}`;
-                    }
-                    
-                    if (serviceId && serviceName) {
-                        const option = document.createElement('option');
-                        option.value = serviceName;
-                        option.textContent = serviceName;
-                        serviceSelect.appendChild(option);
-                        
-                        currentAgencyServices.push({
-                            id: serviceId,
-                            name: serviceName
-                        });
-                    }
-                });
-            }
-            
-            // Initialiser le calendrier de disponibilité
-            availabilityCalendar.initialize(agency.id);
-            
-            // Afficher la section du formulaire de réservation
-            showSection('reservation-form-section');
+            // Remplir le filtre de services
+            serviceFilter.innerHTML = '<option value="">Tous les services</option>';
+            allServices.forEach(service => {
+                const option = document.createElement('option');
+                option.value = service.id;
+                option.textContent = service.name;
+                serviceFilter.appendChild(option);
+            });
         }
         
-        // Availability Calendar Management
-        const availabilityCalendar = {
-            currentStartDate: null,
-            selectedAgencyId: null,
-            selectedDateTime: null,
-            stompClient: null,
-            
-            // Initialize the calendar
-            initialize: function(agencyId) {
-                this.selectedAgencyId = agencyId;
-                this.currentStartDate = this.getStartOfWeek(new Date());
-                this.selectedDateTime = null;
-                
-                // Connect to WebSocket for real-time updates
-                this.connectWebSocket();
-                
-                // Load initial data
-                this.loadWeekAvailability();
-            },
-            
-            // Get the start date of the week (Monday) for a given date
-            getStartOfWeek: function(date) {
-                const day = date.getDay();
-                const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
-                return new Date(date.setDate(diff));
-            },
-            
-            // Navigate weeks
-            navigateWeek: function(daysToAdd) {
-                const newDate = new Date(this.currentStartDate);
-                newDate.setDate(newDate.getDate() + daysToAdd);
-                this.currentStartDate = newDate;
-                this.loadWeekAvailability();
-            },
-            
-            // Format date to YYYY-MM-DD
-            formatDate: function(date) {
-                const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-                return `${year}-${month}-${day}`;
-            },
-            
-            // Format date to display
-            formatDateDisplay: function(date) {
-                return date.toLocaleDateString('fr-FR', { 
-                    weekday: 'short', 
-                    day: 'numeric', 
-                    month: 'short' 
-                });
-            },
-            
-            // Check if date is today
-            isToday: function(date) {
-                const today = new Date();
-                return date.getDate() === today.getDate() && 
-                       date.getMonth() === today.getMonth() && 
-                       date.getFullYear() === today.getFullYear();
-            },
-            
-            // Load availability data for the week
-            loadWeekAvailability: function() {
-                const startDateStr = this.formatDate(this.currentStartDate);
-                
-                // Update week label
-                currentWeekLabel.textContent = `Semaine du ${this.currentStartDate.toLocaleDateString('fr-FR')}`;
-                
-                // Clear any existing selection
-                this.clearSelection();
-                
-                // Show loading state
-                this.showLoadingState();
-                
-                // Fetch availability data
-                fetch(`${API_BASE_URL}/api/availability/${this.selectedAgencyId}/week?startDate=${startDateStr}`, {
-                    method: 'GET',
-                    credentials: 'include'
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erreur lors du chargement des disponibilités');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    this.renderCalendar(data);
-                })
-                .catch(error => {
-                    console.error('Erreur:', error);
-                    // Show error message
-                    this.renderCalendarError();
-                });
-            },
-            
-            // Show loading state
-            showLoadingState: function() {
-                const calendarDays = document.querySelector('.calendar-days');
-                const calendarSlots = document.querySelector('.calendar-slots');
-                
-                calendarDays.innerHTML = '<div class="loading">Chargement...</div>';
-                calendarSlots.innerHTML = '';
-            },
-            
-            // Render calendar error
-            renderCalendarError: function() {
-                const calendarDays = document.querySelector('.calendar-days');
-                calendarDays.innerHTML = '<div class="error">Impossible de charger les disponibilités</div>';
-            },
-            
-            // Render the calendar with availability data
-            renderCalendar: function(availabilityData) {
-                const calendarDays = document.querySelector('.calendar-days');
-                const calendarSlots = document.querySelector('.calendar-slots');
-                
-                // Clear previous content
-                calendarDays.innerHTML = '';
-                calendarSlots.innerHTML = '';
-                
-                // Generate 7 days from the current start date
-                for (let i = 0; i < 7; i++) {
-                    const currentDate = new Date(this.currentStartDate);
-                    currentDate.setDate(currentDate.getDate() + i);
-                    
-                    // Find availability data for this date
-                    const dateStr = this.formatDate(currentDate);
-                    const dayAvailability = availabilityData.find(day => day.date === dateStr) || {
-                        date: dateStr,
-                        availableTimeSlots: [],
-                        bookedTimeSlots: []
-                    };
-                    
-                    // Create day header
-                    const dayElement = document.createElement('div');
-                    dayElement.className = 'calendar-day';
-                    if (this.isToday(currentDate)) {
-                        dayElement.classList.add('today');
-                    }
-                    
-                    dayElement.innerHTML = `
-                        <span class="day-name">${currentDate.toLocaleDateString('fr-FR', { weekday: 'short' })}</span>
-                        <span class="day-date">${currentDate.getDate()}</span>
-                    `;
-                    calendarDays.appendChild(dayElement);
-                    
-                    // Create slots container for this day
-                    const daySlotsElement = document.createElement('div');
-                    daySlotsElement.className = 'day-slots';
-                    calendarSlots.appendChild(daySlotsElement);
-                    
-                    // Add time slots
-                    if (dayAvailability.availableTimeSlots.length === 0 && dayAvailability.bookedTimeSlots.length === 0) {
-                        // No slots available
-                        const noSlotsElement = document.createElement('div');
-                        noSlotsElement.className = 'time-slot no-slots';
-                        noSlotsElement.textContent = 'Pas de créneaux';
-                        daySlotsElement.appendChild(noSlotsElement);
-                    } else {
-                        // Combine and sort all time slots
-                        const allSlots = [...new Set([
-                            ...dayAvailability.availableTimeSlots,
-                            ...dayAvailability.bookedTimeSlots
-                        ])].sort();
-                        
-                        allSlots.forEach(timeStr => {
-                            const isAvailable = dayAvailability.availableTimeSlots.includes(timeStr);
-                            const isBooked = dayAvailability.bookedTimeSlots.includes(timeStr);
-                            
-                            const timeSlotElement = document.createElement('div');
-                            timeSlotElement.className = 'time-slot';
-                            
-                            if (isAvailable) {
-                                timeSlotElement.classList.add('available');
-                                
-                                // Format time for display (e.g., "09:00" to "9h00")
-                                const [hours, minutes] = timeStr.split(':');
-                                timeSlotElement.textContent = `${parseInt(hours)}h${minutes}`;
-                                
-                                // Set data attributes for selection
-                                timeSlotElement.dataset.date = dateStr;
-                                timeSlotElement.dataset.time = timeStr;
-                                
-                                // Add click event for selection
-                                timeSlotElement.addEventListener('click', () => {
-                                    this.selectTimeSlot(timeSlotElement, dateStr, timeStr);
-                                });
-                            } else if (isBooked) {
-                                timeSlotElement.classList.add('booked');
-                                
-                                // Format time for display
-                                const [hours, minutes] = timeStr.split(':');
-                                timeSlotElement.textContent = `${parseInt(hours)}h${minutes}`;
-                            }
-                            
-                            daySlotsElement.appendChild(timeSlotElement);
-                        });
-                    }
-                }
-            },
-            
-            // Select a time slot
-            selectTimeSlot: function(element, dateStr, timeStr) {
-                // Clear previous selection
-                document.querySelectorAll('.time-slot.selected').forEach(slot => {
-                    slot.classList.remove('selected');
-                });
-                
-                // Mark as selected
-                element.classList.add('selected');
-                
-                // Save selected datetime
-                this.selectedDateTime = `${dateStr}T${timeStr}`;
-                
-                // Update hidden input
-                selectedDateTimeInput.value = this.selectedDateTime;
-                
-                // Update display
-                const displayDate = new Date(dateStr + 'T' + timeStr);
-                const formattedDisplay = `${displayDate.toLocaleDateString('fr-FR')} à ${timeStr.replace(':', 'h')}`;
-                selectedDateTimeDisplay.textContent = formattedDisplay;
-                
-                // Update preferred date field
-                preferredDate.value = dateStr;
-            },
-            
-            // Clear selection
-            clearSelection: function() {
-                document.querySelectorAll('.time-slot.selected').forEach(slot => {
-                    slot.classList.remove('selected');
-                });
-                
-                this.selectedDateTime = null;
-                selectedDateTimeInput.value = '';
-                selectedDateTimeDisplay.textContent = 'Aucun créneau sélectionné';
-            },
-            
-            // Connect to WebSocket for real-time updates
-            connectWebSocket: function() {
-                // Charger les bibliothèques SockJS et STOMP
-                if (typeof SockJS === 'undefined' || typeof Stomp === 'undefined') {
-                    const sockjs = document.createElement('script');
-                    sockjs.src = 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js';
-                    sockjs.async = true;
-                    
-                    const stomp = document.createElement('script');
-                    stomp.src = 'https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js';
-                    stomp.async = true;
-                    
-                    document.head.appendChild(sockjs);
-                    document.head.appendChild(stomp);
-                    
-                    // After scripts are loaded
-                    stomp.onload = () => {
-                        this.initializeWebSocketConnection();
-                    };
-                } else {
-                    this.initializeWebSocketConnection();
-                }
-            },
-            
-            // Initialize WebSocket connection
-            initializeWebSocketConnection: function() {
-                const socket = new SockJS(`${API_BASE_URL}/reservation-websocket`);
-                this.stompClient = Stomp.over(socket);
-                
-                // Disable debug logs
-                this.stompClient.debug = null;
-                
-                this.stompClient.connect({}, frame => {
-                    console.log('Connected to WebSocket for Availability');
-                    
-                    // Subscribe to availability updates for the selected agency
-                    this.stompClient.subscribe(`/topic/availability/${this.selectedAgencyId}`, message => {
-                        try {
-                            const updatedAvailability = JSON.parse(message.body);
-                            this.handleAvailabilityUpdate(updatedAvailability);
-                        } catch (e) {
-                            console.error('Error processing WebSocket message:', e);
-                        }
-                    });
-                }, error => {
-                    console.error('WebSocket connection error:', error);
-                    // Will fallback to regular AJAX updates
-                });
-            },
-            
-            // Handle availability update from WebSocket
-            handleAvailabilityUpdate: function(updatedAvailability) {
-                // If we're viewing the week that contains this date, reload the calendar
-                const updateDate = new Date(updatedAvailability.date);
-                const weekStart = new Date(this.currentStartDate);
-                const weekEnd = new Date(this.currentStartDate);
-                weekEnd.setDate(weekEnd.getDate() + 6);
-                
-                if (updateDate >= weekStart && updateDate <= weekEnd) {
-                    this.loadWeekAvailability();
-                }
-            },
-            
-            // Disconnect WebSocket
-            disconnect: function() {
-                if (this.stompClient && this.stompClient.connected) {
-                    this.stompClient.disconnect();
-                }
-            }
-        };
+        // Charger les agences
+        const agenciesResponse = await fetch(`${API_BASE_URL}/api/agencies/public`, {
+            method: 'GET',
+            credentials: 'include'
+        });
         
-        // Function to be called when leaving the reservation form
-        function cancelReservationForm() {
-            // Disconnect the WebSocket connection
-            availabilityCalendar.disconnect();
+        if (agenciesResponse.ok) {
+            allAgencies = await agenciesResponse.json();
             
-            // Go back to agencies section
-            showSection('agencies-section');
-            newReservationForm.reset();
+            if (allAgencies.length === 0) {
+                // Aucune agence trouvée
+                noAgencies.classList.remove('hidden');
+            } else {
+                // Remplir le filtre de villes
+                const cities = [...new Set(allAgencies.map(agency => agency.city))];
+                cityFilter.innerHTML = '<option value="">Toutes les villes</option>';
+                cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    cityFilter.appendChild(option);
+                });
+                
+                // Afficher les agences
+                displayAgencies(allAgencies);
+            }
+        } else {
+            // Erreur lors du chargement des agences
+            showAlert('Une erreur est survenue lors du chargement des agences.', 'danger');
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des agences:', error);
+        showAlert('Erreur de connexion au serveur.', 'danger');
+    } finally {
+        // Masquer le loader
+        agenciesLoader.classList.add('hidden');
+    }
+}
+
+// Filtrer les agences
+function filterAgencies() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    const selectedCity = cityFilter.value;
+    const selectedService = serviceFilter.value;
+    
+    let filteredAgencies = allAgencies;
+    
+    // Filtrer par terme de recherche
+    if (searchTerm) {
+        filteredAgencies = filteredAgencies.filter(agency => 
+            agency.name.toLowerCase().includes(searchTerm) || 
+            agency.city.toLowerCase().includes(searchTerm)
+        );
+    }
+    
+    // Filtrer par ville
+    if (selectedCity) {
+        filteredAgencies = filteredAgencies.filter(agency => agency.city === selectedCity);
+    }
+    
+    // Filtrer par service
+    if (selectedService) {
+        filteredAgencies = filteredAgencies.filter(agency => {
+            if (!agency.services || !Array.isArray(agency.services)) {
+                return false;
+            }
+            
+            return agency.services.some(service => {
+                if (typeof service === 'object' && service !== null) {
+                    return service.id == selectedService;
+                } else if (typeof service === 'number') {
+                    return service == selectedService;
+                }
+                return false;
+            });
+        });
+    }
+    
+    // Afficher les résultats
+    if (filteredAgencies.length === 0) {
+        agenciesGrid.innerHTML = '';
+        noAgencies.classList.remove('hidden');
+    } else {
+        displayAgencies(filteredAgencies);
+        noAgencies.classList.add('hidden');
+    }
+}
+
+// Afficher les agences dans la grille
+function displayAgencies(agencies) {
+    agenciesGrid.innerHTML = '';
+    
+    agencies.forEach(agency => {
+        // Formater les services
+        let servicesHtml = '<p>Aucun service disponible</p>';
+        if (agency.services && Array.isArray(agency.services) && agency.services.length > 0) {
+            servicesHtml = '<div class="services-list">';
+            agency.services.forEach(service => {
+                let serviceName = "Service inconnu";
+                
+                if (typeof service === 'object' && service !== null) {
+                    serviceName = service.name || "Sans nom";
+                } else if (typeof service === 'number') {
+                    const foundService = allServices.find(s => s.id === service);
+                    serviceName = foundService ? foundService.name : `Service #${service}`;
+                }
+                
+                servicesHtml += `<span class="service-item">${serviceName}</span>`;
+            });
+            servicesHtml += '</div>';
         }
         
-        // Créer une nouvelle réservation
-        // Créer une nouvelle réservation
+        // Déterminer les heures d'ouverture aujourd'hui
+        const businessHoursText = getBusinessHoursText(agency.businessHours);
+        
+        // Créer la carte
+        const card = document.createElement('div');
+        card.className = 'agency-card';
+        
+        card.innerHTML = `
+            <div class="card-header">
+                <div class="card-avatar">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="card-title-container">
+                    <h3 class="card-title">${agency.name}</h3>
+                    <div class="card-subtitle"><i class="fas fa-map-marker-alt"></i> ${agency.city}</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card-details">
+                    <div class="card-detail">
+                        <i class="fas fa-map-pin"></i>
+                        <div class="detail-value">${agency.address}</div>
+                    </div>
+                    <div class="card-detail">
+                        <i class="fas fa-phone"></i>
+                        <div class="detail-value">${agency.phoneNumber}</div>
+                    </div>
+                    <div class="card-detail">
+                        <i class="fas fa-envelope"></i>
+                        <div class="detail-value">${agency.email || 'Non disponible'}</div>
+                    </div>
+                    ${agency.description ? `
+                    <div class="card-detail">
+                        <i class="fas fa-info-circle"></i>
+                        <div class="detail-value">${agency.description}</div>
+                    </div>
+                    ` : ''}
+                </div>
+                <div class="card-services">
+                    <div class="services-title">
+                        <i class="fas fa-concierge-bell"></i> Services proposés
+                    </div>
+                    ${servicesHtml}
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="hours-open">
+                    <i class="fas fa-clock"></i>
+                    <span>${businessHoursText}</span>
+                </div>
+                <button class="btn btn-primary book-agency-btn" data-id="${agency.id}">
+                    <i class="fas fa-calendar-plus"></i> Réserver
+                </button>
+            </div>
+        `;
+        
+        agenciesGrid.appendChild(card);
+        
+        // Ajouter l'écouteur d'événement pour le bouton de réservation
+        card.querySelector('.book-agency-btn').addEventListener('click', function() {
+            const agencyId = this.getAttribute('data-id');
+            openReservationForm(agencyId);
+        });
+    });
+}
+
+// Obtenir le texte des heures d'ouverture
+function getBusinessHoursText(businessHours) {
+    if (!businessHours || businessHours.length === 0) {
+        return 'Horaires non disponibles';
+    }
+    
+    // Obtenir le jour actuel (0 = Dimanche, 1 = Lundi, etc.)
+    const today = new Date().getDay();
+    const daysOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+    const todayName = daysOfWeek[today];
+    
+    // Trouver les heures d'ouverture pour aujourd'hui
+    const todayHours = businessHours.find(hour => hour.day === todayName);
+    
+    if (!todayHours) {
+        return 'Horaires non disponibles';
+    }
+    
+    if (todayHours.closed) {
+        return 'Fermé aujourd\'hui';
+    }
+    
+    return `Ouvert aujourd'hui: ${todayHours.openingTime} - ${todayHours.closingTime}`;
+}
+
+// Ouvrir le formulaire de réservation
+function openReservationForm(agencyId) {
+    const agency = allAgencies.find(a => a.id == agencyId);
+    
+    if (!agency) {
+        showAlert('Agence non trouvée.', 'danger');
+        return;
+    }
+    
+    // Mettre à jour les informations de l'agence sélectionnée
+    selectedAgencyName.textContent = agency.name;
+    selectedAgencyAddress.textContent = agency.address;
+    agencyIdInput.value = agency.id;
+    currentAgencyId = agency.id;
+    
+    // Réinitialiser le formulaire
+    newReservationForm.reset();
+    reservationAlert.classList.add('hidden');
+    
+    // Charger les services de l'agence dans le select
+    serviceSelect.innerHTML = '<option value="">Sélectionnez un service</option>';
+    currentAgencyServices = [];
+    
+    if (agency.services && Array.isArray(agency.services)) {
+        agency.services.forEach(service => {
+            let serviceId, serviceName;
+            
+            if (typeof service === 'object' && service !== null) {
+                serviceId = service.id;
+                serviceName = service.name;
+            } else if (typeof service === 'number') {
+                serviceId = service;
+                const foundService = allServices.find(s => s.id === service);
+                serviceName = foundService ? foundService.name : `Service #${service}`;
+            }
+            
+            if (serviceId && serviceName) {
+                const option = document.createElement('option');
+                option.value = serviceName;
+                option.textContent = serviceName;
+                serviceSelect.appendChild(option);
+                
+                currentAgencyServices.push({
+                    id: serviceId,
+                    name: serviceName
+                });
+            }
+        });
+    }
+    
+    // Initialiser le calendrier de disponibilité
+    availabilityCalendar.initialize(agency.id);
+    
+    // Afficher la section du formulaire de réservation
+    showSection('reservation-form-section');
+}
+
+// Availability Calendar Management
+const availabilityCalendar = {
+    currentStartDate: null,
+    selectedAgencyId: null,
+    selectedDateTime: null,
+    stompClient: null,
+    
+    // Initialize the calendar
+    initialize: function(agencyId) {
+        this.selectedAgencyId = agencyId;
+        this.currentStartDate = this.getStartOfWeek(new Date());
+        this.selectedDateTime = null;
+        
+        // Connect to WebSocket for real-time updates
+        this.connectWebSocket();
+        
+        // Load initial data
+        this.loadWeekAvailability();
+    },
+    
+    // Get the start date of the week (Monday) for a given date
+    getStartOfWeek: function(date) {
+        const day = date.getDay();
+        const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
+        return new Date(date.setDate(diff));
+    },
+    
+    // Navigate weeks
+    navigateWeek: function(daysToAdd) {
+        const newDate = new Date(this.currentStartDate);
+        newDate.setDate(newDate.getDate() + daysToAdd);
+        this.currentStartDate = newDate;
+        this.loadWeekAvailability();
+    },
+    
+    // Format date to YYYY-MM-DD
+    formatDate: function(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    },
+    
+    // Format date to display
+    formatDateDisplay: function(date) {
+        return date.toLocaleDateString('fr-FR', { 
+            weekday: 'short', 
+            day: 'numeric', 
+            month: 'short' 
+        });
+    },
+    
+    // Check if date is today
+    isToday: function(date) {
+        const today = new Date();
+        return date.getDate() === today.getDate() && 
+               date.getMonth() === today.getMonth() && 
+               date.getFullYear() === today.getFullYear();
+    },
+    
+    // Load availability data for the week
+    loadWeekAvailability: function() {
+        const startDateStr = this.formatDate(this.currentStartDate);
+        
+        // Update week label
+        currentWeekLabel.textContent = `Semaine du ${this.currentStartDate.toLocaleDateString('fr-FR')}`;
+        
+        // Clear any existing selection
+        this.clearSelection();
+        
+        // Show loading state
+        this.showLoadingState();
+        
+        // Fetch availability data
+        fetch(`${API_BASE_URL}/api/availability/${this.selectedAgencyId}/week?startDate=${startDateStr}`, {
+            method: 'GET',
+            credentials: 'include'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur lors du chargement des disponibilités');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Données de disponibilité reçues:", data);
+            this.renderCalendar(data);
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            // Show error message
+            this.renderCalendarError();
+        });
+    },
+    
+    // Show loading state
+    showLoadingState: function() {
+        const calendarDays = document.querySelector('.calendar-days');
+        const calendarSlots = document.querySelector('.calendar-slots');
+        
+        calendarDays.innerHTML = '<div class="loading">Chargement...</div>';
+        calendarSlots.innerHTML = '';
+    },
+    
+    // Render calendar error
+    renderCalendarError: function() {
+        const calendarDays = document.querySelector('.calendar-days');
+        calendarDays.innerHTML = '<div class="error">Impossible de charger les disponibilités</div>';
+    },
+    
+    // Render the calendar with availability data
+    renderCalendar: function(availabilityData) {
+        const calendarDays = document.querySelector('.calendar-days');
+        const calendarSlots = document.querySelector('.calendar-slots');
+        
+        // Clear previous content
+        calendarDays.innerHTML = '';
+        calendarSlots.innerHTML = '';
+        
+        // Generate 7 days from the current start date
+        for (let i = 0; i < 7; i++) {
+            const currentDate = new Date(this.currentStartDate);
+            currentDate.setDate(currentDate.getDate() + i);
+            
+            // Find availability data for this date
+            const dateStr = this.formatDate(currentDate);
+            const dayAvailability = availabilityData.find(day => day.date === dateStr) || {
+                date: dateStr,
+                availableTimeSlots: [],
+                bookedTimeSlots: []
+            };
+            
+            // Create day header
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day';
+            if (this.isToday(currentDate)) {
+                dayElement.classList.add('today');
+            }
+            
+            dayElement.innerHTML = `
+                <span class="day-name">${currentDate.toLocaleDateString('fr-FR', { weekday: 'short' })}</span>
+                <span class="day-date">${currentDate.getDate()}</span>
+            `;
+            calendarDays.appendChild(dayElement);
+            
+            // Create slots container for this day
+            const daySlotsElement = document.createElement('div');
+            daySlotsElement.className = 'day-slots';
+            calendarSlots.appendChild(daySlotsElement);
+            
+            // Add time slots
+            if (dayAvailability.availableTimeSlots.length === 0 && dayAvailability.bookedTimeSlots.length === 0) {
+                // No slots available
+                const noSlotsElement = document.createElement('div');
+                noSlotsElement.className = 'time-slot no-slots';
+                noSlotsElement.textContent = 'Pas de créneaux';
+                daySlotsElement.appendChild(noSlotsElement);
+            } else {
+                // Combine and sort all time slots
+                const allSlots = [...new Set([
+                    ...dayAvailability.availableTimeSlots,
+                    ...dayAvailability.bookedTimeSlots
+                ])].sort();
+                
+                allSlots.forEach(timeStr => {
+                    const isAvailable = dayAvailability.availableTimeSlots.includes(timeStr);
+                    const isBooked = dayAvailability.bookedTimeSlots.includes(timeStr);
+                    
+                    const timeSlotElement = document.createElement('div');
+                    timeSlotElement.className = 'time-slot';
+                    
+                    if (isAvailable) {
+                        timeSlotElement.classList.add('available');
+                        
+                        // Format time for display (e.g., "09:00" to "9h00")
+                        const [hours, minutes] = timeStr.split(':');
+                        timeSlotElement.textContent = `${parseInt(hours)}h${minutes}`;
+                        
+                        // Set data attributes for selection
+                        timeSlotElement.dataset.date = dateStr;
+                        timeSlotElement.dataset.time = timeStr;
+                        
+                        // Add click event for selection
+                        timeSlotElement.addEventListener('click', () => {
+                            this.selectTimeSlot(timeSlotElement, dateStr, timeStr);
+                        });
+                    } else if (isBooked) {
+                        timeSlotElement.classList.add('booked');
+                        
+                        // Format time for display
+                        const [hours, minutes] = timeStr.split(':');
+                        timeSlotElement.textContent = `${parseInt(hours)}h${minutes}`;
+                    }
+                    
+                    daySlotsElement.appendChild(timeSlotElement);
+                });
+            }
+        }
+    },
+    
+    // Select a time slot
+    selectTimeSlot: function(element, dateStr, timeStr) {
+        // Clear previous selection
+        document.querySelectorAll('.time-slot.selected').forEach(slot => {
+            slot.classList.remove('selected');
+        });
+        
+        // Mark as selected
+        element.classList.add('selected');
+        
+        // Save selected datetime
+        this.selectedDateTime = `${dateStr}T${timeStr}`;
+        
+        // Update hidden input
+        selectedDateTimeInput.value = this.selectedDateTime;
+        
+        // Update display
+        const displayDate = new Date(dateStr + 'T' + timeStr);
+        const formattedDisplay = `${displayDate.toLocaleDateString('fr-FR')} à ${timeStr.replace(':', 'h')}`;
+        selectedDateTimeDisplay.textContent = formattedDisplay;
+        
+        // Update preferred date field
+        preferredDate.value = dateStr;
+        
+        console.log("Créneau sélectionné:", this.selectedDateTime);
+    },
+    
+    // Clear selection
+    clearSelection: function() {
+        document.querySelectorAll('.time-slot.selected').forEach(slot => {
+            slot.classList.remove('selected');
+        });
+        
+        this.selectedDateTime = null;
+        selectedDateTimeInput.value = '';
+        selectedDateTimeDisplay.textContent = 'Aucun créneau sélectionné';
+    },
+    
+    // Connect to WebSocket for real-time updates
+    connectWebSocket: function() {
+        // Charger les bibliothèques SockJS et STOMP si nécessaire
+        if (typeof SockJS === 'undefined' || typeof Stomp === 'undefined') {
+            console.log("Chargement des bibliothèques SockJS et STOMP...");
+            const sockjs = document.createElement('script');
+            sockjs.src = 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js';
+            sockjs.async = true;
+            
+            const stomp = document.createElement('script');
+            stomp.src = 'https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js';
+            stomp.async = true;
+            
+            document.head.appendChild(sockjs);
+            document.head.appendChild(stomp);
+            
+            // After scripts are loaded
+            stomp.onload = () => {
+                console.log("Bibliothèques chargées, initialisation de la connexion WebSocket");
+                this.initializeWebSocketConnection();
+            };
+        } else {
+            console.log("Bibliothèques déjà disponibles, initialisation de la connexion WebSocket");
+            this.initializeWebSocketConnection();
+        }
+    },
+    
+    // Initialize WebSocket connection
+    initializeWebSocketConnection: function() {
+        const socket = new SockJS(`${API_BASE_URL}/reservation-websocket`);
+        this.stompClient = Stomp.over(socket);
+        
+        // Disable debug logs
+        this.stompClient.debug = null;
+        
+        this.stompClient.connect({}, frame => {
+            console.log('Connected to WebSocket for Availability');
+            
+            // Subscribe to availability updates for the selected agency
+            this.stompClient.subscribe(`/topic/availability/${this.selectedAgencyId}`, message => {
+                try {
+                    const updatedAvailability = JSON.parse(message.body);
+                    console.log("Réception mise à jour disponibilité:", updatedAvailability);
+                    this.handleAvailabilityUpdate(updatedAvailability);
+                } catch (e) {
+                    console.error('Error processing WebSocket message:', e);
+                }
+            });
+            
+            // Demander les disponibilités actuelles
+            this.stompClient.send(`/app/fetch-availability/${this.selectedAgencyId}`, {}, this.formatDate(this.currentStartDate));
+        }, error => {
+            console.error('WebSocket connection error:', error);
+            // Will fallback to regular AJAX updates
+        });
+    },
+    
+    // Handle availability update from WebSocket
+    handleAvailabilityUpdate: function(updatedAvailability) {
+        // Si nous sommes en train de visualiser la semaine qui contient cette date, recharger le calendrier
+        const updateDate = new Date(updatedAvailability.date);
+        const weekStart = new Date(this.currentStartDate);
+        const weekEnd = new Date(this.currentStartDate);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+        
+        if (updateDate >= weekStart && updateDate <= weekEnd) {
+            console.log("Mise à jour détectée dans la semaine actuelle, rechargement du calendrier");
+            this.loadWeekAvailability();
+        }
+    },
+    
+    // Disconnect WebSocket
+    disconnect: function() {
+        if (this.stompClient && this.stompClient.connected) {
+            console.log("Déconnexion du WebSocket");
+            this.stompClient.disconnect();
+        }
+    }
+};
+
+// Function to be called when leaving the reservation form
+function cancelReservationForm() {
+    // Disconnect the WebSocket connection
+    availabilityCalendar.disconnect();
+    
+    // Go back to agencies section
+    showSection('agencies-section');
+    newReservationForm.reset();
+}
+
+// Créer une nouvelle réservation
 async function createReservation() {
     const service = document.getElementById('service').value;
     const description = document.getElementById('description').value;
@@ -2605,6 +2616,8 @@ async function createReservation() {
         return;
     }
     
+    console.log("Création de réservation avec:", { service, description, preferredDate: selectedDateTime, agencyId });
+    
     try {
         const response = await fetch(`${API_BASE_URL}/api/user/reservation`, {
             method: 'POST',
@@ -2623,6 +2636,7 @@ async function createReservation() {
         const data = await response.json();
         
         if (response.ok) {
+            console.log("Réservation créée avec succès:", data);
             showReservationAlert('Votre demande de réservation a été créée avec succès!', 'success');
             
             // Réinitialiser le formulaire
@@ -2644,6 +2658,7 @@ async function createReservation() {
                 loadReservations();
             }, 2000);
         } else {
+            console.error("Erreur lors de la création de la réservation:", data);
             showReservationAlert(data.message || 'Une erreur est survenue lors de la création de la réservation.', 'danger');
         }
     } catch (error) {
@@ -2897,6 +2912,7 @@ async function updateUsername() {
     }
     
     try {
+        console.log("Envoi de la requête de mise à jour du nom d'utilisateur");
         const response = await fetch(`${API_BASE_URL}/api/user/update-username`, {
             method: 'POST',
             headers: {
@@ -2908,11 +2924,10 @@ async function updateUsername() {
             credentials: 'include'
         });
         
-        // Simuler une réponse positive
-        // Dans un environnement réel, vous devriez utiliser la réponse du serveur
-        const data = { success: true, message: 'Nom d\'utilisateur mis à jour avec succès' };
+        const data = await response.json();
         
-        if (true) { // Simuler une réponse réussie
+        if (response.ok) {
+            console.log("Nom d'utilisateur mis à jour avec succès");
             // Mettre à jour les données utilisateur en local
             userData.username = usernameValue;
             
@@ -2927,6 +2942,7 @@ async function updateUsername() {
             // Afficher une notification
             showAlert(profileAlert, 'Nom d\'utilisateur mis à jour avec succès!', 'success');
         } else {
+            console.error("Erreur lors de la mise à jour du nom d'utilisateur:", data);
             showAlert(editUsernameAlert, data.message || 'Erreur lors de la mise à jour du nom d\'utilisateur.', 'danger');
         }
     } catch (error) {
@@ -2934,6 +2950,7 @@ async function updateUsername() {
         showAlert(editUsernameAlert, 'Erreur de connexion au serveur.', 'danger');
     }
 }
+
 
 // Changer le mot de passe
 async function changePassword() {
@@ -2948,28 +2965,30 @@ async function changePassword() {
     }
     
     try {
+        console.log("Envoi de la requête de changement de mot de passe");
         const response = await fetch(`${API_BASE_URL}/api/user/change-password`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                currentPassword,
-                newPassword
+                currentPassword: currentPassword,
+                newPassword: newPassword
             }),
             credentials: 'include'
         });
         
-        // Simuler une réponse positive
-        const data = { success: true, message: 'Mot de passe modifié avec succès' };
+        const data = await response.json();
         
-        if (true) { // Simuler une réponse réussie
+        if (response.ok) {
+            console.log("Mot de passe changé avec succès");
             // Réinitialiser le formulaire
             changePasswordForm.reset();
             
             // Afficher une notification
             showAlert(profileAlert, 'Mot de passe modifié avec succès!', 'success');
         } else {
+            console.error("Erreur lors du changement de mot de passe:", data);
             showAlert(profileAlert, data.message || 'Erreur lors de la modification du mot de passe.', 'danger');
         }
     } catch (error) {
@@ -2980,24 +2999,40 @@ async function changePassword() {
 
 // Supprimer le compte
 async function deleteAccount() {
+    const password = document.getElementById('deleteConfirmPassword').value;
+    
     try {
+        console.log("Envoi de la requête de suppression de compte");
         const response = await fetch(`${API_BASE_URL}/api/user/delete-account`, {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                password: password
+            }),
             credentials: 'include'
         });
         
-        // Simuler une réponse positive
-        const data = { success: true };
+        const data = await response.json();
         
-        if (true) { // Simuler une réponse réussie
+        if (response.ok) {
+            console.log("Compte supprimé avec succès");
             // Rediriger vers la page de connexion
             window.location.href = 'auth.html';
         } else {
+            console.error("Erreur lors de la suppression du compte:", data);
             showAlert(profileAlert, data.message || 'Erreur lors de la suppression du compte.', 'danger');
+            
+            // Fermer le modal de confirmation s'il est ouvert
+            closeAllModals();
         }
     } catch (error) {
         console.error('Erreur lors de la suppression du compte:', error);
         showAlert(profileAlert, 'Erreur de connexion au serveur.', 'danger');
+        
+        // Fermer le modal de confirmation s'il est ouvert
+        closeAllModals();
     }
 }
 

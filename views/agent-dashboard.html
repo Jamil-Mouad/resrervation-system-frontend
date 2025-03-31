@@ -1572,6 +1572,7 @@
             
             // Après le chargement des scripts
             stomp.onload = function() {
+                console.log('Initialisation de la connexion WebSocket...');
                 const socket = new SockJS(`${API_BASE_URL}/reservation-websocket`);
                 stompClient = Stomp.over(socket);
                 
@@ -1584,13 +1585,15 @@
                     
                     // S'abonner aux mises à jour des réservations
                     stompClient.subscribe('/topic/reservations', function(message) {
+                        console.log('Message reçu sur /topic/reservations');
                         try {
-                            const reservations = JSON.parse(message.body);
+                            const reservationsData = JSON.parse(message.body);
                             
                             // Si c'est un tableau, c'est une liste complète de réservations
-                            if (Array.isArray(reservations)) {
+                            if (Array.isArray(reservationsData)) {
+                                console.log('Liste de réservations reçue:', reservationsData.length);
                                 // Mettre à jour la liste des réservations en attente
-                                allReservations.pending = reservations;
+                                allReservations.pending = reservationsData;
                                 
                                 // Mettre à jour l'interface
                                 renderReservations(allReservations.pending, pendingReservationsGrid, 'pending');
@@ -1605,7 +1608,8 @@
                             } 
                             // Sinon c'est une seule réservation nouvelle
                             else {
-                                const reservation = reservations;
+                                const reservation = reservationsData;
+                                console.log('Nouvelle réservation reçue:', reservation);
                                 if (reservation.status === 'PENDING') {
                                     // Ajouter à la liste des réservations en attente
                                     allReservations.pending.unshift(reservation);
@@ -1636,8 +1640,10 @@
                     
                     // S'abonner aux mises à jour de réservations spécifiques
                     stompClient.subscribe('/topic/reservation-updated', function(message) {
+                        console.log('Message reçu sur /topic/reservation-updated');
                         try {
                             const updatedReservation = JSON.parse(message.body);
+                            console.log('Réservation mise à jour:', updatedReservation);
                             
                             // Traiter l'événement en fonction du statut de la réservation
                             if (updatedReservation.status === 'CONFIRMED') {
@@ -1722,6 +1728,7 @@
                     // S'abonner aux mises à jour de disponibilité
                     if (agencyData && agencyData.agencyId) {
                         stompClient.subscribe(`/topic/availability/${agencyData.agencyId}`, function(message) {
+                            console.log(`Message reçu sur /topic/availability/${agencyData.agencyId}`);
                             try {
                                 const updatedAvailability = JSON.parse(message.body);
                                 
@@ -1856,6 +1863,8 @@
             }
             
             try {
+                console.log(`Mise à jour du nom d'utilisateur: ${newUsername}`);
+                
                 const response = await fetch(`${API_BASE_URL}/api/user/update-username`, {
                     method: 'POST',
                     headers: {
@@ -1867,7 +1876,10 @@
                     credentials: 'include'
                 });
                 
+                console.log('Statut de la réponse:', response.status);
+                
                 const data = await response.json();
+                console.log('Données de réponse:', data);
                 
                 if (response.ok) {
                     // Mettre à jour les données utilisateur
@@ -1900,6 +1912,8 @@
             }
             
             try {
+                console.log('Tentative de changement de mot de passe');
+                
                 const response = await fetch(`${API_BASE_URL}/api/user/change-password`, {
                     method: 'POST',
                     headers: {
@@ -1912,7 +1926,10 @@
                     credentials: 'include'
                 });
                 
+                console.log('Statut de la réponse:', response.status);
+                
                 const data = await response.json();
+                console.log('Données de réponse:', data);
                 
                 if (response.ok) {
                     // Réinitialiser le formulaire
@@ -1930,6 +1947,8 @@
         
         // Afficher une alerte dans le conteneur principal
         function showAlert(message, type) {
+            console.log(`Alerte: ${message} (type: ${type})`);
+            
             const alertDiv = document.createElement('div');
             alertDiv.className = `alert alert-${type}`;
             
@@ -2020,12 +2039,92 @@
                 window.location.href = 'auth.html';
             }
         }
+        
+        // Vérification de la session
+        async function checkSession() {
+            try {
+                console.log('Vérification de la session...');
+                
+                const response = await fetch(`${API_BASE_URL}/auth/check-session`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                console.log('Statut de la réponse de session:', response.status);
+                
+                const data = await response.json();
+                console.log('Réponse de la vérification de session:', data);
+                
+                if (response.ok && data.success) {
+                    // Extraire les informations de l'utilisateur
+                    const parts = data.message.split('|');
+                    const email = parts[0];
+                    const role = parts[1];
+                    const username = parts.length > 2 ? parts[2] : email.split('@')[0];
+                    
+                    console.log(`Rôle de l'utilisateur: ${role}`);
+                    
+                    // Vérifier si l'utilisateur a le rôle AGENT
+                    if (!role.includes('ROLE_AGENT')) {
+                        console.warn('Utilisateur n\'a pas le rôle AGENT');
+                        // Rediriger vers la page appropriée
+                        if (role.includes('ROLE_ADMIN')) {
+                            window.location.href = 'admin-dashboard.html';
+                        } else {
+                            window.location.href = 'user-dashboard.html';
+                        }
+                        return;
+                    }
+                    
+                    // Stocker les données utilisateur
+                    userData = {
+                        email: email,
+                        role: role,
+                        username: username
+                    };
+                    
+                    console.log('Données utilisateur:', userData);
+                    
+                    // Afficher les informations de l'utilisateur
+                    usernameElement.textContent = username;
+                    profileUsername.textContent = username;
+                    profileEmail.textContent = email;
+                    updateUsername.value = username;
+                    currentEmail.value = email;
+                    
+                    // Charger les informations de l'agence
+                    await loadAgentAgency();
+                    
+                    // Charger les réservations
+                    await loadAllReservations();
+                    
+                    // Charger les statistiques
+                    loadAgentStats();
+                    
+                    // Initialiser le calendrier de disponibilité
+                    availabilityCalendar.initialize();
+                    
+                    // Connecter au WebSocket pour les mises à jour en temps réel
+                    connectWebSocket();
+                } else {
+                    console.error('Session invalide, redirection vers la page de connexion');
+                    // Rediriger vers la page de connexion
+                    window.location.href = 'auth.html';
+                }
+            } catch (error) {
+                console.error('Erreur lors de la vérification de la session:', error);
+                // Rediriger vers la page de connexion
+                window.location.href = 'auth.html';
+            }
+        }
+        
         let agentStats = {
             last24Hours: 0,
             confirmed: 0,
             completed: 0,
             canceled: 0
         };
+        
         let stompClient = null;
         let currentSection = 'dashboard-section';
         let calendarEvents = [];
@@ -2124,83 +2223,21 @@
             initEventListeners();
         });
         
-        // Vérifier la session et initialiser les données
-        async function checkSession() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/auth/check-session`, {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok && data.success) {
-                    // Extraire les informations de l'utilisateur
-                    const parts = data.message.split('|');
-                    const email = parts[0];
-                    const role = parts[1];
-                    const username = parts.length > 2 ? parts[2] : email.split('@')[0];
-                    
-                    // Vérifier si l'utilisateur a le rôle AGENT
-                    if (!role.includes('ROLE_AGENT')) {
-                        // Rediriger vers la page appropriée
-                        if (role.includes('ROLE_ADMIN')) {
-                            window.location.href = 'admin-dashboard.html';
-                        } else {
-                            window.location.href = 'user-dashboard.html';
-                        }
-                        return;
-                    }
-                    
-                    // Stocker les données utilisateur
-                    userData = {
-                        email: email,
-                        role: role,
-                        username: username
-                    };
-                    
-                    // Afficher les informations de l'utilisateur
-                    usernameElement.textContent = username;
-                    profileUsername.textContent = username;
-                    profileEmail.textContent = email;
-                    updateUsername.value = username;
-                    currentEmail.value = email;
-                    
-                    // Charger les informations de l'agence
-                    await loadAgentAgency();
-                    
-                    // Charger les réservations
-                    await loadAllReservations();
-                    
-                    // Charger les statistiques
-                    loadAgentStats();
-                    
-                    // Initialiser le calendrier de disponibilité
-                    availabilityCalendar.initialize();
-                    
-                    // Connecter au WebSocket pour les mises à jour en temps réel
-                    connectWebSocket();
-                } else {
-                    // Rediriger vers la page de connexion
-                    window.location.href = 'auth.html';
-                }
-            } catch (error) {
-                console.error('Erreur lors de la vérification de la session:', error);
-                // Rediriger vers la page de connexion
-                window.location.href = 'auth.html';
-            }
-        }
-        
         // Charger les informations de l'agence de l'agent
         async function loadAgentAgency() {
             try {
+                console.log('Chargement des informations de l\'agence de l\'agent');
+                
                 const response = await fetch(`${API_BASE_URL}/api/agent/info`, {
                     method: 'GET',
                     credentials: 'include'
                 });
                 
+                console.log('Statut de la réponse:', response.status);
+                
                 if (response.ok) {
                     agencyData = await response.json();
+                    console.log('Informations de l\'agence:', agencyData);
                     
                     // Afficher le nom de l'agence
                     if (agencyData && agencyData.agencyName) {
@@ -2699,6 +2736,9 @@
             }
             
             try {
+                // Ajouter plus de logs
+                console.log(`Confirmation de la réservation ${reservationId} avec: début=${startDateTime}, fin=${endDateTime}`);
+                
                 const response = await fetch(`${API_BASE_URL}/api/agent/reservation/confirm/${reservationId}`, {
                     method: 'POST',
                     headers: {
@@ -2712,7 +2752,11 @@
                     credentials: 'include'
                 });
                 
+                // Log de la réponse
+                console.log('Statut de la réponse:', response.status);
+                
                 const data = await response.json();
+                console.log('Données de réponse:', data);
                 
                 if (response.ok) {
                     // Fermer le modal
@@ -2832,11 +2876,15 @@
             
             // Initialiser le calendrier
             initialize: function() {
+                console.log('Initialisation du calendrier de disponibilité');
+                
                 if (agencyData && agencyData.agencyId) {
                     this.selectedAgencyId = agencyData.agencyId;
+                    console.log(`Agence sélectionnée: ${this.selectedAgencyId}`);
                 } else {
-                    // Si pas d'agence, utiliser une valeur par défaut (idéalement à remplacer par une logique appropriée)
+                    // Si pas d'agence, utiliser une valeur par défaut
                     this.selectedAgencyId = 1;
+                    console.log('Aucune agence trouvée, utilisation de l\'ID 1 par défaut');
                 }
                 
                 this.currentStartDate = this.getStartOfWeek(new Date());
@@ -2930,23 +2978,27 @@
                 calendarDays.innerHTML = '<div class="loading">Chargement...</div>';
                 calendarSlots.innerHTML = '';
                 
+                console.log(`Chargement des disponibilités pour la semaine du ${startDateStr}, agence ${this.selectedAgencyId}`);
+                
                 // Appeler l'API pour obtenir les disponibilités
                 fetch(`${API_BASE_URL}/api/availability/${this.selectedAgencyId}/week?startDate=${startDateStr}`, {
                     method: 'GET',
                     credentials: 'include'
                 })
                 .then(response => {
+                    console.log('Statut de réponse:', response.status);
                     if (!response.ok) {
-                        throw new Error('Erreur lors du chargement des disponibilités');
+                        throw new Error('Erreur lors du chargement des disponibilités: ' + response.status);
                     }
                     return response.json();
                 })
                 .then(data => {
+                    console.log('Données de disponibilité reçues:', data);
                     this.renderCalendar(data);
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
-                    calendarDays.innerHTML = '<div class="error">Impossible de charger les disponibilités</div>';
+                    calendarDays.innerHTML = '<div class="error">Impossible de charger les disponibilités: ' + error.message + '</div>';
                 });
             },
             
@@ -2956,11 +3008,13 @@
                 this.loadWeekAvailability();
             },
             
-                            // Afficher le calendrier avec les données de disponibilité
+            // Afficher le calendrier avec les données de disponibilité
             renderCalendar: function(availabilityData) {
                 // Vider les conteneurs
                 calendarDays.innerHTML = '';
                 calendarSlots.innerHTML = '';
+                
+                console.log('Rendu du calendrier avec', availabilityData.length, 'jours de données');
                 
                 // Générer 7 jours à partir de la date de début
                 for (let i = 0; i < 7; i++) {

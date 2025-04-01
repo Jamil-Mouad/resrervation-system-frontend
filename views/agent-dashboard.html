@@ -947,95 +947,6 @@
             color: #f0f0f0;
         }
         
-        /* Error modal */
-        .error-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1100;
-            overflow-y: auto;
-            padding: 2rem 0;
-        }
-        
-        .error-modal-dialog {
-            max-width: 500px;
-            margin: 0 auto;
-            background-color: var(--light-color);
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        }
-        
-        .error-modal-header {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: var(--danger-color);
-            color: white;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-        }
-        
-        .error-modal-body {
-            padding: 1.5rem;
-        }
-        
-        .error-modal-footer {
-            padding: 1rem;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: center;
-            background-color: #f8f9fa;
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
-        }
-        
-        /* Action status modal */
-        .action-status-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1100;
-            overflow-y: auto;
-            padding: 2rem 0;
-        }
-        
-        .action-status-dialog {
-            max-width: 400px;
-            margin: 0 auto;
-            background-color: var(--light-color);
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            text-align: center;
-        }
-        
-        .action-status-body {
-            padding: 2rem;
-        }
-        
-        .action-status-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-        
-        .action-status-icon.waiting {
-            color: var(--warning-color);
-            animation: pulse 1.5s infinite;
-        }
-        
-        .action-status-icon.success {
-            color: var(--success-color);
-        }
-        
         /* Utilities */
         .hidden {
             display: none !important;
@@ -1148,6 +1059,33 @@
         .highlight-new {
             animation: highlightNew 2s ease-out;
         }
+
+        /* Animation for the loading spinner */
+        .loading-circle {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+        }
+        .loading-circle:after {
+            content: " ";
+            display: block;
+            width: 64px;
+            height: 64px;
+            margin: 8px;
+            border-radius: 50%;
+            border: 6px solid #FF9800;
+            border-color: #FF9800 transparent #FF9800 transparent;
+            animation: loading-circle 1.2s linear infinite;
+        }
+        @keyframes loading-circle {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 <body>
@@ -1197,11 +1135,6 @@
                             <i class="fas fa-user"></i> Mon profil
                         </a>
                     </li>
-                    <li>
-                        <a href="#" data-section="settings-section">
-                            <i class="fas fa-cog"></i> Paramètres
-                        </a>
-                    </li>
                 </ul>
             </aside>
             
@@ -1223,16 +1156,6 @@
                             <div class="stat-info">
                                 <div class="stat-value" id="pendingCount">0</div>
                                 <div class="stat-label">Réservations en attente</div>
-                            </div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
-                            <div class="stat-info">
-                                <div class="stat-value" id="confirmedCount">0</div>
-                                <div class="stat-label">Rendez-vous confirmés</div>
                             </div>
                         </div>
                         
@@ -1429,11 +1352,6 @@
                                     </div>
                                     
                                     <div class="profile-stat">
-                                        <div class="profile-stat-value" id="statConfirmedCount">0</div>
-                                        <div class="profile-stat-label">Rendez-vous confirmés</div>
-                                    </div>
-                                    
-                                    <div class="profile-stat">
                                         <div class="profile-stat-value" id="statCompletedCount">0</div>
                                         <div class="profile-stat-label">Rendez-vous complétés</div>
                                     </div>
@@ -1468,18 +1386,7 @@
                                     </div>
                                 </form>
                             </div>
-                        </div>
-                    </div>
-                </section>
-                
-                <!-- Settings Section -->
-                <section id="settings-section" class="hidden">
-                    <div class="section-title">
-                        <h2><i class="fas fa-cog"></i> Paramètres</h2>
-                    </div>
-                    
-                    <div class="profile-card">
-                        <div class="profile-content">
+                            
                             <div class="profile-section">
                                 <h4 class="profile-section-title">
                                     <i class="fas fa-lock"></i> Sécurité
@@ -1507,6 +1414,36 @@
                                         </button>
                                     </div>
                                 </form>
+                            </div>
+                            
+                            <div class="profile-section">
+                                <h4 class="profile-section-title">
+                                    <i class="fas fa-bell"></i> Notifications
+                                </h4>
+                                
+                                <div class="form-group">
+                                    <div class="form-check">
+                                        <input type="checkbox" id="emailNotifications" checked>
+                                        <label for="emailNotifications">
+                                            Recevoir des notifications par email
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <div class="form-check">
+                                        <input type="checkbox" id="browserNotifications" checked>
+                                        <label for="browserNotifications">
+                                            Recevoir des notifications dans le navigateur
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-right">
+                                    <button type="button" class="btn btn-primary" id="saveNotificationSettings">
+                                        <i class="fas fa-save"></i> Enregistrer les préférences
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1600,40 +1537,14 @@
             </div>
         </div>
     </div>
-    
-    <!-- Modal d'erreur -->
-    <div id="errorModal" class="error-modal">
-        <div class="error-modal-dialog">
-            <div class="error-modal-header">
-                <h3 class="modal-title"><i class="fas fa-exclamation-circle"></i> Erreur</h3>
-                <button class="close-modal" onclick="closeErrorModal()">&times;</button>
-            </div>
-            <div class="error-modal-body">
-                <p id="errorModalMessage">Message d'erreur</p>
-            </div>
-            <div class="error-modal-footer">
-                <button type="button" class="btn btn-danger" onclick="closeErrorModal()">Fermer</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Modal de statut d'action -->
-    <div id="actionStatusModal" class="action-status-modal">
-        <div class="action-status-dialog">
-            <div class="action-status-body">
-                <div id="actionWaitingStatus">
-                    <div class="action-status-icon waiting">
-                        <i class="fas fa-spinner"></i>
-                    </div>
-                    <h3>Action en attente</h3>
-                    <p>Veuillez patienter...</p>
-                </div>
-                <div id="actionSuccessStatus" class="hidden">
-                    <div class="action-status-icon success">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <h3>Action effectuée avec succès</h3>
-                </div>
+
+    <!-- Modal d'attente d'action -->
+    <div id="waitingActionModal" class="modal">
+        <div class="modal-dialog" style="max-width: 400px; text-align: center;">
+            <div class="modal-body" style="padding: 2rem;">
+                <div class="loading-circle"></div>
+                <h3 style="margin-top: 1.5rem; color: #333;">Action en attente</h3>
+                <p style="margin-top: 0.5rem; color: #666;">Veuillez patienter...</p>
             </div>
         </div>
     </div>
@@ -1652,20 +1563,6 @@
             canceled: []
         };
         
-
-        function ensureUniqueReservations(reservationList) {
-            // Utiliser Map pour stocker les réservations par ID, ce qui élimine naturellement les doublons
-            const uniqueMap = new Map();
-            
-            // Ajouter chaque réservation à la map avec son ID comme clé
-            reservationList.forEach(reservation => {
-                uniqueMap.set(reservation.id, reservation);
-            });
-            
-            // Reconvertir la map en tableau
-            return Array.from(uniqueMap.values());
-        }
-
         // Connecter au WebSocket pour les mises à jour en temps réel
         function connectWebSocket() {
             // Charger les bibliothèques SockJS et STOMP
@@ -1721,25 +1618,29 @@
                                 const reservation = reservationsData;
                                 console.log('Nouvelle réservation reçue:', reservation);
                                 if (reservation.status === 'PENDING') {
-                                    // Ajouter à la liste des réservations en attente
-                                    allReservations.pending.unshift(reservation);
-                                    
-                                    // Mettre à jour l'interface
-                                    renderReservations(allReservations.pending, pendingReservationsGrid, 'pending');
-                                    
-                                    // Mettre à jour les compteurs
-                                    updateCounters();
-                                    
-                                    // Masquer le message "pas de réservations"
-                                    noPendingReservations.classList.add('hidden');
-                                    
-                                    // Afficher une notification
-                                    showAlert('Nouvelle réservation reçue !', 'info');
-                                    
-                                    // Animer la nouvelle réservation
-                                    const card = document.getElementById(`reservation-${reservation.id}`);
-                                    if (card) {
-                                        card.classList.add('highlight-new');
+                                    // S'assurer que la réservation n'existe pas déjà dans la liste
+                                    const exists = allReservations.pending.some(r => r.id === reservation.id);
+                                    if (!exists) {
+                                        // Ajouter à la liste des réservations en attente
+                                        allReservations.pending.unshift(reservation);
+                                        
+                                        // Mettre à jour l'interface
+                                        renderReservations(allReservations.pending, pendingReservationsGrid, 'pending');
+                                        
+                                        // Mettre à jour les compteurs
+                                        updateCounters();
+                                        
+                                        // Masquer le message "pas de réservations"
+                                        noPendingReservations.classList.add('hidden');
+                                        
+                                        // Afficher une notification
+                                        showAlert('Nouvelle réservation reçue !', 'info');
+                                        
+                                        // Animer la nouvelle réservation
+                                        const card = document.getElementById(`reservation-${reservation.id}`);
+                                        if (card) {
+                                            card.classList.add('highlight-new');
+                                        }
                                     }
                                 }
                             }
@@ -1760,8 +1661,12 @@
                                 // Supprimer de la liste en attente
                                 allReservations.pending = allReservations.pending.filter(r => r.id !== updatedReservation.id);
                                 
-                                // Ajouter à la liste des confirmées
-                                allReservations.confirmed.unshift(updatedReservation);
+                                // S'assurer que la réservation n'existe pas déjà dans la liste des confirmées
+                                const exists = allReservations.confirmed.some(r => r.id === updatedReservation.id);
+                                if (!exists) {
+                                    // Ajouter à la liste des confirmées
+                                    allReservations.confirmed.unshift(updatedReservation);
+                                }
                                 
                                 // Mettre à jour l'interface
                                 renderReservations(allReservations.pending, pendingReservationsGrid, 'pending');
@@ -1784,8 +1689,12 @@
                                 // Supprimer de la liste des confirmées
                                 allReservations.confirmed = allReservations.confirmed.filter(r => r.id !== updatedReservation.id);
                                 
-                                // Ajouter à la liste des complétées
-                                allReservations.completed.unshift(updatedReservation);
+                                // S'assurer que la réservation n'existe pas déjà dans la liste des complétées
+                                const exists = allReservations.completed.some(r => r.id === updatedReservation.id);
+                                if (!exists) {
+                                    // Ajouter à la liste des complétées
+                                    allReservations.completed.unshift(updatedReservation);
+                                }
                                 
                                 // Mettre à jour l'interface
                                 renderReservations(allReservations.confirmed, confirmedReservationsGrid, 'confirmed');
@@ -1809,8 +1718,12 @@
                                 allReservations.pending = allReservations.pending.filter(r => r.id !== updatedReservation.id);
                                 allReservations.confirmed = allReservations.confirmed.filter(r => r.id !== updatedReservation.id);
                                 
-                                // Ajouter à la liste des annulées
-                                allReservations.canceled.unshift(updatedReservation);
+                                // S'assurer que la réservation n'existe pas déjà dans la liste des annulées
+                                const exists = allReservations.canceled.some(r => r.id === updatedReservation.id);
+                                if (!exists) {
+                                    // Ajouter à la liste des annulées
+                                    allReservations.canceled.unshift(updatedReservation);
+                                }
                                 
                                 // Mettre à jour l'interface
                                 renderReservations(allReservations.pending, pendingReservationsGrid, 'pending');
@@ -1953,6 +1866,12 @@
                 changePassword();
             });
             
+            // Bouton de sauvegarde des préférences de notification
+            saveNotificationSettings.addEventListener('click', function() {
+                // Simuler une sauvegarde
+                showAlert('Préférences de notification enregistrées', 'success');
+            });
+            
             // Bouton de déconnexion
             logoutBtn.addEventListener('click', logout);
         }
@@ -1962,15 +1881,15 @@
             const newUsername = updateUsername.value.trim();
             
             if (!newUsername) {
-                showErrorModal('Le nom d\'utilisateur ne peut pas être vide');
+                showAlert('Le nom d\'utilisateur ne peut pas être vide', 'warning');
                 return;
             }
             
             try {
                 console.log(`Mise à jour du nom d'utilisateur: ${newUsername}`);
                 
-                // Afficher le modal d'action en attente
-                showActionStatusModal('waiting');
+                // Afficher le modal d'attente
+                document.getElementById('waitingActionModal').style.display = 'block';
                 
                 const response = await fetch(`${API_BASE_URL}/api/user/update-username`, {
                     method: 'POST',
@@ -1982,6 +1901,9 @@
                     }),
                     credentials: 'include'
                 });
+                
+                // Fermer le modal d'attente
+                document.getElementById('waitingActionModal').style.display = 'none';
                 
                 console.log('Statut de la réponse:', response.status);
                 
@@ -1996,21 +1918,16 @@
                     usernameElement.textContent = newUsername;
                     profileUsername.textContent = newUsername;
                     
-                    // Afficher le succès
-                    showActionStatusModal('success');
-                    
-                    // Masquer le modal après quelques secondes
-                    setTimeout(() => {
-                        hideActionStatusModal();
-                    }, 2000);
+                    showAlert('Profil mis à jour avec succès', 'success');
                 } else {
-                    hideActionStatusModal();
-                    showErrorModal(data.message || 'Erreur lors de la mise à jour du profil');
+                    showAlert(data.message || 'Erreur lors de la mise à jour du profil', 'danger');
                 }
             } catch (error) {
+                // Fermer le modal d'attente en cas d'erreur
+                document.getElementById('waitingActionModal').style.display = 'none';
+                
                 console.error('Erreur lors de la mise à jour du profil:', error);
-                hideActionStatusModal();
-                showErrorModal('Erreur de connexion au serveur');
+                showAlert('Erreur de connexion au serveur', 'danger');
             }
         }
         
@@ -2022,15 +1939,15 @@
             
             // Vérifier que les mots de passe correspondent
             if (newPassword !== confirmPassword) {
-                showErrorModal('Les mots de passe ne correspondent pas');
+                showAlert('Les mots de passe ne correspondent pas', 'warning');
                 return;
             }
             
             try {
                 console.log('Tentative de changement de mot de passe');
                 
-                // Afficher le modal d'action en attente
-                showActionStatusModal('waiting');
+                // Afficher le modal d'attente
+                document.getElementById('waitingActionModal').style.display = 'block';
                 
                 const response = await fetch(`${API_BASE_URL}/api/user/change-password`, {
                     method: 'POST',
@@ -2044,6 +1961,9 @@
                     credentials: 'include'
                 });
                 
+                // Fermer le modal d'attente
+                document.getElementById('waitingActionModal').style.display = 'none';
+                
                 console.log('Statut de la réponse:', response.status);
                 
                 const data = await response.json();
@@ -2053,21 +1973,16 @@
                     // Réinitialiser le formulaire
                     changePasswordForm.reset();
                     
-                    // Afficher le succès
-                    showActionStatusModal('success');
-                    
-                    // Masquer le modal après quelques secondes
-                    setTimeout(() => {
-                        hideActionStatusModal();
-                    }, 2000);
+                    showAlert('Mot de passe changé avec succès', 'success');
                 } else {
-                    hideActionStatusModal();
-                    showErrorModal(data.message || 'Erreur lors du changement de mot de passe');
+                    showAlert(data.message || 'Erreur lors du changement de mot de passe', 'danger');
                 }
             } catch (error) {
+                // Fermer le modal d'attente en cas d'erreur
+                document.getElementById('waitingActionModal').style.display = 'none';
+                
                 console.error('Erreur lors du changement de mot de passe:', error);
-                hideActionStatusModal();
-                showErrorModal('Erreur de connexion au serveur');
+                showAlert('Erreur de connexion au serveur', 'danger');
             }
         }
         
@@ -2112,32 +2027,36 @@
             }, 5000);
         }
         
-        // Afficher le modal d'erreur
-        function showErrorModal(message) {
-            document.getElementById('errorModalMessage').textContent = message;
-            document.getElementById('errorModal').style.display = 'block';
-        }
-        
-        // Fermer le modal d'erreur
-        function closeErrorModal() {
-            document.getElementById('errorModal').style.display = 'none';
-        }
-        
-        // Afficher le modal de statut d'action
-        function showActionStatusModal(status) {
-            if (status === 'waiting') {
-                document.getElementById('actionWaitingStatus').classList.remove('hidden');
-                document.getElementById('actionSuccessStatus').classList.add('hidden');
-            } else if (status === 'success') {
-                document.getElementById('actionWaitingStatus').classList.add('hidden');
-                document.getElementById('actionSuccessStatus').classList.remove('hidden');
+        // Afficher une alerte dans un modal
+        function showModalAlert(container, message, type) {
+            container.className = `alert alert-${type}`;
+            
+            // Ajouter une icône en fonction du type
+            let icon = '';
+            switch (type) {
+                case 'success':
+                    icon = '<i class="fas fa-check-circle"></i>';
+                    break;
+                case 'warning':
+                    icon = '<i class="fas fa-exclamation-triangle"></i>';
+                    break;
+                case 'danger':
+                    icon = '<i class="fas fa-exclamation-circle"></i>';
+                    break;
+                case 'info':
+                    icon = '<i class="fas fa-info-circle"></i>';
+                    break;
             }
-            document.getElementById('actionStatusModal').style.display = 'block';
-        }
-        
-        // Cacher le modal de statut d'action
-        function hideActionStatusModal() {
-            document.getElementById('actionStatusModal').style.display = 'none';
+            
+            container.innerHTML = `${icon} ${message}`;
+            container.classList.remove('hidden');
+            
+            // Faire disparaître l'alerte après 5 secondes pour les alertes non-erreur
+            if (type !== 'danger') {
+                setTimeout(() => {
+                    container.classList.add('hidden');
+                }, 5000);
+            }
         }
         
         // Déconnexion
@@ -2264,7 +2183,6 @@
         
         // Stats counters
         const pendingCount = document.getElementById('pendingCount');
-        const confirmedCount = document.getElementById('confirmedCount');
         const todayCount = document.getElementById('todayCount');
         const completedCount = document.getElementById('completedCount');
         
@@ -2276,7 +2194,6 @@
         
         // Profile stats
         const stat24hCount = document.getElementById('stat24hCount');
-        const statConfirmedCount = document.getElementById('statConfirmedCount');
         const statCompletedCount = document.getElementById('statCompletedCount');
         const statCanceledCount = document.getElementById('statCanceledCount');
         
@@ -2306,6 +2223,7 @@
         const confirmationModal = document.getElementById('confirmationModal');
         const completeModal = document.getElementById('completeModal');
         const cancelModal = document.getElementById('cancelModal');
+        const waitingActionModal = document.getElementById('waitingActionModal');
         
         // Modal forms
         const confirmationForm = document.getElementById('confirmationForm');
@@ -2334,6 +2252,7 @@
         
         // Settings elements
         const changePasswordForm = document.getElementById('changePasswordForm');
+        const saveNotificationSettings = document.getElementById('saveNotificationSettings');
         
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
@@ -2406,17 +2325,20 @@
                 if (response.ok) {
                     allReservations.pending = await response.json();
                     
+                    // Enlever les doublons dans les réservations en attente
+                    allReservations.pending = removeDuplicates(allReservations.pending, 'id');
+                    
                     if (allReservations.pending.length === 0) {
                         noPendingReservations.classList.remove('hidden');
                     } else {
                         renderReservations(allReservations.pending, pendingReservationsGrid, 'pending');
                     }
                 } else {
-                    showErrorModal('Erreur lors du chargement des réservations en attente');
+                    showAlert('Erreur lors du chargement des réservations en attente', 'danger');
                 }
             } catch (error) {
                 console.error('Erreur lors du chargement des réservations en attente:', error);
-                showErrorModal('Erreur de connexion au serveur');
+                showAlert('Erreur de connexion au serveur', 'danger');
             } finally {
                 pendingLoader.classList.add('hidden');
             }
@@ -2437,17 +2359,20 @@
                 if (response.ok) {
                     allReservations.confirmed = await response.json();
                     
+                    // Enlever les doublons dans les réservations confirmées
+                    allReservations.confirmed = removeDuplicates(allReservations.confirmed, 'id');
+                    
                     if (allReservations.confirmed.length === 0) {
                         noConfirmedReservations.classList.remove('hidden');
                     } else {
                         renderReservations(allReservations.confirmed, confirmedReservationsGrid, 'confirmed');
                     }
                 } else {
-                    showErrorModal('Erreur lors du chargement des réservations confirmées');
+                    showAlert('Erreur lors du chargement des réservations confirmées', 'danger');
                 }
             } catch (error) {
                 console.error('Erreur lors du chargement des réservations confirmées:', error);
-                showErrorModal('Erreur de connexion au serveur');
+                showAlert('Erreur de connexion au serveur', 'danger');
             } finally {
                 confirmedLoader.classList.add('hidden');
             }
@@ -2468,17 +2393,20 @@
                 if (response.ok) {
                     allReservations.completed = await response.json();
                     
+                    // Enlever les doublons dans les réservations complétées
+                    allReservations.completed = removeDuplicates(allReservations.completed, 'id');
+                    
                     if (allReservations.completed.length === 0) {
                         noCompletedReservations.classList.remove('hidden');
                     } else {
                         renderReservations(allReservations.completed, completedReservationsGrid, 'completed');
                     }
                 } else {
-                    showErrorModal('Erreur lors du chargement des réservations complétées');
+                    showAlert('Erreur lors du chargement des réservations complétées', 'danger');
                 }
             } catch (error) {
                 console.error('Erreur lors du chargement des réservations complétées:', error);
-                showErrorModal('Erreur de connexion au serveur');
+                showAlert('Erreur de connexion au serveur', 'danger');
             } finally {
                 completedLoader.classList.add('hidden');
             }
@@ -2499,20 +2427,36 @@
                 if (response.ok) {
                     allReservations.canceled = await response.json();
                     
+                    // Enlever les doublons dans les réservations annulées
+                    allReservations.canceled = removeDuplicates(allReservations.canceled, 'id');
+                    
                     if (allReservations.canceled.length === 0) {
                         noCanceledReservations.classList.remove('hidden');
                     } else {
                         renderReservations(allReservations.canceled, canceledReservationsGrid, 'canceled');
                     }
                 } else {
-                    showErrorModal('Erreur lors du chargement des réservations annulées');
+                    showAlert('Erreur lors du chargement des réservations annulées', 'danger');
                 }
             } catch (error) {
                 console.error('Erreur lors du chargement des réservations annulées:', error);
-                showErrorModal('Erreur de connexion au serveur');
+                showAlert('Erreur de connexion au serveur', 'danger');
             } finally {
                 canceledLoader.classList.add('hidden');
             }
+        }
+        
+        // Fonction utilitaire pour supprimer les doublons d'un tableau par propriété
+        function removeDuplicates(array, prop) {
+            const seen = new Set();
+            return array.filter(item => {
+                const value = item[prop];
+                if (seen.has(value)) {
+                    return false;
+                }
+                seen.add(value);
+                return true;
+            });
         }
         
         // Charger les statistiques de l'agent
@@ -2536,7 +2480,6 @@
                     
                     // Mettre à jour l'interface
                     stat24hCount.textContent = agentStats.last24Hours;
-                    statConfirmedCount.textContent = agentStats.confirmed;
                     statCompletedCount.textContent = agentStats.completed;
                     statCanceledCount.textContent = agentStats.canceled;
                 } else {
@@ -2703,8 +2646,14 @@
                             </button>
                         </div>
                     `;
+                } else if (type === 'completed' || type === 'canceled') {
+                    // Pas d'actions pour les réservations complétées ou annulées
+                    cardHTML += `
+                        <div class="reservation-actions">
+                            <span class="text-muted">Aucune action disponible</span>
+                        </div>
+                    `;
                 }
-                // Pour les complétées et annulées, ne pas ajouter de section d'actions du tout
                 
                 card.innerHTML = cardHTML;
                 gridElement.appendChild(card);
@@ -2740,7 +2689,6 @@
         function updateCounters() {
             // Compteurs de statistiques
             pendingCount.textContent = allReservations.pending.length;
-            confirmedCount.textContent = allReservations.confirmed.length;
             completedCount.textContent = allReservations.completed.length;
             
             // Compteurs d'onglets
@@ -2841,12 +2789,12 @@
             
             // Vérifier les dates
             if (!startDateTime || !endDateTime) {
-                showErrorModal('Veuillez sélectionner les dates de début et de fin');
+                showModalAlert(confirmationAlert, 'Veuillez sélectionner les dates de début et de fin', 'warning');
                 return;
             }
             
             if (new Date(startDateTime) >= new Date(endDateTime)) {
-                showErrorModal('La date de début doit être antérieure à la date de fin');
+                showModalAlert(confirmationAlert, 'La date de début doit être antérieure à la date de fin', 'warning');
                 return;
             }
             
@@ -2855,7 +2803,7 @@
                 confirmationModal.style.display = 'none';
                 
                 // Afficher le modal d'attente
-                showActionStatusModal('waiting');
+                waitingActionModal.style.display = 'block';
                 
                 // Ajouter plus de logs
                 console.log(`Confirmation de la réservation ${reservationId} avec: début=${startDateTime}, fin=${endDateTime}`);
@@ -2873,6 +2821,9 @@
                     credentials: 'include'
                 });
                 
+                // Fermer le modal d'attente
+                waitingActionModal.style.display = 'none';
+                
                 // Log de la réponse
                 console.log('Statut de la réponse:', response.status);
                 
@@ -2880,30 +2831,26 @@
                 console.log('Données de réponse:', data);
                 
                 if (response.ok) {
-                    // Afficher le succès
-                    showActionStatusModal('success');
+                    // Afficher une notification
+                    showAlert('Réservation confirmée avec succès', 'success');
                     
-                    // Masquer le modal après 2 secondes
-                    setTimeout(() => {
-                        hideActionStatusModal();
-                        
-                        // Mettre à jour les listes de réservations
-                        loadAllReservations();
-                        
-                        // Mettre à jour les statistiques
-                        loadAgentStats();
-                        
-                        // Mettre à jour le calendrier de disponibilité
-                        availabilityCalendar.refreshAvailability();
-                    }, 2000);
+                    // Mettre à jour les listes de réservations
+                    await loadAllReservations();
+                    
+                    // Mettre à jour les statistiques
+                    loadAgentStats();
+                    
+                    // Mettre à jour le calendrier de disponibilité
+                    availabilityCalendar.refreshAvailability();
                 } else {
-                    hideActionStatusModal();
-                    showErrorModal(data.message || 'Erreur lors de la confirmation de la réservation');
+                    showAlert(data.message || 'Erreur lors de la confirmation de la réservation', 'danger');
                 }
             } catch (error) {
+                // Fermer le modal d'attente
+                waitingActionModal.style.display = 'none';
+                
                 console.error('Erreur lors de la confirmation de la réservation:', error);
-                hideActionStatusModal();
-                showErrorModal('Erreur de connexion au serveur');
+                showAlert('Erreur de connexion au serveur', 'danger');
             }
         }
         
@@ -2917,7 +2864,7 @@
                 completeModal.style.display = 'none';
                 
                 // Afficher le modal d'attente
-                showActionStatusModal('waiting');
+                waitingActionModal.style.display = 'block';
                 
                 const response = await fetch(`${API_BASE_URL}/api/agent/reservation/complete/${reservationId}`, {
                     method: 'POST',
@@ -2930,33 +2877,32 @@
                     credentials: 'include'
                 });
                 
+                // Fermer le modal d'attente
+                waitingActionModal.style.display = 'none';
+                
                 const data = await response.json();
                 
                 if (response.ok) {
-                    // Afficher le succès
-                    showActionStatusModal('success');
+                    // Afficher une notification
+                    showAlert('Réservation marquée comme complétée avec succès', 'success');
                     
-                    // Masquer le modal après 2 secondes
-                    setTimeout(() => {
-                        hideActionStatusModal();
-                        
-                        // Mettre à jour les listes de réservations
-                        loadAllReservations();
-                        
-                        // Mettre à jour les statistiques
-                        loadAgentStats();
-                        
-                        // Mettre à jour le calendrier de disponibilité
-                        availabilityCalendar.refreshAvailability();
-                    }, 2000);
+                    // Mettre à jour les listes de réservations
+                    await loadAllReservations();
+                    
+                    // Mettre à jour les statistiques
+                    loadAgentStats();
+                    
+                    // Mettre à jour le calendrier de disponibilité
+                    availabilityCalendar.refreshAvailability();
                 } else {
-                    hideActionStatusModal();
-                    showErrorModal(data.message || 'Erreur lors de la complétion de la réservation');
+                    showAlert(data.message || 'Erreur lors de la complétion de la réservation', 'danger');
                 }
             } catch (error) {
+                // Fermer le modal d'attente
+                waitingActionModal.style.display = 'none';
+                
                 console.error('Erreur lors de la complétion de la réservation:', error);
-                hideActionStatusModal();
-                showErrorModal('Erreur de connexion au serveur');
+                showAlert('Erreur de connexion au serveur', 'danger');
             }
         }
         
@@ -2970,7 +2916,7 @@
                 cancelModal.style.display = 'none';
                 
                 // Afficher le modal d'attente
-                showActionStatusModal('waiting');
+                waitingActionModal.style.display = 'block';
                 
                 const response = await fetch(`${API_BASE_URL}/api/agent/reservation/cancel/${reservationId}`, {
                     method: 'POST',
@@ -2983,33 +2929,32 @@
                     credentials: 'include'
                 });
                 
+                // Fermer le modal d'attente
+                waitingActionModal.style.display = 'none';
+                
                 const data = await response.json();
                 
                 if (response.ok) {
-                    // Afficher le succès
-                    showActionStatusModal('success');
+                    // Afficher une notification
+                    showAlert('Réservation annulée avec succès', 'success');
                     
-                    // Masquer le modal après 2 secondes
-                    setTimeout(() => {
-                        hideActionStatusModal();
-                        
-                        // Mettre à jour les listes de réservations
-                        loadAllReservations();
-                        
-                        // Mettre à jour les statistiques
-                        loadAgentStats();
-                        
-                        // Mettre à jour le calendrier de disponibilité
-                        availabilityCalendar.refreshAvailability();
-                    }, 2000);
+                    // Mettre à jour les listes de réservations
+                    await loadAllReservations();
+                    
+                    // Mettre à jour les statistiques
+                    loadAgentStats();
+                    
+                    // Mettre à jour le calendrier de disponibilité
+                    availabilityCalendar.refreshAvailability();
                 } else {
-                    hideActionStatusModal();
-                    showErrorModal(data.message || 'Erreur lors de l\'annulation de la réservation');
+                    showAlert(data.message || 'Erreur lors de l\'annulation de la réservation', 'danger');
                 }
             } catch (error) {
+                // Fermer le modal d'attente
+                waitingActionModal.style.display = 'none';
+                
                 console.error('Erreur lors de l\'annulation de la réservation:', error);
-                hideActionStatusModal();
-                showErrorModal('Erreur de connexion au serveur');
+                showAlert('Erreur de connexion au serveur', 'danger');
             }
         }
         

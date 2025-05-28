@@ -2197,46 +2197,10 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    // Immediately check session after successful login
-                    const sessionResponse = await fetch(`${API_BASE_URL}/auth/check-session`, {
-                        method: 'GET',
-                        credentials: 'include'
+                    showSuccessModal(data.message, async function() {
+                        // Check session to get user details
+                        await checkSession();
                     });
-                    
-                    const sessionData = await sessionResponse.json();
-                    
-                    if (sessionResponse.ok && sessionData.success) {
-                        let email, role, username;
-                        
-                        if (sessionData.message.includes('|')) {
-                            const parts = sessionData.message.split('|');
-                            email = parts[0];
-                            role = parts[1];
-                            username = parts.length > 2 ? parts[2] : 'Utilisateur';
-                            userRole = role;
-                        } else {
-                            email = sessionData.message;
-                            role = "Non spécifié";
-                            username = "Utilisateur";
-                            userRole = "ROLE_USER";
-                        }
-                        
-                        // Update UI with user info
-                        userEmailSpan.textContent = email;
-                        userRoleSpan.textContent = role;
-                        document.getElementById('userName').textContent = username;
-                        
-                        // Redirect based on role
-                        if (role.includes('ROLE_ADMIN')) {
-                            window.location.href = 'admin-dashboard.html';
-                        } else if (role.includes('ROLE_AGENT')) {
-                            window.location.href = 'agent-dashboard.html';
-                        } else {
-                            window.location.href = 'user-dashboard.html';
-                        }
-                    } else {
-                        showErrorModal('Erreur lors de la vérification de la session');
-                    }
                 } else {
                     showErrorModal(data.message);
                 }

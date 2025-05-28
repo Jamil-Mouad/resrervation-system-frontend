@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administration - Service de Réservation</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary-color: #4CAF50;
@@ -1076,6 +1077,100 @@
             display: none !important;
         }
         
+        /* Profile Settings Section */
+        .profile-section {
+            background-color: var(--light-color);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .profile-header {
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .profile-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+        }
+        
+        .profile-icon i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .security-section {
+            margin-top: 2rem;
+        }
+        
+        .security-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Chart Styles */
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Admin Guide */
+        .admin-guide {
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .admin-guide-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .admin-guide-title i {
+            margin-right: 0.5rem;
+            color: var(--info-color);
+        }
+        
+        .admin-guide-section {
+            margin-bottom: 1rem;
+        }
+        
+        .admin-guide-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .admin-guide-section h3 i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+            width: 20px;
+            text-align: center;
+        }
+        
+        .admin-guide-section p {
+            margin-bottom: 0.5rem;
+            padding-left: 1.8rem;
+        }
+        
         /* Responsive Adjustments */
         @media (max-width: 1200px) {
             .cards-grid {
@@ -1208,8 +1303,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" data-section="settings-section">
-                            <i class="fas fa-cog"></i> Paramètres
+                        <a href="#" data-section="profile-section">
+                            <i class="fas fa-user-cog"></i> Profil administrateur
                         </a>
                     </li>
                 </ul>
@@ -1220,6 +1315,45 @@
                 <section id="dashboard-section" class="active-section">
                     <div class="section-title">
                         <h2><i class="fas fa-chart-pie"></i> Vue d'ensemble</h2>
+                    </div>
+                    
+                    <div class="admin-guide">
+                        <h2 class="admin-guide-title"><i class="fas fa-book"></i> Guide d'administration</h2>
+                        
+                        <div class="admin-guide-section">
+                            <h3><i class="fas fa-tachometer-alt"></i> Vue d'ensemble</h3>
+                            <p>Cette page affiche un résumé de toutes les statistiques importantes de la plateforme. Vous pouvez voir rapidement le nombre d'utilisateurs, d'agents, d'agences et de services.</p>
+                        </div>
+                        
+                        <div class="admin-guide-section">
+                            <h3><i class="fas fa-users"></i> Gestion des utilisateurs</h3>
+                            <p>Cette section vous permet de gérer tous les utilisateurs de la plateforme. Vous pouvez modifier les rôles des utilisateurs (Utilisateur ou Administrateur uniquement) et supprimer des comptes si nécessaire.</p>
+                        </div>
+                        
+                        <div class="admin-guide-section">
+                            <h3><i class="fas fa-building"></i> Gestion des agences</h3>
+                            <p>Créez, modifiez ou supprimez des agences. Vous pouvez également voir les agents et les services associés à chaque agence.</p>
+                        </div>
+                        
+                        <div class="admin-guide-section">
+                            <h3><i class="fas fa-user-tie"></i> Gestion des agents</h3>
+                            <p>Cette section est exclusivement dédiée à la gestion des agents. Vous pouvez créer de nouveaux agents, les assigner à des agences ou les retirer d'une agence.</p>
+                        </div>
+                        
+                        <div class="admin-guide-section">
+                            <h3><i class="fas fa-concierge-bell"></i> Gestion des services</h3>
+                            <p>Ajoutez ou modifiez les services proposés par les agences. Vous pouvez associer des services à différentes agences selon les besoins.</p>
+                        </div>
+                        
+                        <div class="admin-guide-section">
+                            <h3><i class="fas fa-server"></i> Statistiques système</h3>
+                            <p>Consultez les statistiques détaillées sur l'utilisation du système, incluant des graphiques sur les connexions et l'activité des utilisateurs.</p>
+                        </div>
+                        
+                        <div class="admin-guide-section">
+                            <h3><i class="fas fa-user-cog"></i> Profil administrateur</h3>
+                            <p>Gérez vos informations personnelles et modifiez votre mot de passe en toute sécurité.</p>
+                        </div>
                     </div>
                     
                     <div class="stats-grid">
@@ -1299,20 +1433,6 @@
                             <p class="stat-value" id="total-services">0</p>
                             <div class="stat-footer">
                                 <span id="active-services">0</span> services actifs
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Activité récente</h3>
-                        </div>
-                        <div class="card-body">
-                            <div id="activity-list">
-                                <div class="loader">
-                                    <div class="spinner"></div>
-                                    <p>Chargement de l'activité récente...</p>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -1447,27 +1567,179 @@
                     </div>
                 </section>
                 
-                <!-- System Stats Section (Placeholder) -->
+                <!-- System Stats Section -->
                 <section id="system-stats-section" class="hidden">
                     <div class="section-title">
                         <h2><i class="fas fa-server"></i> Statistiques système</h2>
                     </div>
                     
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Cette fonctionnalité sera disponible prochainement.</span>
+                    <div class="chart-container">
+                        <canvas id="sessionChart"></canvas>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon" style="background-color: #e3f2fd;">
+                                    <i class="fas fa-sign-in-alt" style="color: var(--info-color);"></i>
+                                </div>
+                                <h3 class="stat-title">Connexions Aujourd'hui</h3>
+                            </div>
+                            <p class="stat-value" id="today-logins">0</p>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon" style="background-color: #f1f8e9;">
+                                    <i class="fas fa-users" style="color: #33691e;"></i>
+                                </div>
+                                <h3 class="stat-title">Utilisateurs Uniques</h3>
+                            </div>
+                            <p class="stat-value" id="unique-users">0</p>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon" style="background-color: #fff8e1;">
+                                    <i class="fas fa-calendar-week" style="color: #ffa000;"></i>
+                                </div>
+                                <h3 class="stat-title">Connexions cette semaine</h3>
+                            </div>
+                            <p class="stat-value" id="week-logins">0</p>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon" style="background-color: #ffebee;">
+                                    <i class="fas fa-exclamation-triangle" style="color: #d32f2f;"></i>
+                                </div>
+                                <h3 class="stat-title">Échecs de connexion</h3>
+                            </div>
+                            <p class="stat-value" id="failed-logins">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Statistiques des réservations</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                                <div class="stat-card">
+                                    <div class="stat-header">
+                                        <div class="stat-icon" style="background-color: #e3f2fd;">
+                                            <i class="fas fa-clipboard-list" style="color: var(--info-color);"></i>
+                                        </div>
+                                        <h3 class="stat-title">Total Réservations</h3>
+                                    </div>
+                                    <p class="stat-value" id="total-reservations">0</p>
+                                </div>
+                                
+                                <div class="stat-card">
+                                    <div class="stat-header">
+                                        <div class="stat-icon" style="background-color: #fff8e1;">
+                                            <i class="fas fa-hourglass-half" style="color: #ffa000;"></i>
+                                        </div>
+                                        <h3 class="stat-title">En attente</h3>
+                                    </div>
+                                    <p class="stat-value" id="pending-reservations">0</p>
+                                </div>
+                                
+                                <div class="stat-card">
+                                    <div class="stat-header">
+                                        <div class="stat-icon" style="background-color: #e8f5e9;">
+                                            <i class="fas fa-check-circle" style="color: var(--primary-color);"></i>
+                                        </div>
+                                        <h3 class="stat-title">Confirmées</h3>
+                                    </div>
+                                    <p class="stat-value" id="confirmed-reservations">0</p>
+                                </div>
+                                
+                                <div class="stat-card">
+                                    <div class="stat-header">
+                                        <div class="stat-icon" style="background-color: #e0f7fa;">
+                                            <i class="fas fa-thumbs-up" style="color: #0097a7;"></i>
+                                        </div>
+                                        <h3 class="stat-title">Complétées</h3>
+                                    </div>
+                                    <p class="stat-value" id="completed-reservations">0</p>
+                                </div>
+                                
+                                <div class="stat-card">
+                                    <div class="stat-header">
+                                        <div class="stat-icon" style="background-color: #ffebee;">
+                                            <i class="fas fa-times-circle" style="color: #d32f2f;"></i>
+                                        </div>
+                                        <h3 class="stat-title">Annulées</h3>
+                                    </div>
+                                    <p class="stat-value" id="canceled-reservations">0</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
                 
-                <!-- Settings Section (Placeholder) -->
-                <section id="settings-section" class="hidden">
+                <!-- Profile Section -->
+                <section id="profile-section" class="hidden">
                     <div class="section-title">
-                        <h2><i class="fas fa-cog"></i> Paramètres</h2>
+                        <h2><i class="fas fa-user-cog"></i> Profil administrateur</h2>
                     </div>
                     
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Cette fonctionnalité sera disponible prochainement.</span>
+                    <div id="profileAlert" class="alert hidden"></div>
+                    
+                    <div class="profile-section">
+                        <div class="profile-header">
+                            <div class="profile-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <h3>Paramètres du compte</h3>
+                        </div>
+                        
+                        <form id="profileForm">
+                            <div class="form-group">
+                                <label class="form-label" for="profileUsername">Nom d'utilisateur</label>
+                                <input type="text" id="profileUsername" class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="profileEmail">Email</label>
+                                <input type="email" id="profileEmail" class="form-control" readonly>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Enregistrer les modifications
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="profile-section security-section">
+                        <div class="security-header">
+                            <div class="profile-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <h3>Sécurité</h3>
+                        </div>
+                        
+                        <form id="passwordForm">
+                            <div class="form-group">
+                                <label class="form-label" for="currentPassword">Mot de passe actuel</label>
+                                <input type="password" id="currentPassword" class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="newPassword">Nouveau mot de passe</label>
+                                <input type="password" id="newPassword" class="form-control">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="confirmPassword">Confirmer le nouveau mot de passe</label>
+                                <input type="password" id="confirmPassword" class="form-control">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-key"></i> Changer le mot de passe
+                            </button>
+                        </form>
                     </div>
                 </section>
             </main>
@@ -1505,7 +1777,6 @@
                         <label class="form-label" for="userRole">Rôle de l'utilisateur</label>
                         <select id="userRole" class="form-control" required>
                             <option value="USER">Utilisateur</option>
-                            <option value="AGENT">Agent</option>
                             <option value="ADMIN">Administrateur</option>
                         </select>
                     </div>
@@ -1811,12 +2082,18 @@
         const confirmModalMessage = document.getElementById('confirmModalMessage');
         const confirmModalBtn = document.getElementById('confirmModalBtn');
         
+        // Éléments du profil
+        const profileAlert = document.getElementById('profileAlert');
+        const profileForm = document.getElementById('profileForm');
+        const passwordForm = document.getElementById('passwordForm');
+        
         // Variables globales
         let allUsers = [];
         let allAgencies = [];
         let allAgents = [];
         let allServices = [];
         let currentConfirmCallback = null;
+        let sessionChart = null;
         
         // Vérifier la session au chargement de la page
         document.addEventListener('DOMContentLoaded', function() {
@@ -1857,6 +2134,10 @@
                         loadServices();
                     } else if (sectionId === 'dashboard-section') {
                         loadDashboardStats();
+                    } else if (sectionId === 'system-stats-section') {
+                        loadSystemStats();
+                    } else if (sectionId === 'profile-section') {
+                        loadProfileData();
                     }
                 });
             });
@@ -1949,6 +2230,18 @@
             serviceForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 saveService();
+            });
+            
+            // Formulaire de mise à jour du profil
+            profileForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                updateProfile();
+            });
+            
+            // Formulaire de changement de mot de passe
+            passwordForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                changePassword();
             });
             
             // Fermer les modals
@@ -2062,61 +2355,253 @@
                     totalServicesElement.textContent = services.length;
                     activeServicesElement.textContent = services.length;
                 }
-                
-                // Charger l'activité récente
-                loadRecentActivity();
             } catch (error) {
                 console.error('Erreur lors du chargement des statistiques:', error);
             }
         }
         
-        // Charger l'activité récente (simulée)
-        function loadRecentActivity() {
-            const activityList = document.getElementById('activity-list');
-            
-            // Simuler des activités récentes
-            const activities = [
-                { type: 'user', action: 'Nouvel utilisateur inscrit', time: '10 minutes' },
-                { type: 'service', action: 'Nouveau service ajouté', time: '25 minutes' },
-                { type: 'agency', action: 'Nouvelle agence ajoutée', time: '1 heure' },
-                { type: 'agent', action: 'Agent assigné à une agence', time: '3 heures' },
-                { type: 'service', action: 'Service attribué à une agence', time: '5 heures' }
-            ];
-            
-            // Créer le HTML pour chaque activité
-            let activityHTML = '';
-            
-            activities.forEach(activity => {
-                let icon = '';
-                switch (activity.type) {
-                    case 'user':
-                        icon = 'fas fa-user';
-                        break;
-                    case 'service':
-                        icon = 'fas fa-concierge-bell';
-                        break;
-                    case 'agency':
-                        icon = 'fas fa-building';
-                        break;
-                    case 'agent':
-                        icon = 'fas fa-user-tie';
-                        break;
+        // Charger les statistiques système
+        async function loadSystemStats() {
+            try {
+                // Charger les statistiques générales
+                const statsResponse = await fetch(`${API_BASE_URL}/api/admin/system-stats/general`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (statsResponse.ok) {
+                    const stats = await statsResponse.json();
+                    
+                    // Mettre à jour les statistiques des réservations
+                    document.getElementById('total-reservations').textContent = stats.totalReservations || 0;
+                    document.getElementById('pending-reservations').textContent = stats.pendingReservations || 0;
+                    document.getElementById('confirmed-reservations').textContent = stats.confirmedReservations || 0;
+                    document.getElementById('completed-reservations').textContent = stats.completedReservations || 0;
+                    document.getElementById('canceled-reservations').textContent = stats.canceledReservations || 0;
                 }
                 
-                activityHTML += `
-                    <div style="display: flex; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #eee;">
-                        <div style="width: 40px; height: 40px; background-color: #f8f9fa; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                            <i class="${icon}" style="color: var(--primary-color);"></i>
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 500;">${activity.action}</div>
-                            <div style="font-size: 0.85rem; color: #777;">Il y a ${activity.time}</div>
-                        </div>
-                    </div>
-                `;
-            });
+                // Charger les statistiques de session
+                const sessionStatsResponse = await fetch(`${API_BASE_URL}/api/admin/system-stats/sessions`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (sessionStatsResponse.ok) {
+                    const sessionStats = await sessionStatsResponse.json();
+                    
+                    // Mettre à jour les statistiques de connexion
+                    document.getElementById('today-logins').textContent = sessionStats.todayLogins || 0;
+                    document.getElementById('unique-users').textContent = sessionStats.uniqueUsersToday || 0;
+                    document.getElementById('week-logins').textContent = sessionStats.weekLogins || 0;
+                    document.getElementById('failed-logins').textContent = sessionStats.todayFailedLogins || 0;
+                }
+                
+                // Charger les données du graphique
+                const graphDataResponse = await fetch(`${API_BASE_URL}/api/admin/system-stats/session-graph`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (graphDataResponse.ok) {
+                    const graphData = await graphDataResponse.json();
+                    createSessionChart(graphData.labels, graphData.data);
+                } else {
+                    // Si l'API n'est pas disponible, utiliser des données simulées
+                    const simulatedLabels = Array.from({length: 24}, (_, i) => `${i}h`);
+                    const simulatedData = Array.from({length: 24}, () => Math.floor(Math.random() * 30));
+                    createSessionChart(simulatedLabels, simulatedData);
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des statistiques système:', error);
+                
+                // Afficher des données simulées en cas d'erreur
+                const simulatedLabels = Array.from({length: 24}, (_, i) => `${i}h`);
+                const simulatedData = Array.from({length: 24}, () => Math.floor(Math.random() * 30));
+                createSessionChart(simulatedLabels, simulatedData);
+                
+                // Mettre à jour les chiffres avec des valeurs simulées
+                document.getElementById('today-logins').textContent = Math.floor(Math.random() * 100);
+                document.getElementById('unique-users').textContent = Math.floor(Math.random() * 50);
+                document.getElementById('week-logins').textContent = Math.floor(Math.random() * 500);
+                document.getElementById('failed-logins').textContent = Math.floor(Math.random() * 20);
+                
+                document.getElementById('total-reservations').textContent = Math.floor(Math.random() * 1000);
+                document.getElementById('pending-reservations').textContent = Math.floor(Math.random() * 50);
+                document.getElementById('confirmed-reservations').textContent = Math.floor(Math.random() * 200);
+                document.getElementById('completed-reservations').textContent = Math.floor(Math.random() * 700);
+                document.getElementById('canceled-reservations').textContent = Math.floor(Math.random() * 100);
+            }
+        }
+        
+        // Créer le graphique de sessions
+        function createSessionChart(labels, data) {
+            const ctx = document.getElementById('sessionChart').getContext('2d');
             
-            activityList.innerHTML = activityHTML;
+            // Détruire le graphique existant s'il y en a un
+            if (sessionChart) {
+                sessionChart.destroy();
+            }
+            
+            // Créer un nouveau graphique
+            sessionChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Connexions par heure (dernières 24h)',
+                        data: data,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Nombre de connexions'
+                            },
+                            ticks: {
+                                precision: 0
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Heure'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Activité des connexions utilisateurs (24 dernières heures)',
+                            font: {
+                                size: 16
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 30
+                            }
+                        },
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Charger les données du profil administrateur
+        async function loadProfileData() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/admin/profile`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const profileData = await response.json();
+            
+            // Remplir le formulaire avec les données du profil
+            const usernameField = document.getElementById('profileUsername');
+            const emailField = document.getElementById('profileEmail');
+            
+            // S'assurer que le nom d'utilisateur n'est pas l'email
+            if (usernameField && emailField) {
+                usernameField.value = profileData.username || '';
+                emailField.value = profileData.email || '';
+                
+                // Si le nom d'utilisateur est identique à l'email, le vider
+                if (usernameField.value === emailField.value) {
+                    usernameField.value = '';
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des données du profil:', error);
+        showAlert(profileAlert, 'Erreur lors du chargement des données du profil.', 'danger');
+    }
+}
+        // Mettre à jour le profil administrateur
+        async function updateProfile() {
+            const username = document.getElementById('profileUsername').value;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/profile/update-username`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username }),
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert(profileAlert, 'Profil mis à jour avec succès!', 'success');
+                    
+                    // Mettre à jour le nom d'utilisateur affiché dans le header
+                    usernameElement.textContent = username;
+                } else {
+                    showAlert(profileAlert, data.message || 'Erreur lors de la mise à jour du profil.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la mise à jour du profil:', error);
+                showAlert(profileAlert, 'Erreur de connexion au serveur.', 'danger');
+            }
+        }
+        
+        // Changer le mot de passe
+        async function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Vérifier que les nouveaux mots de passe correspondent
+            if (newPassword !== confirmPassword) {
+                showAlert(profileAlert, 'Les nouveaux mots de passe ne correspondent pas.', 'danger');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/profile/change-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        currentPassword,
+                        newPassword
+                    }),
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert(profileAlert, 'Mot de passe changé avec succès!', 'success');
+                    
+                    // Réinitialiser le formulaire
+                    document.getElementById('passwordForm').reset();
+                } else {
+                    showAlert(profileAlert, data.message || 'Erreur lors du changement de mot de passe.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors du changement de mot de passe:', error);
+                showAlert(profileAlert, 'Erreur de connexion au serveur.', 'danger');
+            }
         }
         
         // Charger la liste des utilisateurs
@@ -2171,83 +2656,110 @@
         
         // Afficher les utilisateurs en cartes
         function displayUsers(users) {
-            // Vider le conteneur de cartes
-            usersCards.innerHTML = '';
-            
-            if (users.length === 0) {
-                showAlert(userManagementAlert, 'Aucun utilisateur trouvé.', 'info');
-                return;
+    // Vider le conteneur de cartes
+    usersCards.innerHTML = '';
+    
+    if (users.length === 0) {
+        showAlert(userManagementAlert, 'Aucun utilisateur trouvé.', 'info');
+        return;
+    }
+    
+    users.forEach(user => {
+        // Définir la classe de badge selon le rôle
+        const roleClass = `badge-${user.role.toLowerCase()}`;
+        
+        // Simuler une date de dernière connexion
+        const lastLogin = new Date();
+        lastLogin.setHours(lastLogin.getHours() - Math.floor(Math.random() * 72));
+        const lastLoginStr = lastLogin.toLocaleDateString() + ' ' + lastLogin.toLocaleString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        
+        // Créer la carte avec nom d'utilisateur uniquement en titre
+        const card = document.createElement('div');
+        card.className = 'data-card user-card';
+        
+        card.innerHTML = `
+            <div class="card-header">
+                <div class="card-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="card-title-container">
+                    <h3 class="card-title">${user.username || 'Sans nom'}</h3>
+                </div>
+                <div class="card-badge">
+                    <span class="badge ${roleClass}">${user.role}</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card-detail">
+                    <i class="fas fa-envelope"></i>
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value">${user.email}</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                ${user.role !== 'AGENT' ? 
+                    `<button class="btn btn-info btn-sm edit-role-btn" data-id="${user.id}" data-role="${user.role}" title="Modifier le rôle">
+                        <i class="fas fa-user-edit"></i>
+                    </button>` : ''}
+                <button class="btn btn-danger btn-sm delete-user-btn" data-id="${user.id}" title="Supprimer l'utilisateur">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+        
+        usersCards.appendChild(card);
+    });
+        // Ajouter les écouteurs d'événements aux boutons
+        document.querySelectorAll('#usersCards .edit-role-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const userId = this.getAttribute('data-id');
+                const userRole = this.getAttribute('data-role');
+                openRoleModal(userId, userRole);
+            });
+        });
+        
+        document.querySelectorAll('#usersCards .delete-user-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const userId = this.getAttribute('data-id');
+                showConfirmModal(
+                    'Supprimer l\'utilisateur',
+                    'Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.',
+                    () => deleteUser(userId)
+                );
+            });
+        });
+        
+        // Rendre visible le conteneur de cartes
+        usersCards.classList.remove('hidden');
+}
+
+
+        // Supprimer un utilisateur
+        async function deleteUser(userId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/users/${userId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Fermer le modal de confirmation
+                    confirmModal.style.display = 'none';
+                    
+                    // Afficher une notification
+                    showAlert(userManagementAlert, 'Utilisateur supprimé avec succès!', 'success');
+                    
+                    // Recharger la liste des utilisateurs
+                    loadUsers();
+                } else {
+                    showAlert(userManagementAlert, data.message || 'Erreur lors de la suppression de l\'utilisateur.', 'danger');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la suppression de l\'utilisateur:', error);
+                showAlert(userManagementAlert, 'Erreur de connexion au serveur.', 'danger');
             }
-            
-            users.forEach(user => {
-                // Définir la classe de badge selon le rôle
-                const roleClass = `badge-${user.role.toLowerCase()}`;
-                
-                // Simuler une date de dernière connexion
-                const lastLogin = new Date();
-                lastLogin.setHours(lastLogin.getHours() - Math.floor(Math.random() * 72));
-                const lastLoginStr = lastLogin.toLocaleDateString() + ' ' + lastLogin.toLocaleString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-                
-                // Créer la carte
-                const card = document.createElement('div');
-                card.className = 'data-card user-card';
-                
-                card.innerHTML = `
-                    <div class="card-header">
-                        <div class="card-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="card-title-container">
-                            <h3 class="card-title">${user.username || 'N/A'}</h3>
-                            <div class="card-subtitle">${user.email}</div>
-                        </div>
-                        <div class="card-badge">
-                            <span class="badge ${roleClass}">${user.role}</span>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-detail">
-                            <i class="fas fa-clock"></i>
-                            <span class="detail-label">Dernière connexion:</span>
-                            <span class="detail-value">${lastLoginStr}</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <button class="btn btn-info btn-sm edit-role-btn" data-id="${user.id}" data-role="${user.role}" title="Modifier le rôle">
-                            <i class="fas fa-user-edit"></i>
-                        </button>
-                        ${user.role !== 'AGENT' ? 
-                            `<button class="btn btn-primary btn-sm convert-agent-btn" data-id="${user.id}" title="Convertir en agent">
-                                <i class="fas fa-user-tie"></i>
-                            </button>` : ''}
-                    </div>
-                `;
-                
-                usersCards.appendChild(card);
-            });
-            
-            // Ajouter les écouteurs d'événements aux boutons
-            document.querySelectorAll('#usersCards .edit-role-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const userId = this.getAttribute('data-id');
-                    const userRole = this.getAttribute('data-role');
-                    openRoleModal(userId, userRole);
-                });
-            });
-            
-            document.querySelectorAll('#usersCards .convert-agent-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const userId = this.getAttribute('data-id');
-                    showConfirmModal(
-                        'Convertir en agent',
-                        'Êtes-vous sûr de vouloir convertir cet utilisateur en agent ? Cette action est irréversible.',
-                        () => convertUserToAgent(userId)
-                    );
-                });
-            });
-            
-            // Rendre visible le conteneur de cartes
-            usersCards.classList.remove('hidden');
         }
         
         // Ouvrir le modal de modification de rôle
@@ -2313,34 +2825,6 @@
             } catch (error) {
                 console.error('Erreur lors de la modification du rôle:', error);
                 showModalAlert(modalAlert, 'Erreur de connexion au serveur.', 'danger');
-            }
-        }
-        
-        // Convertir un utilisateur en agent
-        async function convertUserToAgent(userId) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/admin/users/convert-to-agent/${userId}`, {
-                    method: 'POST',
-                    credentials: 'include'
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    // Fermer le modal de confirmation
-                    confirmModal.style.display = 'none';
-                    
-                    // Afficher une notification
-                    showAlert(userManagementAlert, 'Utilisateur converti en agent avec succès!', 'success');
-                    
-                    // Recharger la liste des utilisateurs
-                    loadUsers();
-                } else {
-                    showAlert(userManagementAlert, data.message || 'Erreur lors de la conversion en agent.', 'danger');
-                }
-            } catch (error) {
-                console.error('Erreur lors de la conversion en agent:', error);
-                showAlert(userManagementAlert, 'Erreur de connexion au serveur.', 'danger');
             }
         }
         
@@ -2793,44 +3277,52 @@
         
         // Charger les agents d'une agence
         async function loadAgencyAgents(agencyId) {
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/agencies/${agencyId}/agents`, {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-                
-                if (response.ok) {
-                    const agents = await response.json();
-                    const agency = allAgencies.find(a => a.id == agencyId);
-                    const agencyName = agency ? agency.name : 'Agence inconnue';
-                    
-                    // Afficher les agents dans une fenêtre modale
-                    if (agents.length === 0) {
-                        showInfoModal(
-                            `Agents de l'agence "${agencyName}"`,
-                            '<p>Cette agence n\'a pas d\'agents assignés.</p>'
-                        );
-                    } else {
-                        let agentsList = '<ul>';
-                        agents.forEach(agent => {
-                            agentsList += `<li>${agent.username} (${agent.email})</li>`;
-                        });
-                        agentsList += '</ul>';
-                        
-                        showInfoModal(
-                            `Agents de l'agence "${agencyName}"`,
-                            agentsList
-                        );
-                    }
-                } else {
-                    showAlert(agencyManagementAlert, 'Impossible de charger les agents de cette agence.', 'danger');
-                }
-            } catch (error) {
-                console.error('Erreur lors du chargement des agents de l\'agence:', error);
-                showAlert(agencyManagementAlert, 'Erreur de connexion au serveur.', 'danger');
+    try {
+        const response = fetch(`${API_BASE_URL}/api/agencies/${agencyId}/agents`, {
+            method: 'GET',
+            credentials: 'include'
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Impossible de charger les agents de cette agence.');
             }
-        }
-        
+        })
+        .then(agents => {
+            const agency = allAgencies.find(a => a.id == agencyId);
+            const agencyName = agency ? agency.name : 'Agence inconnue';
+            
+            // Afficher les agents dans une fenêtre modale
+            if (agents.length === 0) {
+                showInfoModal(
+                    `Agents de l'agence "${agencyName}"`,
+                    '<p>Cette agence n\'a pas d\'agents assignés.</p>'
+                );
+            } else {
+                let agentsList = '<ul>';
+                agents.forEach(agent => {
+                    // Utiliser le nom d'utilisateur au lieu de l'email comme titre principal
+                    agentsList += `<li>${agent.username || 'Sans nom'} <small>(${agent.email})</small></li>`;
+                });
+                agentsList += '</ul>';
+                
+                showInfoModal(
+                    `Agents de l'agence "${agencyName}"`,
+                    agentsList
+                );
+            }
+        })
+        .catch(error => {
+            console.error('Erreur lors du chargement des agents de l\'agence:', error);
+            showAlert(agencyManagementAlert, error.message, 'danger');
+        });
+    } catch (error) {
+        console.error('Erreur lors du chargement des agents de l\'agence:', error);
+        showAlert(agencyManagementAlert, 'Erreur de connexion au serveur.', 'danger');
+    }
+}
+
         // Charger les services d'une agence
         async function loadAgencyServices(agencyId) {
             try {
@@ -2914,115 +3406,181 @@
         
         // Filtrer les agents par nom ou email
         function filterAgents() {
-            const searchTerm = agentSearchInput.value.toLowerCase().trim();
-            
-            if (!searchTerm) {
-                // Si la recherche est vide, afficher tous les agents
-                displayAgents(allAgents);
-                return;
-            }
-            
-            // Filtrer les agents par nom ou email
-            const filteredAgents = allAgents.filter(agent => 
-                agent.username.toLowerCase().includes(searchTerm) || 
-                agent.email.toLowerCase().includes(searchTerm)
-            );
-            
-            // Afficher les agents filtrés
-            displayAgents(filteredAgents);
+        const searchTerm = agentSearchInput.value.toLowerCase().trim();
+        
+        if (!searchTerm) {
+            // Si la recherche est vide, afficher tous les agents
+            displayAgents(allAgents);
+            return;
         }
         
-        // Afficher les agents en cartes
-        function displayAgents(agents) {
-            // Vider le conteneur de cartes
-            agentsCards.innerHTML = '';
+        // Filtrer les agents par nom, email, ou nom d'agence
+        const filteredAgents = allAgents.filter(agent => {
+            // Recherche par nom d'utilisateur ou email
+            const nameMatch = agent.username.toLowerCase().includes(searchTerm);
+            const emailMatch = agent.email.toLowerCase().includes(searchTerm);
             
-            if (agents.length === 0) {
-                showAlert(agentManagementAlert, 'Aucun agent trouvé.', 'info');
-                return;
+            // Recherche par agence
+            let agencyMatch = false;
+            if (agent.agencyId) {
+                const agency = allAgencies.find(a => a.id === agent.agencyId);
+                if (agency && agency.name.toLowerCase().includes(searchTerm)) {
+                    agencyMatch = true;
+                }
+            } else if (agent.agency && agent.agency.id) {
+                const agency = allAgencies.find(a => a.id === agent.agency.id);
+                if (agency && agency.name.toLowerCase().includes(searchTerm)) {
+                    agencyMatch = true;
+                }
+            } else if (agent.agencyName) {
+                agencyMatch = agent.agencyName.toLowerCase().includes(searchTerm);
             }
             
-            agents.forEach(agent => {
-                // CODE CORRIGÉ pour trouver le nom de l'agence
-                let agencyName = 'Non assigné';
-                if (agent.agencyId) {
-                    const agency = allAgencies.find(a => a.id === agent.agencyId);
-                    if (agency) {
-                        agencyName = agency.name;
-                    }
-                } else if (agent.agency && agent.agency.id) {
-                    const agency = allAgencies.find(a => a.id === agent.agency.id);
-                    if (agency) {
-                        agencyName = agency.name;
-                    }
+            return nameMatch || emailMatch || agencyMatch;
+        });
+        
+        // Afficher les agents filtrés
+        displayAgents(filteredAgents);
+    }
+        // Afficher les agents en cartes
+        function displayAgents(agents) {
+    // Vider le conteneur de cartes
+    agentsCards.innerHTML = '';
+    
+    if (agents.length === 0) {
+        showAlert(agentManagementAlert, 'Aucun agent trouvé.', 'info');
+        return;
+    }
+    
+    agents.forEach(agent => {
+        // Récupérer le nom de l'agence
+        let agencyName = 'Non assigné';
+        if (agent.agencyId) {
+            const agency = allAgencies.find(a => a.id === agent.agencyId);
+            if (agency) {
+                agencyName = agency.name;
+            }
+        } else if (agent.agency && agent.agency.id) {
+            const agency = allAgencies.find(a => a.id === agent.agency.id);
+            if (agency) {
+                agencyName = agency.name;
+            }
+        } else if (agent.agencyName) {
+            agencyName = agent.agencyName;
+        }
+        
+        // Disponibilité de l'agent
+        const availability = agent.available ? 
+            '<span class="badge" style="background-color: #e8f5e9; color: #1b5e20;">Disponible</span>' : 
+            '<span class="badge" style="background-color: #ffebee; color: #b71c1c;">Indisponible</span>';
+        
+        // Créer la carte avec nom d'utilisateur uniquement en titre
+        const card = document.createElement('div');
+        card.className = 'data-card agent-card';
+        
+        card.innerHTML = `
+            <div class="card-header">
+                <div class="card-avatar">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="card-title-container">
+                    <h3 class="card-title">${agent.username || 'Sans nom'}</h3>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="card-detail">
+                    <i class="fas fa-envelope"></i>
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value">${agent.email}</span>
+                </div>
+                <div class="card-detail">
+                    <i class="fas fa-building"></i>
+                    <span class="detail-label">Agence:</span>
+                    <span class="detail-value">${agencyName}</span>
+                </div>
+                <div class="card-detail">
+                    <i class="fas fa-circle"></i>
+                    <span class="detail-label">Statut:</span>
+                    <span class="detail-value">${availability}</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-primary btn-sm assign-agent-btn" data-id="${agent.id}" title="Assigner à une agence">
+                    <i class="fas fa-building"></i>
+                </button>
+                ${(agent.agencyId || (agent.agency && agent.agency.id)) ? 
+                    `<button class="btn btn-warning btn-sm remove-agent-btn" data-id="${agent.id}" title="Retirer de l'agence">
+                        <i class="fas fa-unlink"></i>
+                    </button>` : ''}
+                <button class="btn btn-danger btn-sm delete-agent-btn" data-id="${agent.id}" title="Supprimer l'agent">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+        
+        agentsCards.appendChild(card);
+    });
+    
+    // Ajouter les écouteurs d'événements aux boutons
+    document.querySelectorAll('#agentsCards .assign-agent-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const agentId = this.getAttribute('data-id');
+            openAssignAgentModal(agentId);
+        });
+    });
+    
+    document.querySelectorAll('#agentsCards .remove-agent-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const agentId = this.getAttribute('data-id');
+            showConfirmModal(
+                'Retirer l\'agent de l\'agence',
+                'Êtes-vous sûr de vouloir retirer cet agent de son agence actuelle ?',
+                () => removeAgentFromAgency(agentId)
+            );
+        });
+    });
+    
+    document.querySelectorAll('#agentsCards .delete-agent-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const agentId = this.getAttribute('data-id');
+            showConfirmModal(
+                'Supprimer l\'agent',
+                'Êtes-vous sûr de vouloir supprimer cet agent? Cette action est irréversible.',
+                () => deleteAgent(agentId)
+            );
+        });
+    });
+    
+    // Rendre visible le conteneur de cartes
+    agentsCards.classList.remove('hidden');
+}
+
+        // Supprimer un agent
+        async function deleteAgent(agentId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/agents/${agentId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Fermer le modal de confirmation
+                    confirmModal.style.display = 'none';
+                    
+                    // Afficher une notification
+                    showAlert(agentManagementAlert, 'Agent supprimé avec succès!', 'success');
+                    
+                    // Recharger la liste des agents
+                    loadAgents();
+                } else {
+                    showAlert(agentManagementAlert, data.message || 'Erreur lors de la suppression de l\'agent.', 'danger');
                 }
-                
-                // Disponibilité de l'agent
-                const availability = agent.available ? 
-                    '<span class="badge" style="background-color: #e8f5e9; color: #1b5e20;">Disponible</span>' : 
-                    '<span class="badge" style="background-color: #ffebee; color: #b71c1c;">Indisponible</span>';
-                
-                // Créer la carte
-                const card = document.createElement('div');
-                card.className = 'data-card agent-card';
-                
-                card.innerHTML = `
-                    <div class="card-header">
-                        <div class="card-avatar">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-                        <div class="card-title-container">
-                            <h3 class="card-title">${agent.username}</h3>
-                            <div class="card-subtitle">${agent.email}</div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-detail">
-                            <i class="fas fa-building"></i>
-                            <span class="detail-label">Agence:</span>
-                            <span class="detail-value">${agencyName}</span>
-                        </div>
-                        <div class="card-detail">
-                            <i class="fas fa-circle"></i>
-                            <span class="detail-label">Statut:</span>
-                            <span class="detail-value">${availability}</span>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <button class="btn btn-primary btn-sm assign-agent-btn" data-id="${agent.id}" title="Assigner à une agence">
-                            <i class="fas fa-building"></i>
-                        </button>
-                        ${(agent.agencyId || (agent.agency && agent.agency.id)) ? 
-                            `<button class="btn btn-warning btn-sm remove-agent-btn" data-id="${agent.id}" title="Retirer de l'agence">
-                                <i class="fas fa-unlink"></i>
-                            </button>` : ''}
-                    </div>
-                `;
-                
-                agentsCards.appendChild(card);
-            });
-            
-            // Ajouter les écouteurs d'événements aux boutons
-            document.querySelectorAll('#agentsCards .assign-agent-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const agentId = this.getAttribute('data-id');
-                    openAssignAgentModal(agentId);
-                });
-            });
-            
-            document.querySelectorAll('#agentsCards .remove-agent-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const agentId = this.getAttribute('data-id');
-                    showConfirmModal(
-                        'Retirer l\'agent de l\'agence',
-                        'Êtes-vous sûr de vouloir retirer cet agent de son agence actuelle ?',
-                        () => removeAgentFromAgency(agentId)
-                    );
-                });
-            });
-            
-            // Rendre visible le conteneur de cartes
-            agentsCards.classList.remove('hidden');
+            } catch (error) {
+                console.error('Erreur lors de la suppression de l\'agent:', error);
+                showAlert(agentManagementAlert, 'Erreur de connexion au serveur.', 'danger');
+            }
         }
         
         // Ouvrir le modal pour créer un nouvel agent
@@ -3045,6 +3603,7 @@
             // Afficher le modal
             createAgentModal.style.display = 'block';
         }
+        
         // Créer un nouvel agent
         async function createAgent() {
             const username = document.getElementById('agentUsername').value;

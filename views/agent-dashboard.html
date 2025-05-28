@@ -21,6 +21,8 @@
             --text-color: #333;
             --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
+            --blocked-color: #E1BEE7; /* Couleur pour les créneaux bloqués */
+            --blocked-text: #8E24AA; /* Texte pour les créneaux bloqués */
         }     
         * {
             box-sizing: border-box;
@@ -713,6 +715,7 @@
             background-color: white;
             cursor: pointer;
             transition: all 0.2s ease;
+            position: relative; /* Pour les actions de gestion */
         }
 
         .time-slot:hover {
@@ -735,6 +738,17 @@
 
         .time-slot.booked:hover {
             background-color: #ffcdd2;
+        }
+
+        /* Nouveau style pour créneaux bloqués manuellement */
+        .time-slot.blocked {
+            background-color: var(--blocked-color);
+            cursor: default;
+            color: var(--blocked-text);
+        }
+
+        .time-slot.blocked:hover {
+            background-color: #D1C4E9;
         }
 
         .time-slot.selected {
@@ -772,6 +786,49 @@
             font-style: italic;
             padding: 1.5rem;
             text-align: center;
+        }
+
+        /* Actions de gestion des créneaux */
+        .slot-actions {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: none;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        .time-slot:hover .slot-actions {
+            display: flex;
+        }
+
+        .slot-action-btn {
+            background: none;
+            border: none;
+            padding: 0.25rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            transition: background-color 0.2s;
+        }
+
+        .slot-action-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .block-btn {
+            color: var(--blocked-text);
+        }
+
+        .unblock-btn {
+            color: var(--primary-color);
         }
         
         /* Loader and Alerts */
@@ -958,6 +1015,62 @@
         
         .mt-2 {
             margin-top: 1rem;
+        }
+
+        /* Styles pour la barre d'outils du calendrier */
+        .calendar-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            background-color: #f8f9fa;
+            padding: 0.75rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .calendar-tools {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .mode-toggle {
+            display: flex;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .mode-btn {
+            padding: 0.5rem 0.75rem;
+            border: none;
+            background-color: white;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .mode-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Tooltip pour les actions de blocage */
+        .tooltip {
+            position: absolute;
+            z-index: 1000;
+            background-color: rgba(33, 33, 33, 0.9);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+
+        .tooltip.visible {
+            opacity: 1;
         }
         
         /* Responsive */
@@ -1276,7 +1389,24 @@
                     <!-- Message d'information sur la vue des disponibilités -->
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i>
-                        <span>Ce calendrier montre les créneaux disponibles (vert) et réservés (rouge) pour chaque jour. Les créneaux passés sont automatiquement masqués.</span>
+                        <span>Ce calendrier montre les créneaux disponibles (vert), réservés (rouge) et bloqués (violet). Vous pouvez bloquer/débloquer des créneaux en cliquant dessus en mode "Gestion".</span>
+                    </div>
+                    
+                    <!-- Barre d'outils du calendrier -->
+                    <div class="calendar-toolbar">
+                        <div class="mode-toggle">
+                            <button class="mode-btn active" id="viewModeBtn">
+                                <i class="fas fa-eye"></i> Voir
+                            </button>
+                            <button class="mode-btn" id="manageModeBtn">
+                                <i class="fas fa-edit"></i> Gérer
+                            </button>
+                        </div>
+                        <div class="calendar-tools">
+                            <button class="btn btn-sm btn-outline" id="refreshCalendarBtn">
+                                <i class="fas fa-sync-alt"></i> Rafraîchir
+                            </button>
+                        </div>
                     </div>
                     
                     <!-- Navigation de date -->
@@ -1311,8 +1441,8 @@
                             <span>Réservé</span>
                         </div>
                         <div style="display: flex; align-items: center;">
-                            <div style="width: 20px; height: 20px; background-color: var(--primary-color); margin-right: 5px; border-radius: 4px;"></div>
-                            <span>Sélectionné</span>
+                            <div style="width: 20px; height: 20px; background-color: #E1BEE7; margin-right: 5px; border-radius: 4px;"></div>
+                            <span>Bloqué manuellement</span>
                         </div>
                         <div style="display: flex; align-items: center;">
                             <div style="width: 20px; height: 20px; background-color: #f2f2f2; margin-right: 5px; border-radius: 4px;"></div>
@@ -1415,36 +1545,6 @@
                                     </div>
                                 </form>
                             </div>
-                            
-                            <div class="profile-section">
-                                <h4 class="profile-section-title">
-                                    <i class="fas fa-bell"></i> Notifications
-                                </h4>
-                                
-                                <div class="form-group">
-                                    <div class="form-check">
-                                        <input type="checkbox" id="emailNotifications" checked>
-                                        <label for="emailNotifications">
-                                            Recevoir des notifications par email
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <div class="form-check">
-                                        <input type="checkbox" id="browserNotifications" checked>
-                                        <label for="browserNotifications">
-                                            Recevoir des notifications dans le navigateur
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                                <div class="text-right">
-                                    <button type="button" class="btn btn-primary" id="saveNotificationSettings">
-                                        <i class="fas fa-save"></i> Enregistrer les préférences
-                                    </button>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </section>
@@ -1538,6 +1638,55 @@
         </div>
     </div>
 
+    <!-- Modal de blocage de créneau -->
+    <div id="blockTimeSlotModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-header" style="background-color: #9C27B0;">
+                <h3 class="modal-title">Bloquer un créneau horaire</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="blockTimeSlotAlert" class="alert hidden"></div>
+                <p>Ce créneau sera marqué comme indisponible et n'apparaîtra plus comme disponible pour les réservations.</p>
+                <form id="blockTimeSlotForm">
+                    <input type="hidden" id="blockDate">
+                    <input type="hidden" id="blockTime">
+                    
+                    <div class="form-group">
+                        <label for="blockReason" class="form-label">Raison du blocage (facultatif)</label>
+                        <textarea id="blockReason" class="form-control" placeholder="Ex: Formation interne, fermeture exceptionnelle..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline cancel-modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="confirmBlockBtn" style="background-color: #9C27B0;">Bloquer le créneau</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de déblocage de créneau -->
+    <div id="unblockTimeSlotModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title">Débloquer un créneau horaire</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="unblockTimeSlotAlert" class="alert hidden"></div>
+                <p>Ce créneau sera à nouveau disponible pour les réservations. Êtes-vous sûr de vouloir le débloquer ?</p>
+                <form id="unblockTimeSlotForm">
+                    <input type="hidden" id="unblockDate">
+                    <input type="hidden" id="unblockTime">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline cancel-modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="confirmUnblockBtn">Débloquer le créneau</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal d'attente d'action -->
     <div id="waitingActionModal" class="modal">
         <div class="modal-dialog" style="max-width: 400px; text-align: center;">
@@ -1548,6 +1697,47 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de conflit de verrou -->
+    <div id="lockConflictModal" class="modal">
+        <div class="modal-dialog" style="max-width: 500px;">
+            <div class="modal-header" style="background-color: var(--warning-color);">
+                <h3 class="modal-title">Action impossible - Réservation verrouillée</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="lockConflictMessage">Cette réservation est actuellement traitée par un autre agent.</span>
+                </div>
+                <p>La réservation a été verrouillée par un autre agent qui est en train de la traiter. Veuillez attendre que l'agent termine son action ou que le verrou expire.</p>
+                <div class="mt-2">
+                    <p><strong>Agent:</strong> <span id="lockingAgentName">-</span></p>
+                    <p><strong>Statut:</strong> <span id="lockStatus">En cours de traitement</span></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="closeLockConflictBtn">Compris</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de succès d'action -->
+    <div id="successActionModal" class="modal">
+        <div class="modal-dialog" style="max-width: 400px; text-align: center;">
+            <div class="modal-body" style="padding: 2rem;">
+                <div style="font-size: 3rem; color: var(--success-color); margin-bottom: 1rem;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3 style="margin-bottom: 1rem; color: #333;">Action effectuée avec succès</h3>
+                <p id="successActionMessage" style="margin-bottom: 1.5rem; color: #666;"></p>
+                <button type="button" class="btn btn-primary" id="closeSuccessModal">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tooltip pour les actions de slot -->
+    <div id="tooltip" class="tooltip"></div>
 
     <script>
         // Base URL pour l'API
@@ -1562,6 +1752,9 @@
             completed: [],
             canceled: []
         };
+        
+        // Mode du calendrier (voir ou gérer)
+        let calendarMode = 'view'; // 'view' ou 'manage'
         
         // Connecter au WebSocket pour les mises à jour en temps réel
         function connectWebSocket() {
@@ -1764,6 +1957,43 @@
                             }
                         });
                     }
+
+                    // S'abonner aux mises à jour des statuts de verrouillage
+                    stompClient.subscribe('/topic/reservation-lock-status', function(message) {
+                        console.log('Message reçu sur /topic/reservation-lock-status');
+                        try {
+                            const lockStatus = JSON.parse(message.body);
+                            console.log('Mise à jour du statut de verrouillage:', lockStatus);
+                            
+                            // Mettre à jour l'interface pour afficher le statut de verrouillage
+                            updateReservationLockStatus(lockStatus);
+                        } catch (e) {
+                            console.error('Erreur de traitement des données de verrouillage:', e);
+                        }
+                    });
+
+                    // S'abonner aux mises à jour de gestion des créneaux horaires
+                    stompClient.subscribe('/topic/timeslot-management', function(message) {
+                        console.log('Message reçu sur /topic/timeslot-management');
+                        try {
+                            const timeSlotUpdate = JSON.parse(message.body);
+                            console.log('Mise à jour de créneau horaire:', timeSlotUpdate);
+                            
+                            // Si on est sur la page de calendrier, actualiser les disponibilités
+                            if (currentSection === 'calendar-section') {
+                                availabilityCalendar.refreshAvailability();
+                                
+                                // Afficher une notification appropriée
+                                if (timeSlotUpdate.blocked) {
+                                    showAlert(`Créneau du ${formatDate(timeSlotUpdate.date)} à ${formatTime(timeSlotUpdate.time)} bloqué par ${timeSlotUpdate.agentName || 'un agent'}`, 'info');
+                                } else {
+                                    showAlert(`Créneau du ${formatDate(timeSlotUpdate.date)} à ${formatTime(timeSlotUpdate.time)} débloqué par ${timeSlotUpdate.agentName || 'un agent'}`, 'info');
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Erreur de traitement des données de gestion de créneau:', e);
+                        }
+                    });
                     
                     // Demander les réservations en attente
                     stompClient.send('/app/fetch-reservations', {}, {});
@@ -1775,6 +2005,49 @@
                     setTimeout(connectWebSocket, 10000);
                 });
             };
+        }
+
+        // Mise à jour du statut de verrouillage d'une réservation
+        function updateReservationLockStatus(lockStatus) {
+            // Trouver la carte de réservation concernée
+            const card = document.getElementById(`reservation-${lockStatus.reservationId}`);
+            if (!card) return;
+            
+            // Trouver le badge d'activité
+            const badge = card.querySelector('.reservation-badge');
+            if (!badge) return;
+            
+            if (lockStatus.locked) {
+                // Réservation verrouillée
+                badge.className = 'reservation-badge badge-processing';
+                badge.textContent = `En traitement${lockStatus.agentName ? ` par ${lockStatus.agentName}` : ''}`;
+            } else {
+                // Réservation disponible
+                badge.className = 'reservation-badge badge-free';
+                badge.textContent = 'Disponible';
+            }
+        }
+
+        // Fonction utilitaire pour formater une date (YYYY-MM-DD -> JJ/MM/YYYY)
+        function formatDate(dateStr) {
+            if (typeof dateStr === 'string') {
+                const [year, month, day] = dateStr.split('-');
+                return `${day}/${month}/${year}`;
+            } else if (dateStr instanceof Date) {
+                return dateStr.toLocaleDateString('fr-FR');
+            }
+            return dateStr;
+        }
+
+        // Fonction utilitaire pour formater une heure (HH:MM -> HHhMM)
+        function formatTime(timeStr) {
+            if (typeof timeStr === 'string') {
+                const [hours, minutes] = timeStr.split(':');
+                return `${hours}h${minutes}`;
+            } else if (timeStr instanceof Date) {
+                return timeStr.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            }
+            return timeStr;
         }
         
         // Initialiser les écouteurs d'événements
@@ -1829,11 +2102,38 @@
             nextWeekBtn.addEventListener('click', function() {
                 availabilityCalendar.navigateWeek(7);
             });
+
+            // Basculer entre les modes de calendrier
+            document.getElementById('viewModeBtn').addEventListener('click', function() {
+                calendarMode = 'view';
+                this.classList.add('active');
+                document.getElementById('manageModeBtn').classList.remove('active');
+                // Rafraîchir pour mettre à jour l'affichage
+                availabilityCalendar.refreshAvailability();
+            });
+
+            document.getElementById('manageModeBtn').addEventListener('click', function() {
+                calendarMode = 'manage';
+                this.classList.add('active');
+                document.getElementById('viewModeBtn').classList.remove('active');
+                // Rafraîchir pour mettre à jour l'affichage
+                availabilityCalendar.refreshAvailability();
+            });
+
+            // Rafraîchir manuellement le calendrier
+            document.getElementById('refreshCalendarBtn').addEventListener('click', function() {
+                availabilityCalendar.refreshAvailability();
+                showAlert('Calendrier rafraîchi', 'success');
+            });
             
             // Boutons des modals
             confirmReservationBtn.addEventListener('click', confirmReservation);
             completeReservationBtn.addEventListener('click', completeReservation);
             cancelReservationBtn.addEventListener('click', cancelReservation);
+            
+            // Boutons de gestion des créneaux
+            document.getElementById('confirmBlockBtn').addEventListener('click', blockTimeSlot);
+            document.getElementById('confirmUnblockBtn').addEventListener('click', unblockTimeSlot);
             
             // Fermer les modals
             document.querySelectorAll('.close-modal, .cancel-modal').forEach(button => {
@@ -1843,6 +2143,16 @@
                         modal.style.display = 'none';
                     });
                 });
+            });
+            
+            // Fermer le modal de succès
+            document.getElementById('closeSuccessModal').addEventListener('click', function() {
+                document.getElementById('successActionModal').style.display = 'none';
+            });
+
+            // Fermer le modal de conflit de verrou
+            document.getElementById('closeLockConflictBtn').addEventListener('click', function() {
+                document.getElementById('lockConflictModal').style.display = 'none';
             });
             
             // Cliquer en dehors des modals pour les fermer
@@ -1866,14 +2176,251 @@
                 changePassword();
             });
             
-            // Bouton de sauvegarde des préférences de notification
-            saveNotificationSettings.addEventListener('click', function() {
-                // Simuler une sauvegarde
-                showAlert('Préférences de notification enregistrées', 'success');
-            });
-            
             // Bouton de déconnexion
             logoutBtn.addEventListener('click', logout);
+
+            // Tooltip pour les actions de gestion de créneaux
+            const tooltip = document.getElementById('tooltip');
+            document.addEventListener('mousemove', function(e) {
+                if (tooltip.classList.contains('visible')) {
+                    tooltip.style.left = (e.pageX + 10) + 'px';
+                    tooltip.style.top = (e.pageY + 10) + 'px';
+                }
+            });
+        }
+
+        // Afficher le modal de blocage de créneau
+        function openBlockTimeSlotModal(date, time) {
+            document.getElementById('blockDate').value = date;
+            document.getElementById('blockTime').value = time;
+            document.getElementById('blockReason').value = '';
+            document.getElementById('blockTimeSlotAlert').classList.add('hidden');
+            
+            document.getElementById('blockTimeSlotModal').style.display = 'block';
+        }
+
+        // Afficher le modal de déblocage de créneau
+        function openUnblockTimeSlotModal(date, time) {
+            document.getElementById('unblockDate').value = date;
+            document.getElementById('unblockTime').value = time;
+            document.getElementById('unblockTimeSlotAlert').classList.add('hidden');
+            
+            document.getElementById('unblockTimeSlotModal').style.display = 'block';
+        }
+
+        // Afficher un tooltip
+        function showTooltip(text, event) {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.textContent = text;
+            tooltip.classList.add('visible');
+            tooltip.style.left = (event.pageX + 10) + 'px';
+            tooltip.style.top = (event.pageY + 10) + 'px';
+        }
+
+        // Masquer le tooltip
+        function hideTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            tooltip.classList.remove('visible');
+        }
+
+        // Bloquer un créneau horaire
+        async function blockTimeSlot() {
+            const date = document.getElementById('blockDate').value;
+            const time = document.getElementById('blockTime').value;
+            const reason = document.getElementById('blockReason').value;
+            
+            try {
+                // Fermer le modal
+                document.getElementById('blockTimeSlotModal').style.display = 'none';
+                
+                // Afficher le modal d'attente
+                document.getElementById('waitingActionModal').style.display = 'block';
+                
+                console.log(`Blocage du créneau: ${date} à ${time}`);
+                
+                const response = await fetch(`${API_BASE_URL}/api/timeslots/block?agencyId=${agencyData.agencyId}&date=${date}&time=${time}&reason=${encodeURIComponent(reason)}`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                // Fermer le modal d'attente
+                document.getElementById('waitingActionModal').style.display = 'none';
+                
+                console.log('Statut de la réponse:', response.status);
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Afficher le message de succès
+                    showSuccessModal('Créneau bloqué avec succès');
+                    
+                    // Rafraîchir les disponibilités
+                    availabilityCalendar.refreshAvailability();
+                } else {
+                    showErrorModal(data.message || 'Erreur lors du blocage du créneau');
+                }
+            } catch (error) {
+                // Fermer le modal d'attente en cas d'erreur
+                document.getElementById('waitingActionModal').style.display = 'none';
+                
+                console.error('Erreur lors du blocage du créneau:', error);
+                showErrorModal('Erreur de connexion au serveur');
+            }
+        }
+
+        // Débloquer un créneau horaire
+        async function unblockTimeSlot() {
+            const date = document.getElementById('unblockDate').value;
+            const time = document.getElementById('unblockTime').value;
+            
+            try {
+                // Fermer le modal
+                document.getElementById('unblockTimeSlotModal').style.display = 'none';
+                
+                // Afficher le modal d'attente
+                document.getElementById('waitingActionModal').style.display = 'block';
+                
+                console.log(`Déblocage du créneau: ${date} à ${time}`);
+                
+                const response = await fetch(`${API_BASE_URL}/api/timeslots/unblock?agencyId=${agencyData.agencyId}&date=${date}&time=${time}`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                // Fermer le modal d'attente
+                document.getElementById('waitingActionModal').style.display = 'none';
+                
+                console.log('Statut de la réponse:', response.status);
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Afficher le message de succès
+                    showSuccessModal('Créneau débloqué avec succès');
+                    
+                    // Rafraîchir les disponibilités
+                    availabilityCalendar.refreshAvailability();
+                } else {
+                    showErrorModal(data.message || 'Erreur lors du déblocage du créneau');
+                }
+            } catch (error) {
+                // Fermer le modal d'attente en cas d'erreur
+                document.getElementById('waitingActionModal').style.display = 'none';
+                
+                console.error('Erreur lors du déblocage du créneau:', error);
+                showErrorModal('Erreur de connexion au serveur');
+            }
+        }
+
+        // Afficher le modal de conflit de verrouillage
+        function showLockConflictModal(reservationId, agentName) {
+            document.getElementById('lockingAgentName').textContent = agentName || 'Un autre agent';
+            document.getElementById('lockConflictModal').style.display = 'block';
+        }
+
+        // Vérifier et acquérir un verrou pour une réservation
+        async function acquireLock(reservationId) {
+            try {
+                // Afficher le modal d'attente pendant la vérification
+                document.getElementById('waitingActionModal').style.display = 'block';
+                
+                const response = await fetch(`${API_BASE_URL}/api/agent/lock/acquire/${reservationId}`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                // Fermer le modal d'attente
+                document.getElementById('waitingActionModal').style.display = 'none';
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Verrou acquis avec succès
+                    return true;
+                } else {
+                    // Impossible d'acquérir le verrou
+                    let agentName = null;
+                    
+                    // Extraire le nom de l'agent si présent dans le message
+                    if (data.message) {
+                        const match = data.message.match(/\(([^)]+)\)/);
+                        if (match && match[1]) {
+                            agentName = match[1];
+                        }
+                    }
+                    
+                    // Afficher le modal de conflit
+                    showLockConflictModal(reservationId, agentName);
+                    return false;
+                }
+            } catch (error) {
+                // Fermer le modal d'attente en cas d'erreur
+                document.getElementById('waitingActionModal').style.display = 'none';
+                
+                console.error('Erreur lors de l\'acquisition du verrou:', error);
+                showErrorModal('Erreur de connexion au serveur');
+                return false;
+            }
+        }
+
+        // Libérer un verrou sur une réservation
+        async function releaseLock(reservationId) {
+            try {
+                await fetch(`${API_BASE_URL}/api/agent/lock/release/${reservationId}`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                console.log(`Verrou libéré pour la réservation ${reservationId}`);
+                return true;
+            } catch (error) {
+                console.error('Erreur lors de la libération du verrou:', error);
+                return false;
+            }
+        }
+
+        // Afficher un modal d'erreur
+        function showErrorModal(message) {
+            const errorModal = document.createElement('div');
+            errorModal.className = 'modal';
+            errorModal.innerHTML = `
+                <div class="modal-dialog" style="max-width: 400px;">
+                    <div class="modal-header" style="background-color: var(--danger-color);">
+                        <h3 class="modal-title">Erreur</h3>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle"></i>
+                            ${message}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary error-close">OK</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(errorModal);
+            errorModal.style.display = 'block';
+            
+            // Ajouter l'événement pour fermer le modal
+            errorModal.querySelector('.error-close').addEventListener('click', function() {
+                errorModal.style.display = 'none';
+            });
+            errorModal.querySelector('.close-modal').addEventListener('click', function() {
+                errorModal.style.display = 'none';
+            });
+        }
+        
+        // Afficher le modal de succès après une action
+        function showSuccessModal(message) {
+            document.getElementById('successActionMessage').textContent = message;
+            document.getElementById('successActionModal').style.display = 'block';
+            
+            // Fermer automatiquement après 2 secondes
+            setTimeout(() => {
+                document.getElementById('successActionModal').style.display = 'none';
+            }, 2000);
         }
         
         // Mettre à jour le profil
@@ -1881,7 +2428,7 @@
             const newUsername = updateUsername.value.trim();
             
             if (!newUsername) {
-                showAlert('Le nom d\'utilisateur ne peut pas être vide', 'warning');
+                showModalAlert(document.createElement('div'), 'Le nom d\'utilisateur ne peut pas être vide', 'warning');
                 return;
             }
             
@@ -1918,16 +2465,17 @@
                     usernameElement.textContent = newUsername;
                     profileUsername.textContent = newUsername;
                     
-                    showAlert('Profil mis à jour avec succès', 'success');
+                    // Afficher le message de succès
+                    showSuccessModal('Profil mis à jour avec succès');
                 } else {
-                    showAlert(data.message || 'Erreur lors de la mise à jour du profil', 'danger');
+                    showErrorModal(data.message || 'Erreur lors de la mise à jour du profil');
                 }
             } catch (error) {
                 // Fermer le modal d'attente en cas d'erreur
                 document.getElementById('waitingActionModal').style.display = 'none';
                 
                 console.error('Erreur lors de la mise à jour du profil:', error);
-                showAlert('Erreur de connexion au serveur', 'danger');
+                showErrorModal('Erreur de connexion au serveur');
             }
         }
         
@@ -1939,7 +2487,7 @@
             
             // Vérifier que les mots de passe correspondent
             if (newPassword !== confirmPassword) {
-                showAlert('Les mots de passe ne correspondent pas', 'warning');
+                showErrorModal('Les mots de passe ne correspondent pas');
                 return;
             }
             
@@ -1973,16 +2521,17 @@
                     // Réinitialiser le formulaire
                     changePasswordForm.reset();
                     
-                    showAlert('Mot de passe changé avec succès', 'success');
+                    // Afficher le message de succès
+                    showSuccessModal('Mot de passe changé avec succès');
                 } else {
-                    showAlert(data.message || 'Erreur lors du changement de mot de passe', 'danger');
+                    showErrorModal(data.message || 'Erreur lors du changement de mot de passe');
                 }
             } catch (error) {
                 // Fermer le modal d'attente en cas d'erreur
                 document.getElementById('waitingActionModal').style.display = 'none';
                 
                 console.error('Erreur lors du changement de mot de passe:', error);
-                showAlert('Erreur de connexion au serveur', 'danger');
+                showErrorModal('Erreur de connexion au serveur');
             }
         }
         
@@ -2224,6 +2773,7 @@
         const completeModal = document.getElementById('completeModal');
         const cancelModal = document.getElementById('cancelModal');
         const waitingActionModal = document.getElementById('waitingActionModal');
+        const successActionModal = document.getElementById('successActionModal');
         
         // Modal forms
         const confirmationForm = document.getElementById('confirmationForm');
@@ -2252,7 +2802,6 @@
         
         // Settings elements
         const changePasswordForm = document.getElementById('changePasswordForm');
-        const saveNotificationSettings = document.getElementById('saveNotificationSettings');
         
         // Initialisation
         document.addEventListener('DOMContentLoaded', function() {
@@ -2646,13 +3195,6 @@
                             </button>
                         </div>
                     `;
-                } else if (type === 'completed' || type === 'canceled') {
-                    // Pas d'actions pour les réservations complétées ou annulées
-                    cardHTML += `
-                        <div class="reservation-actions">
-                            <span class="text-muted">Aucune action disponible</span>
-                        </div>
-                    `;
                 }
                 
                 card.innerHTML = cardHTML;
@@ -2663,23 +3205,39 @@
                     const confirmBtn = card.querySelector('.confirm-btn');
                     const cancelBtn = card.querySelector('.cancel-btn');
                     
-                    confirmBtn.addEventListener('click', function() {
-                        openConfirmationModal(reservation);
+                    confirmBtn.addEventListener('click', async function() {
+                        // Tenter d'acquérir le verrou
+                        const lockAcquired = await acquireLock(reservation.id);
+                        if (lockAcquired) {
+                            openConfirmationModal(reservation);
+                        }
                     });
                     
-                    cancelBtn.addEventListener('click', function() {
-                        openCancelModal(reservation);
+                    cancelBtn.addEventListener('click', async function() {
+                        // Tenter d'acquérir le verrou
+                        const lockAcquired = await acquireLock(reservation.id);
+                        if (lockAcquired) {
+                            openCancelModal(reservation);
+                        }
                     });
                 } else if (type === 'confirmed') {
                     const completeBtn = card.querySelector('.complete-btn');
                     const cancelBtn = card.querySelector('.cancel-btn');
                     
-                    completeBtn.addEventListener('click', function() {
-                        openCompleteModal(reservation);
+                    completeBtn.addEventListener('click', async function() {
+                        // Tenter d'acquérir le verrou
+                        const lockAcquired = await acquireLock(reservation.id);
+                        if (lockAcquired) {
+                            openCompleteModal(reservation);
+                        }
                     });
                     
-                    cancelBtn.addEventListener('click', function() {
-                        openCancelModal(reservation);
+                    cancelBtn.addEventListener('click', async function() {
+                        // Tenter d'acquérir le verrou
+                        const lockAcquired = await acquireLock(reservation.id);
+                        if (lockAcquired) {
+                            openCancelModal(reservation);
+                        }
                     });
                 }
             });
@@ -2789,12 +3347,12 @@
             
             // Vérifier les dates
             if (!startDateTime || !endDateTime) {
-                showModalAlert(confirmationAlert, 'Veuillez sélectionner les dates de début et de fin', 'warning');
+                showErrorModal('Veuillez sélectionner les dates de début et de fin');
                 return;
             }
             
             if (new Date(startDateTime) >= new Date(endDateTime)) {
-                showModalAlert(confirmationAlert, 'La date de début doit être antérieure à la date de fin', 'warning');
+                showErrorModal('La date de début doit être antérieure à la date de fin');
                 return;
             }
             
@@ -2831,8 +3389,11 @@
                 console.log('Données de réponse:', data);
                 
                 if (response.ok) {
-                    // Afficher une notification
-                    showAlert('Réservation confirmée avec succès', 'success');
+                    // Libérer le verrou
+                    await releaseLock(reservationId);
+                    
+                    // Afficher le message de succès
+                    showSuccessModal('Réservation confirmée avec succès');
                     
                     // Mettre à jour les listes de réservations
                     await loadAllReservations();
@@ -2843,14 +3404,20 @@
                     // Mettre à jour le calendrier de disponibilité
                     availabilityCalendar.refreshAvailability();
                 } else {
-                    showAlert(data.message || 'Erreur lors de la confirmation de la réservation', 'danger');
+                    // Libérer le verrou
+                    await releaseLock(reservationId);
+                    
+                    showErrorModal(data.message || 'Erreur lors de la confirmation de la réservation');
                 }
             } catch (error) {
                 // Fermer le modal d'attente
                 waitingActionModal.style.display = 'none';
                 
+                // Libérer le verrou
+                await releaseLock(reservationId);
+                
                 console.error('Erreur lors de la confirmation de la réservation:', error);
-                showAlert('Erreur de connexion au serveur', 'danger');
+                showErrorModal('Erreur de connexion au serveur');
             }
         }
         
@@ -2883,8 +3450,11 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    // Afficher une notification
-                    showAlert('Réservation marquée comme complétée avec succès', 'success');
+                    // Libérer le verrou
+                    await releaseLock(reservationId);
+                    
+                    // Afficher le message de succès
+                    showSuccessModal('Rendez-vous marqué comme complété');
                     
                     // Mettre à jour les listes de réservations
                     await loadAllReservations();
@@ -2895,14 +3465,20 @@
                     // Mettre à jour le calendrier de disponibilité
                     availabilityCalendar.refreshAvailability();
                 } else {
-                    showAlert(data.message || 'Erreur lors de la complétion de la réservation', 'danger');
+                    // Libérer le verrou
+                    await releaseLock(reservationId);
+                    
+                    showErrorModal(data.message || 'Erreur lors de la complétion de la réservation');
                 }
             } catch (error) {
                 // Fermer le modal d'attente
                 waitingActionModal.style.display = 'none';
                 
+                // Libérer le verrou
+                await releaseLock(reservationId);
+                
                 console.error('Erreur lors de la complétion de la réservation:', error);
-                showAlert('Erreur de connexion au serveur', 'danger');
+                showErrorModal('Erreur de connexion au serveur');
             }
         }
         
@@ -2935,8 +3511,11 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    // Afficher une notification
-                    showAlert('Réservation annulée avec succès', 'success');
+                    // Libérer le verrou
+                    await releaseLock(reservationId);
+                    
+                    // Afficher le message de succès
+                    showSuccessModal('Réservation annulée avec succès');
                     
                     // Mettre à jour les listes de réservations
                     await loadAllReservations();
@@ -2947,14 +3526,20 @@
                     // Mettre à jour le calendrier de disponibilité
                     availabilityCalendar.refreshAvailability();
                 } else {
-                    showAlert(data.message || 'Erreur lors de l\'annulation de la réservation', 'danger');
+                    // Libérer le verrou
+                    await releaseLock(reservationId);
+                    
+                    showErrorModal(data.message || 'Erreur lors de l\'annulation de la réservation');
                 }
             } catch (error) {
                 // Fermer le modal d'attente
                 waitingActionModal.style.display = 'none';
                 
+                // Libérer le verrou
+                await releaseLock(reservationId);
+                
                 console.error('Erreur lors de l\'annulation de la réservation:', error);
-                showAlert('Erreur de connexion au serveur', 'danger');
+                showErrorModal('Erreur de connexion au serveur');
             }
         }
         
@@ -3116,7 +3701,8 @@
                     const dayAvailability = availabilityData.find(day => day.date === dateStr) || {
                         date: dateStr,
                         availableTimeSlots: [],
-                        bookedTimeSlots: []
+                        bookedTimeSlots: [],
+                        bookedSlotInfo: {}
                     };
                     
                     // Créer l'en-tête du jour
@@ -3174,6 +3760,11 @@
                             const isAvailable = dayAvailability.availableTimeSlots.includes(timeStr);
                             const isBooked = dayAvailability.bookedTimeSlots.includes(timeStr);
                             
+                            // Vérifier s'il s'agit d'un créneau bloqué manuellement (en vérifiant les infos)
+                            const timeKey = timeStr;
+                            const slotInfo = dayAvailability.bookedSlotInfo && dayAvailability.bookedSlotInfo[timeKey];
+                            const isBlocked = isBooked && slotInfo && slotInfo.includes('Bloqué:');
+                            
                             // Vérifier si ce créneau est dans le passé (pour aujourd'hui uniquement)
                             const isPastSlot = this.isToday(currentDate) && this.isPastTimeSlot(timeStr);
                             
@@ -3196,10 +3787,78 @@
                                 // Ajouter des attributs de données pour références futures
                                 timeSlotElement.dataset.date = dateStr;
                                 timeSlotElement.dataset.time = timeStr;
+                                
+                                // Si on est en mode gestion, ajouter les contrôles pour bloquer
+                                if (calendarMode === 'manage') {
+                                    const slotActions = document.createElement('div');
+                                    slotActions.className = 'slot-actions';
+                                    
+                                    const blockBtn = document.createElement('button');
+                                    blockBtn.className = 'slot-action-btn block-btn';
+                                    blockBtn.innerHTML = '<i class="fas fa-ban"></i>';
+                                    blockBtn.title = 'Bloquer ce créneau';
+                                    
+                                    blockBtn.addEventListener('mouseover', (e) => {
+                                        showTooltip('Bloquer ce créneau', e);
+                                    });
+                                    
+                                    blockBtn.addEventListener('mouseout', hideTooltip);
+                                    
+                                    blockBtn.addEventListener('click', (e) => {
+                                        e.stopPropagation();
+                                        openBlockTimeSlotModal(dateStr, timeStr);
+                                    });
+                                    
+                                    slotActions.appendChild(blockBtn);
+                                    timeSlotElement.appendChild(slotActions);
+                                }
+                            } else if (isBlocked) {
+                                // Créneaux bloqués manuellement
+                                timeSlotElement.classList.add('blocked');
+                                timeSlotElement.textContent = formattedTime;
+                                
+                                // Ajouter l'info du blocage au titre pour affichage au survol
+                                if (slotInfo) {
+                                    timeSlotElement.title = slotInfo;
+                                }
+                                
+                                // Ajouter des attributs de données pour références futures
+                                timeSlotElement.dataset.date = dateStr;
+                                timeSlotElement.dataset.time = timeStr;
+                                
+                                // Si on est en mode gestion, ajouter les contrôles pour débloquer
+                                if (calendarMode === 'manage') {
+                                    const slotActions = document.createElement('div');
+                                    slotActions.className = 'slot-actions';
+                                    
+                                    const unblockBtn = document.createElement('button');
+                                    unblockBtn.className = 'slot-action-btn unblock-btn';
+                                    unblockBtn.innerHTML = '<i class="fas fa-unlock"></i>';
+                                    unblockBtn.title = 'Débloquer ce créneau';
+                                    
+                                    unblockBtn.addEventListener('mouseover', (e) => {
+                                        showTooltip('Débloquer ce créneau', e);
+                                    });
+                                    
+                                    unblockBtn.addEventListener('mouseout', hideTooltip);
+                                    
+                                    unblockBtn.addEventListener('click', (e) => {
+                                        e.stopPropagation();
+                                        openUnblockTimeSlotModal(dateStr, timeStr);
+                                    });
+                                    
+                                    slotActions.appendChild(unblockBtn);
+                                    timeSlotElement.appendChild(slotActions);
+                                }
                             } else if (isBooked) {
                                 // Créneaux réservés
                                 timeSlotElement.classList.add('booked');
                                 timeSlotElement.textContent = formattedTime;
+                                
+                                // Ajouter l'info de réservation au titre pour affichage au survol
+                                if (slotInfo) {
+                                    timeSlotElement.title = slotInfo;
+                                }
                             }
                             
                             daySlotsElement.appendChild(timeSlotElement);

@@ -5,21 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Espace Client - Service de Réservation</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #4CAF50;
-            --primary-dark: #45a049;
-            --primary-light: #e8f5e9;
-            --secondary-color: #f5f5f5;
-            --dark-color: #2c3e50;
+            --primary-color: #4361ee;
+            --primary-dark: #3a56d4;
+            --primary-light: #eef2ff;
+            --secondary-color: #f8f9fa;
+            --dark-color: #1e293b;
             --light-color: #ffffff;
-            --danger-color: #f44336;
-            --warning-color: #ff9800;
-            --info-color: #2196F3;
-            --success-color: #4CAF50;
-            --border-color: #ddd;
-            --text-color: #333;
-            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
+            --success-color: #10b981;
+            --border-color: #e2e8f0;
+            --text-color: #334155;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             --transition: all 0.3s ease;
         }
         
@@ -30,27 +35,182 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--secondary-color);
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f3 100%);
             color: var(--text-color);
             line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
         
+        /* Cercles décoratifs en arrière-plan */
+        .bg-circles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            top: 0;
+            left: 0;
+        }
+        
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(to right, rgba(67, 97, 238, 0.1), rgba(58, 86, 212, 0.05));
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+        
+        .circle-2 {
+            width: 500px;
+            height: 500px;
+            bottom: -200px;
+            right: -200px;
+            animation-delay: 2s;
+        }
+        
+        .circle-3 {
+            width: 200px;
+            height: 200px;
+            top: 30%;
+            right: 10%;
+            animation-delay: 4s;
+        }
+        
+        .circle-4 {
+            width: 150px;
+            height: 150px;
+            top: 40%;
+            left: 15%;
+            background: linear-gradient(to right, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            animation-delay: 6s;
+            animation-duration: 17s;
+        }
+        
+        .circle-5 {
+            width: 100px;
+            height: 100px;
+            bottom: 20%;
+            left: 30%;
+            background: linear-gradient(to right, rgba(239, 68, 68, 0.05), rgba(239, 68, 68, 0.02));
+            animation-delay: 1s;
+            animation-duration: 13s;
+        }
+        
+        .circle-6 {
+            width: 250px;
+            height: 250px;
+            top: 10%;
+            left: 40%;
+            background: linear-gradient(to right, rgba(245, 158, 11, 0.05), rgba(245, 158, 11, 0.02));
+            animation-delay: 3s;
+            animation-duration: 20s;
+        }
+        
+        .circle-7 {
+            width: 180px;
+            height: 180px;
+            bottom: 30%;
+            right: 25%;
+            background: linear-gradient(to right, rgba(59, 130, 246, 0.05), rgba(59, 130, 246, 0.02));
+            animation-delay: 5s;
+            animation-duration: 18s;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+        }
+        
+        /* Particules décoratifs */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: rgba(67, 97, 238, 0.1);
+            border-radius: 50%;
+            animation: particleFloat 20s infinite linear;
+        }
+        
+        @keyframes particleFloat {
+            0% {
+                transform: translate(0, 0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--x), var(--y));
+                opacity: 0;
+            }
+        }
+
         /* Header Styles */
         header {
-            background-color: var(--dark-color);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             color: var(--light-color);
             padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 100;
             box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 120%;
+            height: 200%;
+            background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 60%);
+            animation: pulse 8s infinite ease-in-out;
+            z-index: -1;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.2;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.3;
+            }
         }
         
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 1rem;
+            padding: 0 1.5rem;
+            position: relative;
         }
         
         .header-container {
@@ -61,16 +221,39 @@
         
         .logo {
             font-size: 1.5rem;
-            font-weight: bold;
+            font-weight: 700;
             color: var(--light-color);
             display: flex;
             align-items: center;
             text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover {
+            transform: translateY(-3px);
         }
         
         .logo i {
-            margin-right: 0.5rem;
-            color: var(--primary-color);
+            margin-right: 0.75rem;
+            color: var(--light-color);
+            font-size: 1.75rem;
+            animation: logoSpin 10s infinite linear;
+            display: inline-block;
+        }
+        
+        @keyframes logoSpin {
+            0% {
+                transform: rotate(0deg);
+            }
+            25% {
+                transform: rotate(10deg);
+            }
+            75% {
+                transform: rotate(-10deg);
+            }
+            100% {
+                transform: rotate(0deg);
+            }
         }
         
         .user-info {
@@ -79,126 +262,232 @@
         }
         
         .user-name {
-            margin-right: 1rem;
+            margin-right: 1.25rem;
             font-weight: 500;
             display: flex;
             align-items: center;
         }
         
         .user-name i {
-            margin-right: 0.5rem;
-            color: var(--primary-color);
+            margin-right: 0.75rem;
+            color: var(--light-color);
+            background-color: rgba(255, 255, 255, 0.2);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .user-name:hover i {
+            transform: scale(1.1);
+            background-color: rgba(255, 255, 255, 0.3);
         }
         
         /* Button Styles */
         .btn {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+            display: inline-flex;
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.5rem;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-decoration: none;
             border: none;
             font-size: 0.9rem;
-            display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             font-weight: 500;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
         }
         
         .btn i {
-            margin-right: 0.5rem;
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover i {
+            transform: translateX(2px);
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+        
+        .btn:hover::after {
+            width: 300px;
+            height: 300px;
         }
         
         .btn-sm {
-            padding: 0.25rem 0.5rem;
+            padding: 0.375rem 0.75rem;
             font-size: 0.8rem;
         }
         
         .btn-primary {
-            background-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             color: var(--light-color);
+            box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
         }
         
         .btn-primary:hover {
-            background-color: var(--primary-dark);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.3);
         }
         
         .btn-outline {
             background-color: transparent;
             color: var(--primary-color);
             border: 1px solid var(--primary-color);
+            box-shadow: 0 2px 4px rgba(67, 97, 238, 0.1);
         }
         
         .btn-outline:hover {
             background-color: var(--primary-light);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(67, 97, 238, 0.2);
         }
         
         .btn-danger {
-            background-color: var(--danger-color);
+            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
             color: var(--light-color);
+            box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
         }
         
         .btn-danger:hover {
-            background-color: #d32f2f;
+            background: linear-gradient(135deg, #dc2626 0%, var(--danger-color) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(239, 68, 68, 0.3);
         }
         
         .btn-warning {
-            background-color: var(--warning-color);
+            background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
             color: var(--light-color);
+            box-shadow: 0 4px 6px rgba(245, 158, 11, 0.2);
         }
         
         .btn-warning:hover {
-            background-color: #e68a00;
+            background: linear-gradient(135deg, #d97706 0%, var(--warning-color) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(245, 158, 11, 0.3);
         }
         
         .btn-info {
-            background-color: var(--info-color);
+            background: linear-gradient(135deg, var(--info-color) 0%, #2563eb 100%);
             color: var(--light-color);
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
         }
         
         .btn-info:hover {
-            background-color: #0b7dda;
+            background: linear-gradient(135deg, #2563eb 0%, var(--info-color) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+            color: var(--light-color);
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669 0%, var(--success-color) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
         }
         
         /* Dashboard Layout */
         .dashboard {
             display: flex;
             margin: 1.5rem 0;
+            gap: 1.5rem;
+            position: relative;
+            z-index: 1;
         }
         
         .sidebar {
             width: 280px;
             background-color: var(--light-color);
-            border-radius: 8px;
+            border-radius: 1rem;
             box-shadow: var(--shadow);
-            padding: 1.5rem;
-            margin-right: 1.5rem;
+            padding: 1.75rem;
             height: calc(100vh - 100px);
             position: sticky;
             top: 90px;
             overflow-y: auto;
+            animation: sidebarIn 0.5s ease-out;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        @keyframes sidebarIn {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .sidebar:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateX(5px);
         }
         
         .sidebar-header {
             display: flex;
             align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
             border-bottom: 1px solid var(--border-color);
         }
         
         .sidebar-header i {
             font-size: 1.5rem;
-            margin-right: 0.5rem;
+            margin-right: 0.75rem;
             color: var(--primary-color);
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar:hover .sidebar-header i {
+            transform: rotate(15deg);
         }
         
         .sidebar-title {
             font-size: 1.2rem;
             font-weight: 600;
             color: var(--dark-color);
+            position: relative;
+        }
+        
+        .sidebar-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .sidebar:hover .sidebar-title::after {
+            width: 100%;
         }
         
         .sidebar-menu {
@@ -207,22 +496,45 @@
         
         .sidebar-menu li {
             margin-bottom: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-menu li:hover {
+            transform: translateX(5px);
         }
         
         .sidebar-menu li a {
             display: flex;
             align-items: center;
-            padding: 0.75rem 1rem;
+            padding: 0.875rem 1.25rem;
             text-decoration: none;
             color: var(--text-color);
-            border-radius: 4px;
-            transition: var(--transition);
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
         
         .sidebar-menu li a i {
-            margin-right: 0.5rem;
+            margin-right: 0.75rem;
             width: 20px;
             text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-menu li a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(67, 97, 238, 0.1), transparent);
+            transition: all 0.5s ease;
+        }
+        
+        .sidebar-menu li a:hover::before {
+            left: 100%;
         }
         
         .sidebar-menu li a:hover,
@@ -231,22 +543,61 @@
             color: var(--primary-color);
         }
         
+        .sidebar-menu li a:hover i,
+        .sidebar-menu li a.active i {
+            transform: scale(1.2);
+        }
+        
         .main-content {
             flex: 1;
             background-color: var(--light-color);
-            border-radius: 8px;
+            border-radius: 1rem;
             box-shadow: var(--shadow);
-            padding: 1.5rem;
+            padding: 1.75rem;
             min-height: calc(100vh - 100px);
+            animation: fadeIn 0.5s ease-out;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .main-content:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px);
         }
         
         .section-title {
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
+            margin-bottom: 1.75rem;
+            padding-bottom: 1rem;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), transparent);
+            transition: width 0.3s ease;
+        }
+        
+        .section-title:hover::after {
+            width: 100px;
         }
         
         .section-title h2 {
@@ -255,11 +606,22 @@
             margin: 0;
             display: flex;
             align-items: center;
+            gap: 0.75rem;
+            position: relative;
         }
         
         .section-title h2 i {
-            margin-right: 0.75rem;
             color: var(--primary-color);
+            animation: iconPulse 2s infinite ease-in-out;
+        }
+        
+        @keyframes iconPulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
         }
         
         /* Search and filter controls */
@@ -267,9 +629,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.75rem;
             flex-wrap: wrap;
             gap: 1rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .controls:hover {
+            transform: translateY(-3px);
         }
         
         .search-container {
@@ -281,26 +648,38 @@
         
         .search-input {
             width: 100%;
-            padding: 0.75rem;
-            padding-left: 2.5rem;
+            padding: 0.875rem;
+            padding-left: 2.75rem;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 0.9rem;
-            transition: var(--transition);
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
         
         .search-input:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: var(--light-color);
+            transform: translateY(-2px);
         }
         
         .search-icon {
             position: absolute;
-            left: 0.75rem;
+            left: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            color: #999;
+            color: #94a3b8;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus + .search-icon {
+            color: var(--primary-color);
+            transform: translateY(-50%) scale(1.1);
         }
         
         .filters {
@@ -309,18 +688,35 @@
         }
         
         .filter-select {
-            padding: 0.5rem;
+            padding: 0.75rem 1rem;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
-            background-color: white;
+            border-radius: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            background-image: linear-gradient(to bottom, var(--light-color), #f8f9fa);
         }
         
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .filter-select:hover {
+            border-color: var(--primary-color);
+            background-image: linear-gradient(to bottom, #f8f9fa, var(--light-color));
+        }
         /* Cards Grid Styles */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
+            gap: 1.75rem;
+            margin-bottom: 1.75rem;
         }
         
         .agency-card {
@@ -328,20 +724,41 @@
             flex-direction: column;
             height: 100%;
             background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-sm);
             overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        
+        .agency-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+        
+        .agency-card:hover::before {
+            transform: scaleX(1);
         }
         
         .agency-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-light);
+            z-index: 2;
         }
         
         /* En-tête de carte */
         .card-header {
-            padding: 1.25rem;
+            padding: 1.5rem;
             border-bottom: 1px solid var(--border-color);
             background-color: #f8f9fa;
             display: flex;
@@ -357,6 +774,7 @@
             align-items: center;
             justify-content: center;
             margin-right: 1rem;
+            flex-shrink: 0;
         }
         
         .card-avatar i {
@@ -377,69 +795,75 @@
         
         .card-subtitle {
             font-size: 0.9rem;
-            color: #666;
+            color: #64748b;
             margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
         /* Corps de la carte */
         .card-body {
             flex: 1;
-            padding: 1.25rem;
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
         }
         
         .card-details {
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
         
         .card-detail {
             display: flex;
-            align-items: center;
-            margin-bottom: 0.75rem;
+            align-items: flex-start;
+            margin-bottom: 0.875rem;
         }
         
         .card-detail i {
             width: 20px;
-            margin-right: 0.75rem;
-            color: #666;
+            margin-right: 0.875rem;
+            color: #64748b;
             text-align: center;
+            margin-top: 0.25rem;
+            flex-shrink: 0;
         }
         
         .detail-value {
             flex: 1;
+            word-break: break-word;
         }
         
         .card-services {
             margin-top: auto;
             border-top: 1px solid var(--border-color);
-            padding-top: 1rem;
+            padding-top: 1.25rem;
         }
         
         .services-title {
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             display: flex;
             align-items: center;
+            gap: 0.5rem;
         }
         
         .services-title i {
-            margin-right: 0.5rem;
             color: var(--primary-color);
         }
         
         .services-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 0.625rem;
         }
         
         .service-item {
             background-color: var(--primary-light);
             color: var(--primary-color);
-            padding: 0.25rem 0.75rem;
+            padding: 0.375rem 0.875rem;
             border-radius: 50px;
-            font-size: 0.85rem;
+            font-size: 0.875rem;
             font-weight: 500;
         }
         
@@ -447,7 +871,7 @@
         .card-footer {
             display: flex;
             justify-content: space-between;
-            padding: 1rem;
+            padding: 1.25rem;
             border-top: 1px solid var(--border-color);
             background-color: #f8f9fa;
         }
@@ -455,12 +879,12 @@
         .hours-open {
             display: flex;
             align-items: center;
-            font-size: 0.85rem;
-            color: #666;
+            font-size: 0.875rem;
+            color: #64748b;
+            gap: 0.5rem;
         }
         
         .hours-open i {
-            margin-right: 0.5rem;
             color: var(--primary-color);
         }
         
@@ -472,23 +896,24 @@
         .form-label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: 600;
+            font-weight: 500;
             color: var(--dark-color);
         }
         
         .form-control {
             width: 100%;
-            padding: 0.75rem;
+            padding: 0.875rem;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 0.9rem;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
             transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
         }
         
         .form-control:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
         }
         
         select.form-control {
@@ -502,7 +927,7 @@
         
         .form-row {
             display: flex;
-            gap: 1rem;
+            gap: 1.25rem;
             margin-bottom: 1.5rem;
         }
         
@@ -513,7 +938,7 @@
         /* Reservation form */
         .reservation-form {
             background-color: white;
-            border-radius: 8px;
+            border-radius: 1rem;
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: var(--shadow);
@@ -522,32 +947,34 @@
         .reservation-agency {
             display: flex;
             align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
+            margin-bottom: 1.75rem;
+            padding-bottom: 1.25rem;
             border-bottom: 1px solid var(--border-color);
         }
         
         .agency-logo {
-            width: 60px;
-            height: 60px;
+            width: 64px;
+            height: 64px;
             background-color: var(--primary-light);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 1rem;
+            margin-right: 1.25rem;
             color: var(--primary-color);
-            font-size: 1.5rem;
+            font-size: 1.75rem;
+            flex-shrink: 0;
         }
         
         .agency-info h3 {
             margin: 0 0 0.5rem 0;
+            font-weight: 600;
         }
         
         .agency-info p {
             margin: 0;
-            color: #666;
-            font-size: 0.9rem;
+            color: #64748b;
+            font-size: 0.95rem;
         }
         
         .form-actions {
@@ -562,7 +989,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
 
         .current-week-label {
@@ -572,10 +999,11 @@
 
         .availability-calendar {
             background-color: white;
-            border-radius: 8px;
+            border-radius: 0.75rem;
             overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.75rem;
+            border: 1px solid var(--border-color);
         }
 
         .calendar-days {
@@ -587,7 +1015,7 @@
 
         .calendar-day {
             text-align: center;
-            padding: 0.75rem 0.5rem;
+            padding: 0.875rem 0.5rem;
             font-weight: 600;
             position: relative;
         }
@@ -599,13 +1027,14 @@
 
         .calendar-day .day-name {
             display: block;
-            font-size: 0.85rem;
-            color: #666;
+            font-size: 0.875rem;
+            color: #64748b;
+            font-weight: 500;
         }
 
         .calendar-day .day-date {
             display: block;
-            font-size: 1rem;
+            font-size: 1.1rem;
             margin-top: 0.25rem;
         }
 
@@ -630,11 +1059,12 @@
         }
 
         .time-slot {
-            padding: 0.5rem;
+            padding: 0.625rem;
             text-align: center;
             background-color: white;
             cursor: pointer;
             transition: all 0.2s ease;
+            font-size: 0.95rem;
         }
 
         .time-slot:hover {
@@ -642,7 +1072,7 @@
         }
 
         .time-slot.available {
-            background-color: #e8f5e9;
+            background-color: #e9f7ef;
         }
 
         .time-slot.available:hover {
@@ -665,10 +1095,11 @@
         }
 
         .time-slot.no-slots {
-            background-color: #f5f5f5;
+            background-color: #f8f9fa;
             cursor: default;
             color: #999;
-            padding: 1rem;
+            padding: 1.25rem;
+            font-style: italic;
         }
 
         /* Styles pour les créneaux passés */
@@ -680,12 +1111,12 @@
         }
 
         .calendar-day.past-date {
-            background-color: #f2f2f2;
+            background-color: #f8f9fa;
             color: #999;
         }
 
         .time-slot.past-date-message {
-            background-color: #f2f2f2;
+            background-color: #f8f9fa;
             color: #999;
             font-style: italic;
             padding: 1.5rem;
@@ -694,66 +1125,97 @@
 
         /* Message informatif pour la limite de réservation */
         .reservation-info {
-            background-color: #e3f2fd;
-            border-left: 4px solid #2196F3;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            border-radius: 4px;
+            background-color: #e9f5fe;
+            border-left: 4px solid var(--info-color);
+            padding: 1.25rem;
+            margin-bottom: 1.75rem;
+            border-radius: 0.5rem;
             display: flex;
             align-items: flex-start;
+            gap: 0.875rem;
         }
 
         .reservation-info i {
-            color: #2196F3;
+            color: var(--info-color);
             font-size: 1.25rem;
-            margin-right: 0.75rem;
             margin-top: 0.1rem;
+            flex-shrink: 0;
         }
 
         /* Notification pour une réservation active existante */
         .reservation-active-warning {
-            background-color: #fff3cd;
-            border-left: 4px solid #ff9800;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            border-radius: 4px;
+            background-color: #fef3c7;
+            border-left: 4px solid var(--warning-color);
+            padding: 1.25rem;
+            margin-bottom: 1.75rem;
+            border-radius: 0.5rem;
             display: flex;
             align-items: flex-start;
+            gap: 0.875rem;
         }
 
         .reservation-active-warning i {
-            color: #ff9800;
+            color: var(--warning-color);
             font-size: 1.25rem;
-            margin-right: 0.75rem;
             margin-top: 0.1rem;
+            flex-shrink: 0;
         }
 
         .selected-time-display {
-            padding: 0.75rem;
+            padding: 0.875rem;
             background-color: var(--primary-light);
-            border-radius: 4px;
-            margin-top: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1.25rem;
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .selected-time-display i {
+            color: var(--primary-color);
         }
 
         .loading {
             text-align: center;
-            padding: 1rem;
+            padding: 2rem;
             grid-column: 1 / -1;
-            color: #666;
+            color: #64748b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .loading i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         .error {
             text-align: center;
-            padding: 1rem;
+            padding: 1.5rem;
             grid-column: 1 / -1;
-            color: var(--accent-color);
+            color: var(--danger-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .error i {
+            font-size: 2rem;
         }
         
         /* Reservation history */
         .reservation-history {
             background-color: white;
-            border-radius: 8px;
+            border-radius: 1rem;
             padding: 1.5rem;
         }
         
@@ -765,23 +1227,26 @@
         
         .reservation-item {
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 0.75rem;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
             transition: var(--transition);
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-sm);
+            background-color: white;
         }
         
         .reservation-item:hover {
             transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary-light);
         }
         
         .reservation-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.875rem;
             border-bottom: 1px solid var(--border-color);
         }
         
@@ -791,55 +1256,74 @@
             margin: 0;
             display: flex;
             align-items: center;
+            gap: 0.75rem;
         }
         
         .reservation-title i {
-            margin-right: 8px;
             color: var(--primary-color);
         }
         
         .reservation-status {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            padding: 0.375rem 0.875rem;
             border-radius: 50px;
             font-size: 0.875rem;
             font-weight: 600;
             text-transform: uppercase;
+            gap: 0.5rem;
         }
         
         .status-pending {
             background-color: #fff8e1;
-            color: #ff8f00;
+            color: #ed8936;
+        }
+        
+        .status-pending i {
+            color: #ed8936;
         }
         
         .status-confirmed {
-            background-color: #e8f5e9;
-            color: #2e7d32;
+            background-color: #e9f7ef;
+            color: #38a169;
+        }
+        
+        .status-confirmed i {
+            color: #38a169;
         }
         
         .status-canceled {
-            background-color: #ffebee;
-            color: #c62828;
+            background-color: #fff5f5;
+            color: #e53e3e;
+        }
+        
+        .status-canceled i {
+            color: #e53e3e;
         }
         
         .status-completed {
-            background-color: #e3f2fd;
-            color: #1565c0;
+            background-color: #ebf8ff;
+            color: #3182ce;
+        }
+        
+        .status-completed i {
+            color: #3182ce;
         }
         
         .reservation-details {
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
         
         .reservation-detail {
             display: flex;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
         
         .detail-label {
-            width: 120px;
+            width: 140px;
             font-weight: 600;
-            color: #666;
+            color: #64748b;
+            flex-shrink: 0;
         }
         
         .detail-value {
@@ -847,32 +1331,78 @@
         }
         
         .reservation-description {
-            background-color: #f9f9f9;
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 1rem;
+            background-color: #f8f9fa;
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.25rem;
+            font-style: italic;
+            color: #4b5563;
+        }
+        
+        /* Feedback Button and Modal */
+        .add-feedback-btn {
+            margin-top: 1rem;
+        }
+        
+        .star-rating {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        
+        .star-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #cbd5e0;
+            padding: 0;
+            transition: color 0.2s;
+        }
+        
+        .star-btn.active {
+            color: #f59e0b;
+        }
+        
+        .star-btn:hover {
+            color: #f59e0b;
         }
         
         /* Profile Section */
         .profile-card {
             background-color: white;
-            border-radius: 8px;
+            border-radius: 1rem;
             box-shadow: var(--shadow);
             margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
         }
         
         .profile-header {
             background-color: var(--primary-light);
-            padding: 2rem 1.5rem;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
+            padding: 2.5rem 2rem;
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
             display: flex;
             align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(67, 97, 238, 0.1), transparent 60%);
+            z-index: 0;
         }
         
         .profile-avatar {
-            width: 100px;
-            height: 100px;
+            width: 110px;
+            height: 110px;
             background-color: white;
             border-radius: 50%;
             display: flex;
@@ -881,17 +1411,56 @@
             margin-right: 2rem;
             font-size: 3rem;
             color: var(--primary-color);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+        
+        .profile-info {
+            position: relative;
+            z-index: 1;
         }
         
         .profile-info h3 {
             margin: 0 0 0.5rem 0;
-            font-size: 1.5rem;
+            font-size: 1.75rem;
+            color: var(--dark-color);
         }
         
         .profile-info p {
             margin: 0;
-            color: #666;
+            color: #4b5563;
+            font-size: 1.1rem;
+        }
+        
+        .profile-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.25rem;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-sm);
+            min-width: 100px;
+        }
+        
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: #4b5563;
+            font-weight: 500;
         }
         
         .profile-tabs {
@@ -901,10 +1470,10 @@
         }
         
         .profile-tab {
-            padding: 1rem 1.5rem;
+            padding: 1.25rem 1.5rem;
             cursor: pointer;
             font-weight: 500;
-            color: #666;
+            color: #64748b;
             transition: var(--transition);
             border-bottom: 2px solid transparent;
         }
@@ -916,10 +1485,11 @@
         .profile-tab.active {
             color: var(--primary-color);
             border-bottom-color: var(--primary-color);
+            background-color: white;
         }
         
         .profile-content {
-            padding: 1.5rem;
+            padding: 1.75rem;
         }
         
         .profile-section {
@@ -937,9 +1507,10 @@
         .profile-data-item {
             display: flex;
             align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
             border-bottom: 1px solid #f0f0f0;
+            gap: 1rem;
         }
         
         .profile-data-item:last-child {
@@ -955,13 +1526,14 @@
             align-items: center;
             justify-content: center;
             color: var(--primary-color);
-            margin-right: 1rem;
+            flex-shrink: 0;
         }
         
         .profile-label {
-            width: 120px;
+            width: 140px;
             font-weight: 600;
-            color: #666;
+            color: #64748b;
+            flex-shrink: 0;
         }
         
         .profile-value {
@@ -971,16 +1543,17 @@
         /* Help Section */
         .help-card {
             background-color: white;
-            border-radius: 8px;
+            border-radius: 1rem;
             box-shadow: var(--shadow);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            padding: 1.75rem;
+            margin-bottom: 1.75rem;
+            border: 1px solid var(--border-color);
         }
         
         .faq-item {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.75rem;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 1.5rem;
+            padding-bottom: 1.75rem;
         }
         
         .faq-item:last-child {
@@ -991,77 +1564,113 @@
         
         .faq-question {
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             color: var(--dark-color);
             display: flex;
             align-items: center;
+            gap: 0.75rem;
+            font-size: 1.1rem;
         }
         
         .faq-question i {
-            margin-right: 0.75rem;
             color: var(--primary-color);
         }
         
         .faq-answer {
-            margin-left: 1.75rem;
-            color: #666;
+            margin-left: 2.25rem;
+            color: #4b5563;
+            line-height: 1.7;
         }
         
         .help-contact {
             background-color: var(--primary-light);
-            border-radius: 8px;
-            padding: 1.5rem;
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid rgba(67, 97, 238, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .help-contact::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(67, 97, 238, 0.1), transparent 70%);
+            z-index: 0;
         }
         
         .help-contact h3 {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
+            gap: 0.75rem;
+            position: relative;
+            z-index: 1;
         }
         
         .help-contact h3 i {
-            margin-right: 0.75rem;
             color: var(--primary-color);
         }
         
         /* Alert Styles */
         .alert {
-            padding: 1rem 1.25rem;
-            margin-bottom: 1.5rem;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.75rem;
             border: 1px solid transparent;
-            border-radius: 4px;
+            border-radius: 0.5rem;
             position: relative;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
+            gap: 1rem;
         }
         
         .alert i {
-            margin-right: 0.75rem;
-            font-size: 1.2rem;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
         }
         
         .alert-success {
-            color: #155724;
-            background-color: #d4edda;
-            border-color: #c3e6cb;
+            color: #0f766e;
+            background-color: #d1fae5;
+            border-color: #a7f3d0;
+        }
+        
+        .alert-success i {
+            color: #059669;
         }
         
         .alert-danger {
-            color: #721c24;
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
+            color: #b91c1c;
+            background-color: #fee2e2;
+            border-color: #fecaca;
+        }
+        
+        .alert-danger i {
+            color: #dc2626;
         }
         
         .alert-warning {
-            color: #856404;
-            background-color: #fff3cd;
-            border-color: #ffeeba;
+            color: #b45309;
+            background-color: #fef3c7;
+            border-color: #fde68a;
+        }
+        
+        .alert-warning i {
+            color: #d97706;
         }
         
         .alert-info {
-            color: #0c5460;
-            background-color: #d1ecf1;
-            border-color: #bee5eb;
+            color: #1e40af;
+            background-color: #e0f2fe;
+            border-color: #bae6fd;
+        }
+        
+        .alert-info i {
+            color: #3b82f6;
         }
         
         /* Modal Styles */
@@ -1082,41 +1691,57 @@
             max-width: 600px;
             margin: 0 auto;
             background-color: var(--light-color);
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            animation: modalOpen 0.3s ease-out;
+        }
+        
+        @keyframes modalOpen {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .modal-header {
-            padding: 1.25rem;
+            padding: 1.5rem;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: var(--info-color);
+            background-color: var(--primary-color);
             color: white;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
         }
         
         .modal-title {
             margin: 0;
             font-size: 1.25rem;
             color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
         
         .modal-body {
-            padding: 1.5rem;
+            padding: 1.75rem;
         }
         
         .modal-footer {
-            padding: 1rem;
+            padding: 1.25rem;
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: flex-end;
-            gap: 0.5rem;
+            gap: 0.75rem;
             background-color: #f8f9fa;
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
+            border-bottom-left-radius: 1rem;
+            border-bottom-right-radius: 1rem;
         }
         
         .close-modal {
@@ -1126,10 +1751,55 @@
             font-weight: 700;
             color: white;
             cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s;
         }
         
         .close-modal:hover {
-            color: #f0f0f0;
+            opacity: 1;
+        }
+        
+        /* Success Modal */
+        .success-modal .modal-header {
+            background-color: var(--success-color);
+        }
+        
+        .success-checkmark {
+            text-align: center;
+            margin: 1rem 0 2rem;
+        }
+        
+        .success-checkmark i {
+            font-size: 4rem;
+            color: var(--success-color);
+            animation: checkmark 0.5s ease-in-out;
+        }
+        
+        @keyframes checkmark {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .success-message {
+            text-align: center;
+            color: #4b5563;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        /* Feedback Modal */
+        .feedback-modal .modal-header {
+            background-color: var(--primary-color);
         }
         
         /* Loader Styles */
@@ -1137,18 +1807,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 2rem;
+            padding: 2.5rem;
             flex-direction: column;
+            gap: 1.25rem;
         }
         
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(76, 175, 80, 0.3);
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(67, 97, 238, 0.2);
             border-radius: 50%;
             border-top-color: var(--primary-color);
             animation: spin 1s ease-in-out infinite;
-            margin-bottom: 1rem;
         }
         
         @keyframes spin {
@@ -1158,14 +1828,17 @@
         /* No results */
         .no-results {
             text-align: center;
-            padding: 3rem 0;
-            color: #666;
+            padding: 4rem 0;
+            color: #64748b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.25rem;
         }
         
         .no-results i {
-            font-size: 3rem;
-            color: #ddd;
-            margin-bottom: 1rem;
+            font-size: 3.5rem;
+            color: #cbd5e0;
         }
         
         /* Pagination */
@@ -1174,7 +1847,7 @@
             justify-content: center;
             list-style-type: none;
             gap: 0.5rem;
-            margin-top: 1.5rem;
+            margin-top: 1.75rem;
         }
         
         .page-item {
@@ -1182,22 +1855,38 @@
         }
         
         .page-link {
-            padding: 0.5rem 0.75rem;
+            padding: 0.625rem 0.875rem;
             border: 1px solid var(--border-color);
             color: var(--text-color);
             text-decoration: none;
-            border-radius: 4px;
+            border-radius: 0.5rem;
             transition: var(--transition);
+            font-weight: 500;
         }
         
         .page-link:hover {
-            background-color: #f5f5f5;
+            background-color: #f8f9fa;
+            border-color: var(--primary-color);
         }
         
         .page-item.active .page-link {
             background-color: var(--primary-color);
             color: white;
             border-color: var(--primary-color);
+        }
+        
+        /* Feedback Badge */
+        .feedback-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: #e9f7ef;
+            color: #16a34a;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
         }
         
         /* Utilities */
@@ -1213,10 +1902,30 @@
             margin-top: 1rem;
         }
         
+        .mt-4 {
+            margin-top: 2rem;
+        }
+        
+        .mb-2 {
+            margin-bottom: 1rem;
+        }
+        
+        .mb-4 {
+            margin-bottom: 2rem;
+        }
+        
         /* Responsive Adjustments */
         @media (max-width: 1200px) {
             .cards-grid {
                 grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+            
+            .profile-stats {
+                gap: 1rem;
+            }
+            
+            .stat-item {
+                padding: 0.5rem 1rem;
             }
         }
         
@@ -1236,7 +1945,12 @@
             .sidebar-menu {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 0.5rem;
+                gap: 0.75rem;
+            }
+            
+            .sidebar-menu li {
+                flex: 1;
+                min-width: 200px;
             }
             
             .profile-header {
@@ -1246,7 +1960,11 @@
             
             .profile-avatar {
                 margin-right: 0;
-                margin-bottom: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .profile-stats {
+                justify-content: center;
             }
         }
         
@@ -1274,7 +1992,7 @@
             
             .date-navigation {
                 flex-direction: column;
-                gap: 0.5rem;
+                gap: 0.75rem;
                 align-items: stretch;
             }
             
@@ -1295,10 +2013,7 @@
             .reservation-header {
                 flex-direction: column;
                 align-items: flex-start;
-            }
-            
-            .reservation-status {
-                margin-top: 0.5rem;
+                gap: 0.75rem;
             }
             
             .profile-tabs {
@@ -1309,21 +2024,53 @@
                 flex: 1;
                 text-align: center;
                 padding: 0.75rem 0.5rem;
+                font-size: 0.9rem;
             }
             
             .profile-data-item {
                 flex-direction: column;
                 align-items: flex-start;
+                gap: 0.5rem;
             }
             
             .profile-label {
                 width: 100%;
-                margin-bottom: 0.5rem;
+            }
+            
+            .stat-item {
+                min-width: 80px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .user-name span {
+                display: none;
+            }
+            
+            .profile-stats {
+                flex-wrap: wrap;
+            }
+            
+            .stat-item {
+                min-width: 40%;
+                flex: 1;
             }
         }
     </style>
 </head>
 <body>
+    <div class="bg-circles">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+        <div class="circle circle-4"></div>
+        <div class="circle circle-5"></div>
+        <div class="circle circle-6"></div>
+        <div class="circle circle-7"></div>
+    </div>
+    
+    <div class="particles" id="particles"></div>
+
     <header>
         <div class="container header-container">
             <a href="index.html" class="logo">
@@ -1488,7 +2235,7 @@
                                 <!-- Créneau sélectionné -->
                                 <input type="hidden" id="selectedDateTimeInput" name="selectedDateTime">
                                 <div class="selected-time-display">
-                                    <span>Créneau sélectionné: </span>
+                                    <i class="fas fa-calendar-day"></i>
                                     <span id="selectedDateTimeDisplay">Aucun créneau sélectionné</span>
                                 </div>
                             </div>
@@ -1496,8 +2243,12 @@
                             <input type="hidden" id="preferredDate" name="preferredDate">
                             
                             <div class="form-actions">
-                                <button type="button" class="btn btn-outline" id="cancelReservationBtn">Annuler</button>
-                                <button type="submit" class="btn btn-primary">Soumettre la demande</button>
+                                <button type="button" class="btn btn-outline" id="cancelReservationBtn">
+                                    <i class="fas fa-times"></i> Annuler
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane"></i> Soumettre la demande
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -1540,6 +2291,22 @@
                             <div class="profile-info">
                                 <h3 id="profileUsername">Nom d'utilisateur</h3>
                                 <p id="profileEmail">Email</p>
+                                
+                                <!-- Statistiques utilisateur -->
+                                <div class="profile-stats">
+                                    <div class="stat-item">
+                                        <div class="stat-value" id="statTotalReservations">0</div>
+                                        <div class="stat-label">Réservations</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-value" id="statCompletedReservations">0</div>
+                                        <div class="stat-label">Complétées</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-value" id="statAgenciesVisited">0</div>
+                                        <div class="stat-label">Agences</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
@@ -1569,15 +2336,9 @@
                                     </div>
                                     
                                     <div class="profile-data-item">
-                                        <i class="fas fa-calendar-alt"></i>
-                                        <span class="profile-label">Membre depuis</span>
-                                        <div class="profile-value">Janvier 2024</div>
-                                    </div>
-                                    
-                                    <div class="profile-data-item">
-                                        <i class="fas fa-tag"></i>
-                                        <span class="profile-label">Rôle</span>
-                                        <div class="profile-value" id="personalInfoRole"></div>
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span class="profile-label">Agences visitées</span>
+                                        <div class="profile-value" id="agenciesVisitedList">Aucune pour le moment</div>
                                     </div>
                                 </div>
                             </div>
@@ -1738,7 +2499,7 @@
     <div id="editUsernameModal" class="modal">
         <div class="modal-dialog">
             <div class="modal-header">
-                <h3 class="modal-title">Modifier le nom d'utilisateur</h3>
+                <h3 class="modal-title"><i class="fas fa-user-edit"></i> Modifier le nom d'utilisateur</h3>
                 <button class="close-modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -1753,6 +2514,19 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline cancel-modal">Annuler</button>
                 <button type="button" class="btn btn-primary" id="saveUsernameBtn">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de chargement -->
+    <div id="loadingModal" class="modal">
+        <div class="modal-dialog" style="max-width: 300px; text-align: center;">
+            <div style="padding: 30px;">
+                <div style="margin-bottom: 20px;">
+                    <div class="spinner" style="margin: 0 auto;"></div>
+                </div>
+                <h3 style="margin-bottom: 10px; color: #4361ee;">Action en attente</h3>
+                <p>Veuillez patienter...</p>
             </div>
         </div>
     </div>
@@ -1774,7 +2548,111 @@
         </div>
     </div>
     
+    <!-- Modal de succès -->
+    <div id="successModal" class="modal success-modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-check-circle"></i> Confirmation</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="success-checkmark">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="success-message" id="successMessage">
+                    Votre demande a été traitée avec succès !
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="successModalBtn">OK</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal pour laisser un avis -->
+    <div id="feedbackModal" class="modal feedback-modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-star"></i> Donnez votre avis</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="feedbackAlert" class="alert hidden"></div>
+                <form id="feedbackForm">
+                    <input type="hidden" id="feedbackReservationId">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Comment noteriez-vous votre expérience ?</label>
+                        <div class="star-rating">
+                            <button type="button" class="star-btn" data-rating="1"><i class="fas fa-star"></i></button>
+                            <button type="button" class="star-btn" data-rating="2"><i class="fas fa-star"></i></button>
+                            <button type="button" class="star-btn" data-rating="3"><i class="fas fa-star"></i></button>
+                            <button type="button" class="star-btn" data-rating="4"><i class="fas fa-star"></i></button>
+                            <button type="button" class="star-btn" data-rating="5"><i class="fas fa-star"></i></button>
+                        </div>
+                        <input type="hidden" id="ratingInput" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="feedbackComment" class="form-label">Commentaire (optionnel)</label>
+                        <textarea id="feedbackComment" class="form-control" rows="4" placeholder="Partagez votre expérience..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline cancel-modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="submitFeedbackBtn">Envoyer</button>
+            </div>
+        </div>
+    </div>
+    
     <script>
+// Fonction pour créer les particules
+function createParticles() {
+    const particles = document.getElementById('particles');
+    const particleCount = 20;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Position aléatoire
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
+        particle.style.left = `${x}%`;
+        particle.style.top = `${y}%`;
+        
+        // Taille aléatoire
+        const size = Math.random() * 5 + 3;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Couleur aléatoire
+        const colors = ['rgba(67, 97, 238, 0.1)', 'rgba(16, 185, 129, 0.1)', 'rgba(59, 130, 246, 0.1)', 'rgba(245, 158, 11, 0.1)'];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.backgroundColor = color;
+        
+        // Mouvement aléatoire
+        const xMove = (Math.random() - 0.5) * 200;
+        const yMove = (Math.random() - 0.5) * 200;
+        particle.style.setProperty('--x', `${xMove}px`);
+        particle.style.setProperty('--y', `${yMove}px`);
+        
+        // Durée d'animation aléatoire
+        const duration = Math.random() * 10 + 10;
+        particle.style.animationDuration = `${duration}s`;
+        
+        // Délai d'animation aléatoire
+        const delay = Math.random() * 5;
+        particle.style.animationDelay = `${delay}s`;
+        
+        particles.appendChild(particle);
+    }
+}
+
+// Appeler la fonction au chargement de la page
+document.addEventListener('DOMContentLoaded', createParticles);
+
 // Base URL pour l'API
 const API_BASE_URL = 'http://localhost:8082';
 
@@ -1786,6 +2664,8 @@ let currentAgencyServices = [];
 let userData = null;
 let selectedTimeSlot = null;
 let currentConfirmCallback = null;
+let userStats = null;
+let currentFeedbackReservationId = null;
 
 // Éléments du DOM
 const usernameElement = document.getElementById('username');
@@ -1817,6 +2697,7 @@ const selectedDateTimeDisplay = document.getElementById('selectedDateTimeDisplay
 const prevWeekBtn = document.getElementById('prevWeekBtn');
 const nextWeekBtn = document.getElementById('nextWeekBtn');
 const currentWeekLabel = document.getElementById('currentWeekLabel');
+const activeReservationWarning = document.getElementById('activeReservationWarning');
 
 // Éléments de la section Historique
 const historyLoader = document.getElementById('historyLoader');
@@ -1830,12 +2711,17 @@ const profileUsername = document.getElementById('profileUsername');
 const profileEmail = document.getElementById('profileEmail');
 const personalInfoUsername = document.getElementById('personalInfoUsername');
 const personalInfoEmail = document.getElementById('personalInfoEmail');
-const personalInfoRole = document.getElementById('personalInfoRole');
 const profileTabs = document.querySelectorAll('.profile-tab');
 const profileSections = document.querySelectorAll('.profile-section');
 const editUsernameBtn = document.getElementById('editUsernameBtn');
 const changePasswordForm = document.getElementById('changePasswordForm');
 const deleteAccountForm = document.getElementById('deleteAccountForm');
+
+// Éléments des statistiques utilisateur
+const statTotalReservations = document.getElementById('statTotalReservations');
+const statCompletedReservations = document.getElementById('statCompletedReservations');
+const statAgenciesVisited = document.getElementById('statAgenciesVisited');
+const agenciesVisitedList = document.getElementById('agenciesVisitedList');
 
 // Éléments du modal de modification du nom d'utilisateur
 const editUsernameModal = document.getElementById('editUsernameModal');
@@ -1843,6 +2729,21 @@ const editUsernameForm = document.getElementById('editUsernameForm');
 const newUsername = document.getElementById('newUsername');
 const saveUsernameBtn = document.getElementById('saveUsernameBtn');
 const editUsernameAlert = document.getElementById('editUsernameAlert');
+
+// Éléments du modal de succès
+const successModal = document.getElementById('successModal');
+const successMessage = document.getElementById('successMessage');
+const successModalBtn = document.getElementById('successModalBtn');
+
+// Éléments du modal de feedback
+const feedbackModal = document.getElementById('feedbackModal');
+const feedbackForm = document.getElementById('feedbackForm');
+const feedbackReservationId = document.getElementById('feedbackReservationId');
+const ratingInput = document.getElementById('ratingInput');
+const feedbackComment = document.getElementById('feedbackComment');
+const starButtons = document.querySelectorAll('.star-btn');
+const submitFeedbackBtn = document.getElementById('submitFeedbackBtn');
+const feedbackAlert = document.getElementById('feedbackAlert');
 
 // Éléments de la section Aide
 const helpAlert = document.getElementById('helpAlert');
@@ -1969,10 +2870,37 @@ function initializeEventListeners() {
         );
     });
     
+    // Évaluation par étoiles
+    starButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const rating = parseInt(this.getAttribute('data-rating'));
+            ratingInput.value = rating;
+            
+            // Mettre à jour l'affichage des étoiles
+            starButtons.forEach((btn, index) => {
+                if (index < rating) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        });
+    });
+    
+    // Soumettre un feedback
+    submitFeedbackBtn.addEventListener('click', function() {
+        submitFeedback();
+    });
+    
     // Formulaire de contact
     contactForm.addEventListener('submit', function(e) {
         e.preventDefault();
         submitContactForm();
+    });
+    
+    // Fermer le modal de succès
+    successModalBtn.addEventListener('click', function() {
+        closeAllModals();
     });
     
     // Déconnexion
@@ -2034,6 +2962,9 @@ async function checkSession() {
             // Afficher le nom d'utilisateur
             usernameElement.textContent = username;
             
+            // Charger les statistiques de l'utilisateur
+            loadUserStats();
+            
             // Charger les agences
             loadAgencies();
         } else {
@@ -2044,6 +2975,37 @@ async function checkSession() {
         console.error('Erreur lors de la vérification de la session:', error);
         // En cas d'erreur, rediriger vers la page de connexion
         window.location.href = 'auth.html';
+    }
+}
+
+// Charger les statistiques de l'utilisateur
+async function loadUserStats() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/user/stats`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            userStats = await response.json();
+            console.log('Statistiques utilisateur:', userStats);
+            
+            // Mettre à jour les statistiques dans l'interface
+            if (userStats) {
+                statTotalReservations.textContent = userStats.totalReservations || '0';
+                statCompletedReservations.textContent = userStats.completedReservations || '0';
+                statAgenciesVisited.textContent = userStats.agenciesVisited ? userStats.agenciesVisited.length : '0';
+                
+                // Mettre à jour la liste des agences visitées
+                if (userStats.agenciesVisited && userStats.agenciesVisited.length > 0) {
+                    agenciesVisitedList.textContent = userStats.agenciesVisited.join(', ');
+                } else {
+                    agenciesVisitedList.textContent = 'Aucune pour le moment';
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des statistiques utilisateur:', error);
     }
 }
 
@@ -2075,42 +3037,42 @@ async function loadAgencies() {
         }
         
         // Charger les agences
-        const agenciesResponse = await fetch(`${API_BASE_URL}/api/agencies/public`, {
-            method: 'GET',
-            credentials: 'include'
+const agenciesResponse = await fetch(`${API_BASE_URL}/api/agencies/public`, {
+    method: 'GET',
+    credentials: 'include'
+});
+
+if (agenciesResponse.ok) {
+    allAgencies = await agenciesResponse.json();
+    
+    if (allAgencies.length === 0) {
+        // Aucune agence trouvée
+        noAgencies.classList.remove('hidden');
+    } else {
+        // Remplir le filtre de villes
+        const cities = [...new Set(allAgencies.map(agency => agency.city))];
+        cityFilter.innerHTML = '<option value="">Toutes les villes</option>';
+        cities.forEach(city => {
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = city;
+            cityFilter.appendChild(option);
         });
         
-        if (agenciesResponse.ok) {
-            allAgencies = await agenciesResponse.json();
-            
-            if (allAgencies.length === 0) {
-                // Aucune agence trouvée
-                noAgencies.classList.remove('hidden');
-            } else {
-                // Remplir le filtre de villes
-                const cities = [...new Set(allAgencies.map(agency => agency.city))];
-                cityFilter.innerHTML = '<option value="">Toutes les villes</option>';
-                cities.forEach(city => {
-                    const option = document.createElement('option');
-                    option.value = city;
-                    option.textContent = city;
-                    cityFilter.appendChild(option);
-                });
-                
-                // Afficher les agences
-                displayAgencies(allAgencies);
-            }
-        } else {
-            // Erreur lors du chargement des agences
-            showAlert('Une erreur est survenue lors du chargement des agences.', 'danger');
-        }
-    } catch (error) {
-        console.error('Erreur lors du chargement des agences:', error);
-        showAlert('Erreur de connexion au serveur.', 'danger');
-    } finally {
-        // Masquer le loader
-        agenciesLoader.classList.add('hidden');
+        // Afficher les agences
+        displayAgencies(allAgencies);
     }
+} else {
+    // Erreur lors du chargement des agences
+    showAlert(alertContainer, 'Une erreur est survenue lors du chargement des agences.', 'danger');
+}
+} catch (error) {
+    console.error('Erreur lors du chargement des agences:', error);
+    showAlert(alertContainer, 'Erreur de connexion au serveur.', 'danger');
+} finally {
+    // Masquer le loader
+    agenciesLoader.classList.add('hidden');
+}
 }
 
 // Filtrer les agences
@@ -2287,25 +3249,35 @@ function openReservationForm(agencyId) {
     .then(response => response.json())
     .then(data => {
         if (data.hasActiveReservation) {
+            // Masquer d'abord tous les autres avertissements ou alertes
+            reservationAlert.classList.add('hidden');
+            
             // Afficher un avertissement et ne pas ouvrir le formulaire
-            document.getElementById('activeReservationWarning').classList.remove('hidden');
+            activeReservationWarning.classList.remove('hidden');
+            
+            // Faire défiler vers le haut pour que l'avertissement soit visible
             window.scrollTo({ top: 0, behavior: 'smooth' });
             
-            // Optionnellement, rediriger vers l'historique des réservations
-            setTimeout(() => {
-                showSection('reservation-history-section');
-                menuItems.forEach(item => {
-                    if (item.getAttribute('data-section') === 'reservation-history-section') {
-                        item.classList.add('active');
-                    } else {
-                        item.classList.remove('active');
-                    }
-                });
-                loadReservations();
-                
-                // Masquer l'avertissement après la redirection
-                document.getElementById('activeReservationWarning').classList.add('hidden');
-            }, 3000);
+            // Afficher un modal de notification
+            showConfirmModal(
+                'Réservation active',
+                'Vous avez déjà une réservation active. Vous ne pouvez pas créer de nouvelle réservation tant que celle-ci n\'est pas complétée ou annulée.',
+                () => {
+                    // Rediriger vers l'historique des réservations
+                    showSection('reservation-history-section');
+                    menuItems.forEach(item => {
+                        if (item.getAttribute('data-section') === 'reservation-history-section') {
+                            item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
+                        }
+                    });
+                    loadReservations();
+                    
+                    // Masquer l'avertissement après la redirection
+                    activeReservationWarning.classList.add('hidden');
+                }
+            );
             
             return;
         }
@@ -2314,7 +3286,7 @@ function openReservationForm(agencyId) {
         const agency = allAgencies.find(a => a.id == agencyId);
         
         if (!agency) {
-            showAlert('Agence non trouvée.', 'danger');
+            showAlert(alertContainer, 'Agence non trouvée.', 'danger');
             return;
         }
         
@@ -2367,10 +3339,9 @@ function openReservationForm(agencyId) {
     })
     .catch(error => {
         console.error('Erreur lors de la vérification des réservations actives:', error);
-        showAlert('Une erreur est survenue. Veuillez réessayer.', 'danger');
+        showAlert(alertContainer, 'Une erreur est survenue. Veuillez réessayer.', 'danger');
     });
 }
-
 // Availability Calendar Management
 const availabilityCalendar = {
     currentStartDate: null,
@@ -2552,14 +3523,14 @@ const availabilityCalendar = {
         const calendarDays = document.querySelector('.calendar-days');
         const calendarSlots = document.querySelector('.calendar-slots');
         
-        calendarDays.innerHTML = '<div class="loading">Chargement...</div>';
+        calendarDays.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i><span>Chargement...</span></div>';
         calendarSlots.innerHTML = '';
     },
     
     // Render calendar error
     renderCalendarError: function() {
         const calendarDays = document.querySelector('.calendar-days');
-        calendarDays.innerHTML = '<div class="error">Impossible de charger les disponibilités</div>';
+        calendarDays.innerHTML = '<div class="error"><i class="fas fa-exclamation-triangle"></i><span>Impossible de charger les disponibilités</span></div>';
     },
     
     // Render the calendar with availability data
@@ -2795,6 +3766,23 @@ const availabilityCalendar = {
         }
     }
 };
+
+// Annuler le formulaire de réservation et revenir à la liste des agences
+function cancelReservationForm() {
+    // Disconnect the WebSocket connection
+    availabilityCalendar.disconnect();
+    
+    // Revenir à la liste des agences
+    showSection('agencies-section');
+    menuItems.forEach(item => {
+        if (item.getAttribute('data-section') === 'agencies-section') {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+}
+
 // Créer une nouvelle réservation
 async function createReservation() {
     const service = document.getElementById('service').value;
@@ -2839,16 +3827,22 @@ async function createReservation() {
         
         if (response.ok) {
             console.log("Réservation créée avec succès:", data);
-            showReservationAlert('Votre demande de réservation a été créée avec succès!', 'success');
             
             // Réinitialiser le formulaire
             newReservationForm.reset();
             
-            // Rediriger vers l'historique des réservations après 2 secondes
-            setTimeout(() => {
+            // Afficher le modal de succès
+            showSuccessModal(
+                'Votre demande de réservation a été créée avec succès !',
+                'Un agent va examiner votre demande et vous recevrez bientôt un email de confirmation.'
+            );
+            
+            // Rediriger vers l'historique des réservations après fermeture du modal
+            successModalBtn.onclick = function() {
                 // Disconnect the WebSocket connection
                 availabilityCalendar.disconnect();
                 
+                // Rediriger vers l'historique des réservations
                 showSection('reservation-history-section');
                 menuItems.forEach(item => {
                     if (item.getAttribute('data-section') === 'reservation-history-section') {
@@ -2858,7 +3852,10 @@ async function createReservation() {
                     }
                 });
                 loadReservations();
-            }, 2000);
+                
+                // Fermer le modal
+                closeAllModals();
+            };
         } else {
             console.error("Erreur lors de la création de la réservation:", data);
             showReservationAlert(data.message || 'Une erreur est survenue lors de la création de la réservation.', 'danger');
@@ -2928,20 +3925,37 @@ function displayReservations(reservations) {
         
         const statusClass = `status-${reservation.status.toLowerCase()}`;
         const statusText = formatStatus(reservation.status);
-        
+        const statusIcon = getStatusIcon(reservation.status);
+
         // Trouver l'agence correspondante
         let agencyName = "Agence";
-        if (reservation.agency && reservation.agency.name) {
-            agencyName = reservation.agency.name;
+        if (reservation.agency) {
+            if (typeof reservation.agency === 'object' && reservation.agency.name) {
+                // Cas où agency est un objet complet avec une propriété name
+                agencyName = reservation.agency.name;
+            } else if (typeof reservation.agency === 'number' || typeof reservation.agency === 'string') {
+                // Cas où agency est juste un ID
+                const agencyId = reservation.agency;
+                // Chercher l'agence dans allAgencies si disponible
+                if (allAgencies && allAgencies.length > 0) {
+                    const foundAgency = allAgencies.find(a => a.id == agencyId);
+                    if (foundAgency) {
+                        agencyName = foundAgency.name;
+                    } else {
+                        agencyName = `Agence #${agencyId}`;
+                    }
+                } else {
+                    agencyName = `Agence #${agencyId}`;
+                }
+            }
         }
-        
         let html = `
             <div class="reservation-header">
                 <h3 class="reservation-title">
                     <i class="fas fa-calendar-check"></i>
                     ${reservation.service}
                 </h3>
-                <span class="reservation-status ${statusClass}">${statusText}</span>
+                <span class="reservation-status ${statusClass}">${statusIcon} ${statusText}</span>
             </div>
             
             <div class="reservation-details">
@@ -3015,6 +4029,56 @@ function displayReservations(reservations) {
             </div>
         `;
         
+        // Vérifier si un feedback existe déjà pour cette réservation
+        let hasFeedback = false;
+        
+        // Ajouter un bouton de feedback pour les réservations complétées
+        if (reservation.status === 'COMPLETED') {
+            // Vérifier si l'utilisateur a déjà donné un avis
+            fetch(`${API_BASE_URL}/api/user/feedback/${reservation.id}/exists`, {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                const feedbackDiv = document.createElement('div');
+                
+                if (data.success) {
+                    // L'utilisateur a déjà donné un avis
+                    feedbackDiv.innerHTML = `
+                        <div class="feedback-badge">
+                            <i class="fas fa-check-circle"></i> Avis envoyé
+                        </div>
+                    `;
+                    hasFeedback = true;
+                } else {
+                    // L'utilisateur n'a pas encore donné d'avis
+                    feedbackDiv.innerHTML = `
+                        <div class="text-right mt-2">
+                            <button class="btn btn-info btn-sm add-feedback-btn" data-id="${reservation.id}">
+                                <i class="fas fa-star"></i> Donnez votre avis
+                            </button>
+                        </div>
+                    `;
+                }
+                
+                listItem.appendChild(feedbackDiv);
+                
+                // Ajouter l'écouteur d'événement pour le bouton d'avis
+                if (!hasFeedback) {
+                    const feedbackBtn = listItem.querySelector('.add-feedback-btn');
+                    if (feedbackBtn) {
+                        feedbackBtn.addEventListener('click', function() {
+                            openFeedbackModal(reservation.id);
+                        });
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors de la vérification du feedback:', error);
+            });
+        }
+        
         // Add cancel button if reservation is in pending status
         if (reservation.status === 'PENDING') {
             html += `
@@ -3042,6 +4106,109 @@ function displayReservations(reservations) {
             });
         }
     });
+}
+
+// Ouvrir le modal de feedback
+function openFeedbackModal(reservationId) {
+    // Réinitialiser le formulaire
+    feedbackForm.reset();
+    feedbackAlert.classList.add('hidden');
+    
+    // Réinitialiser les étoiles
+    starButtons.forEach(btn => btn.classList.remove('active'));
+    
+    // Mettre à jour l'ID de la réservation
+    feedbackReservationId.value = reservationId;
+    currentFeedbackReservationId = reservationId;
+    
+    // Afficher le modal
+    feedbackModal.style.display = 'block';
+}
+
+// Afficher le modal de chargement
+function showLoadingModal() {
+    document.getElementById('loadingModal').style.display = 'block';
+}
+
+// Cacher le modal de chargement
+function hideLoadingModal() {
+    document.getElementById('loadingModal').style.display = 'none';
+}
+
+// Soumettre un feedback
+async function submitFeedback() {
+    const reservationId = currentFeedbackReservationId;
+    const rating = parseInt(ratingInput.value);
+    const comment = feedbackComment.value;
+    
+    // Vérification des champs
+    if (!rating || rating < 1 || rating > 5) {
+        showAlert(feedbackAlert, 'Veuillez sélectionner une note entre 1 et 5 étoiles.', 'warning');
+        return;
+    }
+    
+    // Fermer le modal de feedback
+    feedbackModal.style.display = 'none';
+    
+    // Afficher le modal de chargement
+    showLoadingModal();
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/user/feedback`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                reservationId: reservationId,
+                rating: rating,
+                comment: comment
+            }),
+            credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        // Cacher le modal de chargement
+        hideLoadingModal();
+        
+        if (response.ok) {
+            // Afficher le modal de succès au lieu d'une simple alerte
+            showSuccessModal(
+                'Merci pour votre avis !',
+                'Votre retour est très précieux pour nous et nous aide à améliorer nos services.'
+            );
+            
+            // Recharger les réservations après la fermeture du modal
+            successModalBtn.onclick = function() {
+                loadReservations(); // Recharger la liste des réservations
+                closeAllModals();
+            };
+        } else {
+            showAlert(feedbackAlert, data.message || 'Une erreur est survenue lors de l\'envoi de votre avis.', 'danger');
+            feedbackModal.style.display = 'block'; // Réafficher le modal de feedback en cas d'erreur
+        }
+    } catch (error) {
+        console.error('Erreur lors de l\'envoi du feedback:', error);
+        hideLoadingModal();
+        showAlert(feedbackAlert, 'Erreur de connexion au serveur.', 'danger');
+        feedbackModal.style.display = 'block'; // Réafficher le modal de feedback en cas d'erreur
+    }
+}
+// Obtenir l'icône correspondant au statut
+function getStatusIcon(status) {
+    switch (status) {
+        case 'PENDING':
+            return '<i class="fas fa-clock"></i>';
+        case 'CONFIRMED':
+            return '<i class="fas fa-check"></i>';
+        case 'CANCELED':
+            return '<i class="fas fa-times"></i>';
+        case 'COMPLETED':
+            return '<i class="fas fa-flag-checkered"></i>';
+        default:
+            return '';
+    }
 }
 
 // Annuler une réservation
@@ -3094,7 +4261,9 @@ function loadUserProfile() {
     
     personalInfoUsername.textContent = userData.username;
     personalInfoEmail.textContent = userData.email;
-    personalInfoRole.textContent = userData.role === 'ROLE_USER' ? 'Utilisateur' : userData.role;
+    
+    // Recharger les statistiques utilisateur
+    loadUserStats();
 }
 
 // Ouvrir le modal de modification du nom d'utilisateur
@@ -3253,6 +4422,9 @@ async function submitContactForm() {
         return;
     }
     
+    // Afficher le modal de chargement
+    showLoadingModal();
+    
     try {
         const response = await fetch(`${API_BASE_URL}/api/user/contact`, {
             method: 'POST',
@@ -3266,22 +4438,33 @@ async function submitContactForm() {
             credentials: 'include'
         });
         
-        // Simuler une réponse positive
-        const data = { success: true };
+        const data = await response.json();
         
-        if (true) { // Simuler une réponse réussie
+        // Cacher le modal de chargement
+        hideLoadingModal();
+        
+        if (response.ok) {
             // Réinitialiser le formulaire
             contactForm.reset();
             
-            // Afficher une notification
-            showAlert(helpAlert, 'Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.', 'success');
+            // Afficher le modal de succès
+            showSuccessModal(
+                'Message envoyé avec succès !',
+                'Votre message a bien été transmis à notre équipe. Nous vous répondrons dans les plus brefs délais.'
+            );
         } else {
             showAlert(helpAlert, data.message || 'Erreur lors de l\'envoi du message.', 'danger');
         }
     } catch (error) {
         console.error('Erreur lors de l\'envoi du message:', error);
+        hideLoadingModal();
         showAlert(helpAlert, 'Erreur de connexion au serveur.', 'danger');
     }
+}
+// Afficher le modal de succès
+function showSuccessModal(title, message) {
+    successMessage.textContent = message;
+    successModal.style.display = 'block';
 }
 
 // Afficher une alerte dans un conteneur spécifique
@@ -3311,47 +4494,12 @@ function showAlert(container, message, type, autoHide = true) {
 
 // Afficher une alerte dans la section de réservation
 function showReservationAlert(message, type) {
-    reservationAlert.className = `alert alert-${type}`;
-    
-    // Déterminer l'icône en fonction du type
-    let icon = '';
-    if (type === 'success') icon = '<i class="fas fa-check-circle"></i>';
-    else if (type === 'danger') icon = '<i class="fas fa-exclamation-circle"></i>';
-    else if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle"></i>';
-    else if (type === 'info') icon = '<i class="fas fa-info-circle"></i>';
-    
-    reservationAlert.innerHTML = `${icon} ${message}`;
-    reservationAlert.classList.remove('hidden');
-    
-    // Faire défiler jusqu'à l'alerte
-    reservationAlert.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    
-    // Masquer l'alerte après 5 secondes si ce n'est pas un succès
-    if (type !== 'success') {
-        setTimeout(() => {
-            reservationAlert.classList.add('hidden');
-        }, 5000);
-    }
+    showAlert(reservationAlert, message, type);
 }
 
 // Afficher une alerte dans la section d'historique
 function showHistoryAlert(message, type) {
-    historyAlert.className = `alert alert-${type}`;
-    
-    // Déterminer l'icône en fonction du type
-    let icon = '';
-    if (type === 'success') icon = '<i class="fas fa-check-circle"></i>';
-    else if (type === 'danger') icon = '<i class="fas fa-exclamation-circle"></i>';
-    else if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle"></i>';
-    else if (type === 'info') icon = '<i class="fas fa-info-circle"></i>';
-    
-    historyAlert.innerHTML = `${icon} ${message}`;
-    historyAlert.classList.remove('hidden');
-    
-    // Masquer l'alerte après 5 secondes
-    setTimeout(() => {
-        historyAlert.classList.add('hidden');
-    }, 5000);
+    showAlert(historyAlert, message, type);
 }
 
 // Afficher le modal de confirmation
@@ -3422,6 +4570,6 @@ async function logout() {
         window.location.href = 'auth.html';
     }
 }
-    </script>
+</script>
 </body>
 </html>

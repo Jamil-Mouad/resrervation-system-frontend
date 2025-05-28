@@ -4,268 +4,1845 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Authentification - Service de Réservation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Styles du code précédent, gardés à l'identique */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
+        :root {
+            --primary-color: #4361ee;
+            --primary-dark: #3a56d4;
+            --primary-light: #eef2ff;
+            --secondary-color: #f8f9fa;
+            --dark-color: #1e293b;
+            --light-color: #ffffff;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
+            --success-color: #10b981;
+            --border-color: #e2e8f0;
+            --text-color: #334155;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 20px;
+            padding: 0;
         }
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f3 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        h1 {
-            text-align: center;
-            color: #333;
+        
+        /* Layout principal */
+        .main-container {
+            display: flex;
+            flex: 1;
+            position: relative;
+            overflow: hidden;
         }
-        .form-group {
-            margin-bottom: 15px;
+        
+        /* Cercles décoratifs en arrière-plan */
+        .bg-circles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
         }
-        label {
-            display: block;
-            margin-bottom: 5px;
+        
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(to right, rgba(67, 97, 238, 0.1), rgba(58, 86, 212, 0.05));
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+        
+        .circle-2 {
+            width: 500px;
+            height: 500px;
+            bottom: -200px;
+            right: -200px;
+            animation-delay: 2s;
+        }
+        
+        .circle-3 {
+            width: 200px;
+            height: 200px;
+            top: 30%;
+            right: 10%;
+            animation-delay: 4s;
+        }
+        
+        .circle-4 {
+            width: 150px;
+            height: 150px;
+            top: 40%;
+            left: 15%;
+            background: linear-gradient(to right, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            animation-delay: 6s;
+            animation-duration: 17s;
+        }
+        
+        .circle-5 {
+            width: 100px;
+            height: 100px;
+            bottom: 20%;
+            left: 30%;
+            background: linear-gradient(to right, rgba(239, 68, 68, 0.05), rgba(239, 68, 68, 0.02));
+            animation-delay: 1s;
+            animation-duration: 13s;
+        }
+        
+        .circle-6 {
+            width: 250px;
+            height: 250px;
+            top: 10%;
+            left: 40%;
+            background: linear-gradient(to right, rgba(245, 158, 11, 0.05), rgba(245, 158, 11, 0.02));
+            animation-delay: 3s;
+            animation-duration: 20s;
+        }
+        
+        .circle-7 {
+            width: 180px;
+            height: 180px;
+            bottom: 30%;
+            right: 25%;
+            background: linear-gradient(to right, rgba(59, 130, 246, 0.05), rgba(59, 130, 246, 0.02));
+            animation-delay: 5s;
+            animation-duration: 18s;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+        }
+        
+        /* Particules décoratifs */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: rgba(67, 97, 238, 0.1);
+            border-radius: 50%;
+            animation: particleFloat 20s infinite linear;
+        }
+        
+        @keyframes particleFloat {
+            0% {
+                transform: translate(0, 0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--x), var(--y));
+                opacity: 0;
+            }
+        }
+        
+        /* Section d'information */
+        .info-section {
+            flex: 1;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .logo-container {
+            margin-bottom: 2rem;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .welcome-text {
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+        
+        .welcome-text h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+            line-height: 1.2;
+        }
+        
+        .welcome-text p {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .feature-card {
+            background-color: var(--light-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            width: 0;
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            transition: var(--transition);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+        
+        .feature-card:hover::after {
+            width: 100%;
+        }
+        
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            transition: var(--transition);
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+            background-color: var(--primary-color);
+            color: var(--light-color);
+        }
+        
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+        
+        .testimonials {
+            margin-top: 2rem;
+            padding: 0;
+            position: relative;
+            width: 100%;
+        }
+        
+        .testimonials-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+            color: var(--dark-color);
             font-weight: 600;
         }
-        input {
+        
+        .testimonials-header i {
+            color: var(--primary-color);
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .testimonial-card {
+            padding: 1.5rem;
+            background-color: var(--light-color);
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            position: relative;
+            border-top: 3px solid transparent;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+            border-top: 3px solid var(--primary-color);
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            color: #4b5563;
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        .testimonial-text::before {
+            content: '"';
+            position: absolute;
+            left: 0;
+            top: -0.5rem;
+            font-size: 2rem;
+            color: var(--primary-light);
+            font-family: serif;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+        }
+        
+        .author-info {
+            flex: 1;
+        }
+        
+        .author-name {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .author-role {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+        
+        /* Section de formulaire */
+        .form-section {
+            width: 500px;
+            background-color: var(--light-color);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            padding: 2rem;
+            color: var(--light-color);
+            text-align: center;
+            position: relative;
+        }
+        
+        .form-header h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+        
+        .form-header::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 0;
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
+            height: 30px;
+            background-color: var(--light-color);
+            border-radius: 50% 50% 0 0;
         }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .error {
-            color: #f44336;
-            margin-top: 5px;
-            font-size: 14px;
-        }
-        .success {
-            color: #4CAF50;
-            margin-top: 5px;
-            font-size: 14px;
-        }
+        
         .nav-tabs {
             display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ddd;
+            background-color: var(--light-color);
+            z-index: 1;
+            padding: 0 1rem;
         }
+        
         .nav-tab {
-            padding: 10px 15px;
-            cursor: pointer;
+            flex: 1;
+            padding: 1rem;
             border: none;
             background: none;
-            font-size: 16px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
         }
+        
+        .nav-tab::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+            transform: translateX(-50%);
+        }
+        
+        .nav-tab:hover {
+            color: var(--primary-color);
+        }
+        
         .nav-tab.active {
-            border-bottom: 2px solid #4CAF50;
-            color: #4CAF50;
+            color: var(--primary-color);
             font-weight: 600;
         }
+        
+        .nav-tab.active::after {
+            width: 100%;
+        }
+        
+        .form-container {
+            padding: 2rem;
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .form-container.scrolled {
+            background-color: rgba(248, 250, 252, 0.9);
+        }
+        
         .tab-content {
             display: none;
+            animation: fadeIn 0.5s ease-out;
         }
+        
         .tab-content.active {
             display: block;
         }
-        #userInfo {
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-            margin-top: 20px;
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark-color);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-label i {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.875rem;
+            padding-left: 2.75rem;
+            padding-right: 2.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 2.3rem;
+            color: #94a3b8;
+            transition: var(--transition);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 2.3rem;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            background-color: var(--light-color);
+        }
+        
+        .form-control:focus + .input-icon {
+            color: var(--primary-color);
+        }
+        
+        /* Password strength meter */
+        .password-strength {
+            margin-top: 0.5rem;
             display: none;
         }
+        
+        .strength-meter {
+            height: 4px;
+            border-radius: 2px;
+            background-color: #e2e8f0;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .strength-meter-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s ease, background-color 0.3s ease;
+            width: 0%;
+        }
+        
+        .strength-text {
+            font-size: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .strength-label {
+            font-weight: 500;
+        }
+        
+        /* Remember Me Checkbox */
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            cursor: pointer;
+        }
+        
+        .form-check-label {
+            font-size: 0.95rem;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+        
+        /* Social Login */
+        .social-login {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        
+        .social-login-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        
+        .social-login-title::before,
+        .social-login-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--border-color);
+        }
+        
+        .social-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .social-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+        
+        .social-button:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .google-btn {
+            color: #ea4335;
+        }
+        
+        .facebook-btn {
+            color: #1877f2;
+        }
+        
+        .twitter-btn {
+            color: #1da1f2;
+        }
+        
+        .btn {
+            display: inline-flex;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            border: none;
+            font-size: 1rem;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: 500;
+            gap: 0.5rem;
+            width: 100%;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: var(--light-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-primary:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: var(--light-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #059669;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: var(--light-color);
+        }
+        
+        .btn-danger:hover {
+            background-color: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+        
         .forgot-password {
             text-align: right;
-            margin-top: 5px;
-            font-size: 14px;
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
         }
+        
         .forgot-password a {
-            color: #4CAF50;
+            color: var(--primary-color);
             text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
         }
+        
         .forgot-password a:hover {
+            color: var(--primary-dark);
             text-decoration: underline;
         }
-        .back-link {
-            display: inline-block;
-            margin-top: 15px;
-            color: #666;
+        
+        .home-link, .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            color: var(--primary-color);
             text-decoration: none;
-            font-size: 14px;
+            font-size: 0.95rem;
+            transition: var(--transition);
         }
-        .back-link:hover {
-            color: #4CAF50;
-            text-decoration: underline;
+        
+        .home-link:hover, .back-link:hover {
+            color: var(--primary-dark);
+            transform: translateX(5px);
         }
+        
         .verification-note {
-            font-size: 13px;
-            color: #777;
-            margin-top: 10px;
+            background-color: var(--primary-light);
+            border-radius: 0.5rem;
+            padding: 0.875rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            border-left: 4px solid var(--primary-color);
         }
+        
+        .verification-note i {
+            margin-top: 0.125rem;
+        }
+        
+        .user-info {
+            padding: 2rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .welcome-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background-color: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 2.5rem;
+        }
+        
+        .welcome-text h3 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: var(--dark-color);
+        }
+        
+        .welcome-text p {
+            color: #64748b;
+            margin: 0.25rem 0 0 0;
+        }
+        
         .user-details {
-            background-color: #f1f1f1;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
+            background-color: var(--secondary-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
         }
-        .user-details p {
-            margin: 5px 0;
+        
+        .user-detail {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            gap: 0.75rem;
         }
-        .home-link {
-            display: inline-block;
-            margin-top: 15px;
-            color: #4CAF50;
+        
+        .user-detail:last-child {
+            margin-bottom: 0;
+        }
+        
+        .detail-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            flex-shrink: 0;
+        }
+        
+        .detail-content {
+            flex: 1;
+        }
+        
+        .detail-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin: 0;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            margin: 0.25rem 0 0 0;
+        }
+        
+        #redirectButtons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        /* FAQ Section */
+        .faq-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .faq-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+        
+        .faq-header i {
+            color: var(--primary-color);
+        }
+        
+        .faq-item {
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            background-color: var(--light-color);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+        
+        .faq-item:hover {
+            box-shadow: var(--shadow);
+            border-color: var(--primary-light);
+        }
+        
+        .faq-question {
+            padding: 1rem;
+            font-weight: 500;
+            color: var(--dark-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+        }
+        
+        .faq-question:hover {
+            color: var(--primary-color);
+        }
+        
+        .faq-answer {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background-color: var(--secondary-color);
+        }
+        
+        .faq-answer-content {
+            padding: 1rem;
+            color: #4b5563;
+        }
+        
+        .faq-item.active .faq-question {
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            transition: all 0.5s ease;
+        }
+        
+        .faq-toggle {
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-item.active .faq-toggle {
+            transform: rotate(180deg);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 2rem 0;
+        }
+        
+        .modal-dialog {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: var(--light-color);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            animation: modalOpen 0.3s ease-out;
+        }
+        
+        @keyframes modalOpen {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+        }
+        
+        .modal-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .success-modal .modal-header {
+            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+            color: white;
+        }
+        
+        .error-modal .modal-header {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+            color: white;
+        }
+        
+        .info-modal .modal-header {
+            background: linear-gradient(135deg, var(--info-color) 0%, #2563eb 100%);
+            color: white;
+        }
+        
+        .modal-body {
+            padding: 1.75rem;
+        }
+        
+        .modal-footer {
+            padding: 1.25rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            background-color: #f8f9fa;
+            border-bottom-left-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: currentColor;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+        
+        .close-modal:hover {
+            opacity: 1;
+        }
+        
+        /* Success Modal */
+        .success-checkmark {
+            text-align: center;
+            margin: 1rem 0 2rem;
+        }
+        
+        .success-checkmark i {
+            font-size: 4rem;
+            color: var(--success-color);
+            animation: checkmark 0.5s ease-in-out;
+        }
+        
+        @keyframes checkmark {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .success-message {
+            text-align: center;
+            color: #4b5563;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        /* Error Modal */
+        .error-icon {
+            text-align: center;
+            margin: 1rem 0 2rem;
+        }
+        
+        .error-icon i {
+            font-size: 4rem;
+            color: var(--danger-color);
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+        
+        .error-message {
+            text-align: center;
+            color: #4b5563;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        /* Loading animation for buttons */
+        @keyframes spinner {
+            to { transform: rotate(360deg); }
+        }
+        
+        .btn.loading {
+            position: relative;
+            color: transparent !important;
+            pointer-events: none;
+        }
+        
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 1.25rem;
+            height: 1.25rem;
+            top: calc(50% - 0.625rem);
+            left: calc(50% - 0.625rem);
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-top-color: white;
+            animation: spinner 0.6s linear infinite;
+        }
+        
+        /* Footer */
+        .footer {
+            padding: 1.5rem;
+            background-color: var(--light-color);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .footer a {
+            color: var(--primary-color);
             text-decoration: none;
-            font-size: 14px;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .info-section {
+                padding: 2rem;
+                order: 2;
+            }
+            
+            .form-section {
+                width: 100%;
+                max-width: 500px;
+                margin: 2rem auto;
+                order: 1;
+            }
+            
+            .welcome-text h1 {
+                font-size: 2rem;
+            }
+            
+            .feature-cards {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            }
+            
+            .testimonial-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .info-section {
+                padding: 1.5rem;
+            }
+            
+            .welcome-text h1 {
+                font-size: 1.75rem;
+            }
+            
+            .form-section {
+                margin: 1rem auto;
+            }
+            
+            .feature-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .testimonials {
+                padding: 1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .form-section {
+                width: 100%;
+                max-width: 100%;
+                box-shadow: none;
+                margin: 0;
+            }
+            
+            .form-container {
+                padding: 1.5rem;
+            }
+            
+            .welcome-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .user-avatar {
+                margin: 0 auto;
+            }
+            
+            .modal-dialog {
+                margin: 0.5rem;
+                width: auto;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Service de Réservation</h1>
-        
-        <div class="nav-tabs">
-            <button class="nav-tab active" data-tab="login">Connexion</button>
-            <button class="nav-tab" data-tab="register">Inscription</button>
+    <div class="main-container">
+        <div class="bg-circles">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+            <div class="circle circle-3"></div>
+            <div class="circle circle-4"></div>
+            <div class="circle circle-5"></div>
+            <div class="circle circle-6"></div>
+            <div class="circle circle-7"></div>
         </div>
         
-        <!-- Login Form -->
-        <div id="loginTab" class="tab-content active">
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="loginEmail">Email</label>
-                    <input type="email" id="loginEmail" required>
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">Mot de passe</label>
-                    <input type="password" id="loginPassword" required>
-                </div>
-                <div class="forgot-password">
-                    <a href="#" id="forgotPasswordLink">Mot de passe oublié?</a>
-                </div>
-                <button type="submit">Se connecter</button>
-                <div id="loginMessage"></div>
-            </form>
-            <a href="index.html" class="home-link">Retour à l'accueil</a>
-        </div>
+        <div class="particles" id="particles"></div>
         
-        <!-- Register Form -->
-        <div id="registerTab" class="tab-content">
-            <form id="registerForm">
-                <div class="form-group">
-                    <label for="registerUsername">Nom d'utilisateur</label>
-                    <input type="text" id="registerUsername" required>
+        <!-- Section d'information -->
+        <section class="info-section">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Service de Réservation</span>
                 </div>
-                <div class="form-group">
-                    <label for="registerEmail">Email</label>
-                    <input type="email" id="registerEmail" required>
-                </div>
-                <div class="form-group">
-                    <label for="registerPassword">Mot de passe</label>
-                    <input type="password" id="registerPassword" minlength="8" required>
-                </div>
-                <div class="form-group">
-                    <label for="registerPasswordConfirm">Confirmer le mot de passe</label>
-                    <input type="password" id="registerPasswordConfirm" minlength="8" required>
-                </div>
-                <button type="submit">S'inscrire</button>
-                <p class="verification-note">Un code de vérification sera envoyé à votre adresse email.</p>
-                <div id="registerMessage"></div>
-            </form>
-            <a href="index.html" class="home-link">Retour à l'accueil</a>
-        </div>
-
-        <!-- Formulaire de vérification d'email pour l'inscription -->
-        <div id="verifyEmailTab" class="tab-content">
-            <h2>Vérification de votre email</h2>
-            <p>Un code de vérification a été envoyé à votre adresse email. Veuillez le saisir ci-dessous pour finaliser votre inscription.</p>
-            <form id="verifyEmailForm">
-                <div class="form-group">
-                    <label for="emailVerificationCode">Code de vérification</label>
-                    <input type="text" id="emailVerificationCode" required>
-                </div>
-                <button type="submit">Vérifier et créer le compte</button>
-                <div id="verifyEmailMessage"></div>
-            </form>
-            <a href="#" class="back-link" id="resendVerificationCode">Renvoyer le code</a>
-        </div>
-        
-        <!-- Password Reset Request Form -->
-        <div id="passwordResetRequestTab" class="tab-content">
-            <h2>Réinitialisation du mot de passe</h2>
-            <p>Veuillez entrer votre adresse email pour recevoir un code de vérification.</p>
-            <form id="passwordResetRequestForm">
-                <div class="form-group">
-                    <label for="resetEmail">Email</label>
-                    <input type="email" id="resetEmail" required>
-                </div>
-                <button type="submit">Envoyer le code</button>
-                <div id="resetRequestMessage"></div>
-            </form>
-            <a href="#" class="back-link" id="backToLoginFromRequest">Retour à la connexion</a>
-        </div>
-        
-        <!-- Verification Code Form -->
-        <div id="verificationCodeTab" class="tab-content">
-            <h2>Vérification du code</h2>
-            <p>Un code de vérification a été envoyé à votre adresse email. Ce code expire dans 15 minutes.</p>
-            <form id="verificationCodeForm">
-                <div class="form-group">
-                    <label for="verificationCode">Code de vérification</label>
-                    <input type="text" id="verificationCode" required>
-                </div>
-                <button type="submit">Vérifier le code</button>
-                <div id="verificationMessage"></div>
-            </form>
-            <a href="#" class="back-link" id="backToResetRequest">Retour à la demande de réinitialisation</a>
-        </div>
-        
-        <!-- New Password Form -->
-        <div id="newPasswordTab" class="tab-content">
-            <h2>Nouveau mot de passe</h2>
-            <p>Veuillez entrer votre nouveau mot de passe.</p>
-            <form id="newPasswordForm">
-                <div class="form-group">
-                    <label for="newPassword">Nouveau mot de passe</label>
-                    <input type="password" id="newPassword" minlength="8" required>
-                </div>
-                <div class="form-group">
-                    <label for="confirmNewPassword">Confirmer le mot de passe</label>
-                    <input type="password" id="confirmNewPassword" minlength="8" required>
-                </div>
-                <button type="submit">Réinitialiser le mot de passe</button>
-                <div id="newPasswordMessage"></div>
-            </form>
-        </div>
-        
-        <!-- User Info (shown when logged in) -->
-        <div id="userInfo">
-            <h3>Bienvenue, <span id="userName"></span>!</h3>
-            <div class="user-details">
-                <p><strong>Email:</strong> <span id="userEmail"></span></p>
-                <p><strong>Rôle:</strong> <span id="userRole"></span></p>
             </div>
-            <div id="redirectButtons">
-                <button id="dashboardBtn" style="margin-bottom: 10px;">Accéder au tableau de bord</button>
-                <button id="logoutBtn">Se déconnecter</button>
+            
+            <div class="welcome-text">
+                <h1>Simplifiez vos réservations avec notre service en ligne</h1>
+                <p>Notre plateforme vous permet de gérer facilement vos réservations, de trouver les meilleures agences et de suivre vos demandes en temps réel.</p>
+            </div>
+            
+            <div class="feature-cards">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 class="feature-title">Trouvez facilement</h3>
+                    <p>Recherchez et filtrez parmi nos nombreuses agences pour trouver celle qui correspond parfaitement à vos besoins.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Réservez en ligne</h3>
+                    <p>Choisissez votre créneau horaire et réservez en quelques clics sans avoir à vous déplacer ou à téléphoner.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3 class="feature-title">Notifications</h3>
+                    <p>Recevez des notifications en temps réel sur le statut de vos réservations et les confirmations.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h3 class="feature-title">Historique complet</h3>
+                    <p>Consultez l'historique détaillé de toutes vos réservations passées et à venir.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="feature-title">Évaluations et avis</h3>
+                    <p>Partagez votre expérience et consultez les avis des autres utilisateurs pour faire le meilleur choix.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Sécurité garantie</h3>
+                    <p>Vos données personnelles et vos transactions sont protégées par les dernières technologies de sécurité.</p>
+                </div>
+            </div>
+            
+            <!-- <div class="testimonials">
+                <div class="testimonials-header">
+                    <i class="fas fa-quote-left"></i> Ce que disent nos utilisateurs
+                </div>
+                
+                <div class="testimonial-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-text">
+                            Le service de réservation m'a fait gagner tellement de temps ! Plus besoin d'appeler pour prendre rendez-vous, tout se fait en ligne avec une confirmation immédiate.
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="author-info">
+                                <div class="author-name">Sophie Martin</div>
+                                <div class="author-role">Cliente depuis 2023</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <div class="testimonial-text">
+                            L'interface est très intuitive et le système de notification est vraiment pratique. Je recommande vivement !
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="author-info">
+                                <div class="author-name">Thomas Dubois</div>
+                                <div class="author-role">Client depuis 2022</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <div class="testimonial-text">
+                            Le suivi des réservations est impeccable, je reçois des rappels avant mes rendez-vous. Un vrai plus pour quelqu'un d'aussi étourdi que moi !
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="author-info">
+                                <div class="author-name">Marie Leroy</div>
+                                <div class="author-role">Cliente depuis 2024</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <div class="testimonial-text">
+                            Pouvoir consulter les avis des autres clients m'a beaucoup aidé à trouver la bonne agence. Service très complet !
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="author-info">
+                                <div class="author-name">Lucas Bernard</div>
+                                <div class="author-role">Client depuis 2023</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </section>
+        
+        <!-- Section de formulaire -->
+        <section class="form-section">
+            <div class="form-header">
+                <h2><i class="fas fa-calendar-check"></i> Service de Réservation</h2>
+            </div>
+            
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-tab="login">Connexion</button>
+                <button class="nav-tab" data-tab="register">Inscription</button>
+            </div>
+            
+            <div class="form-container" id="formContainer">
+                <!-- Login Form -->
+                <div id="loginTab" class="tab-content active">
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="loginEmail" class="form-label">
+                                <i class="fas fa-envelope"></i> Email
+                            </label>
+                            <input type="email" id="loginEmail" class="form-control" required>
+                            <i class="fas fa-envelope input-icon"></i>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword" class="form-label">
+                                <i class="fas fa-lock"></i> Mot de passe
+                            </label>
+                            <input type="password" id="loginPassword" class="form-control" required>
+                            <i class="fas fa-lock input-icon"></i>
+                            <i class="fas fa-eye password-toggle" data-target="loginPassword"></i>
+                        </div>
+                        
+                        <div class="form-check">
+                            <input type="checkbox" id="rememberMe" class="form-check-input">
+                            <label for="rememberMe" class="form-check-label">Se souvenir de moi</label>
+                        </div>
+                        
+                        <div class="forgot-password">
+                            <a href="#" id="forgotPasswordLink">
+                                <i class="fas fa-question-circle"></i> Mot de passe oublié?
+                            </a>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Se connecter
+                        </button>
+                        
+                        <!-- <div class="social-login">
+                            <div class="social-login-title">Ou connectez-vous avec</div>
+                            <div class="social-buttons">
+                                <a href="#" class="social-button google-btn">
+                                    <i class="fab fa-google"></i>
+                                </a>
+                                <a href="#" class="social-button facebook-btn">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="#" class="social-button twitter-btn">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                            </div>
+                        </div> -->
+                    </form>
+                    <a href="index.html" class="home-link">
+                        <i class="fas fa-home"></i> Retour à l'accueil
+                    </a>
+                    
+                    <!-- FAQ Section -->
+                    <div class="faq-section">
+                        <div class="faq-header">
+                            <i class="fas fa-question-circle"></i> Questions fréquentes
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                Comment puis-je m'inscrire sur le site ?
+                                <i class="fas fa-chevron-down faq-toggle"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    Pour vous inscrire, cliquez sur l'onglet "Inscription" en haut du formulaire, puis remplissez les champs requis. Un email de vérification vous sera envoyé pour finaliser votre inscription.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                J'ai oublié mon mot de passe, que faire ?
+                                <i class="fas fa-chevron-down faq-toggle"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    Cliquez sur le lien "Mot de passe oublié?" sous le formulaire de connexion. Vous recevrez un email avec les instructions pour réinitialiser votre mot de passe.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                Comment puis-je réserver un créneau ?
+                                <i class="fas fa-chevron-down faq-toggle"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    Après vous être connecté, vous pourrez accéder à votre tableau de bord. De là, vous pourrez rechercher une agence, sélectionner un service et choisir un créneau disponible dans le calendrier.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                Puis-je annuler ma réservation ?
+                                <i class="fas fa-chevron-down faq-toggle"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    Oui, vous pouvez annuler votre réservation depuis votre tableau de bord dans la section "Mes réservations". Notez que certaines annulations peuvent être soumises à des conditions selon la politique de l'agence.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                Est-ce que le service est gratuit ?
+                                <i class="fas fa-chevron-down faq-toggle"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    L'inscription et l'utilisation de la plateforme de réservation sont entièrement gratuites. Vous ne payez que pour les services que vous réservez auprès des agences.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Register Form -->
+                <div id="registerTab" class="tab-content">
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label for="registerUsername" class="form-label">
+                                <i class="fas fa-user"></i> Nom d'utilisateur
+                            </label>
+                            <input type="text" id="registerUsername" class="form-control" required>
+                            <i class="fas fa-user input-icon"></i>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerEmail" class="form-label">
+                                <i class="fas fa-envelope"></i> Email
+                            </label>
+                            <input type="email" id="registerEmail" class="form-control" required>
+                            <i class="fas fa-envelope input-icon"></i>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPassword" class="form-label">
+                                <i class="fas fa-lock"></i> Mot de passe
+                            </label>
+                            <input type="password" id="registerPassword" class="form-control" minlength="8" required>
+                            <i class="fas fa-lock input-icon"></i>
+                            <i class="fas fa-eye password-toggle" data-target="registerPassword"></i>
+                            
+                            <div class="password-strength" id="passwordStrength">
+                                <div class="strength-meter">
+                                    <div class="strength-meter-fill" id="strengthMeter"></div>
+                                </div>
+                                <div class="strength-text">
+                                    <span>Force du mot de passe: <span class="strength-label" id="strengthLabel">Faible</span></span>
+                                    <span id="strengthScore">0/100</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPasswordConfirm" class="form-label">
+                                <i class="fas fa-shield-alt"></i> Confirmer le mot de passe
+                            </label>
+                            <input type="password" id="registerPasswordConfirm" class="form-control" minlength="8" required>
+                            <i class="fas fa-shield-alt input-icon"></i>
+                            <i class="fas fa-eye password-toggle" data-target="registerPasswordConfirm"></i>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> S'inscrire
+                        </button>
+                        <div class="verification-note">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Un code de vérification sera envoyé à votre adresse email pour finaliser votre inscription.</span>
+                        </div>
+                        
+                        <!-- <div class="social-login">
+                            <div class="social-login-title">Ou inscrivez-vous avec</div>
+                            <div class="social-buttons">
+                                <a href="#" class="social-button google-btn">
+                                    <i class="fab fa-google"></i>
+                                </a>
+                                <a href="#" class="social-button facebook-btn">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="#" class="social-button twitter-btn">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                            </div>
+                        </div> -->
+                    </form>
+                    <a href="index.html" class="home-link">
+                        <i class="fas fa-home"></i> Retour à l'accueil
+                    </a>
+                    
+                    <!-- FAQ Section -->
+                    <div class="faq-section">
+                        <div class="faq-header">
+                            <i class="fas fa-question-circle"></i> Questions fréquentes
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                Quelles sont les exigences pour le mot de passe ?
+                                <i class="fas fa-chevron-down faq-toggle"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    Votre mot de passe doit contenir au moins 8 caractères, incluant des lettres majuscules et minuscules, au moins un chiffre et un caractère spécial pour assurer une sécurité optimale.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                Comment fonctionne la vérification de l'email ?
+                                <i class="fas fa-chevron-down faq-toggle"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    Après votre inscription, un email contenant un code de vérification vous sera envoyé. Entrez ce code dans le formulaire qui s'affichera pour activer votre compte.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                Quelles informations sont visibles sur mon profil ?
+                                <i class="fas fa-chevron-down faq-toggle"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    Votre profil public n'affiche que votre nom d'utilisateur. Vos informations personnelles comme votre email ne sont jamais partagées avec d'autres utilisateurs ou les agences.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                Puis-je modifier mes informations après l'inscription ?
+                                <i class="fas fa-chevron-down faq-toggle"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    Oui, vous pouvez modifier votre nom d'utilisateur et votre mot de passe à tout moment depuis votre profil. L'adresse email ne peut pas être modifiée car elle sert d'identifiant unique.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulaire de vérification d'email pour l'inscription -->
+                <div id="verifyEmailTab" class="tab-content">
+                    <h2><i class="fas fa-envelope-open-text"></i> Vérification de votre email</h2>
+                    <p>Un code de vérification a été envoyé à votre adresse email. Veuillez le saisir ci-dessous pour finaliser votre inscription.</p>
+                    <form id="verifyEmailForm">
+                        <div class="form-group">
+                            <label for="emailVerificationCode" class="form-label">
+                                <i class="fas fa-key"></i> Code de vérification
+                            </label>
+                            <input type="text" id="emailVerificationCode" class="form-control" required>
+                            <i class="fas fa-key input-icon"></i>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check-circle"></i> Vérifier et créer le compte
+                        </button>
+                    </form>
+                    <a href="#" class="back-link" id="resendVerificationCode">
+                        <i class="fas fa-redo"></i> Renvoyer le code
+                    </a>
+                </div>
+                
+                <!-- Password Reset Request Form -->
+                <div id="passwordResetRequestTab" class="tab-content">
+                    <h2><i class="fas fa-key"></i> Réinitialisation du mot de passe</h2>
+                    <p>Veuillez entrer votre adresse email pour recevoir un code de vérification.</p>
+                    <form id="passwordResetRequestForm">
+                        <div class="form-group">
+                            <label for="resetEmail" class="form-label">
+                                <i class="fas fa-envelope"></i> Email
+                            </label>
+                            <input type="email" id="resetEmail" class="form-control" required>
+                            <i class="fas fa-envelope input-icon"></i>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Envoyer le code
+                        </button>
+                    </form>
+                    <a href="#" class="back-link" id="backToLoginFromRequest">
+                        <i class="fas fa-arrow-left"></i> Retour à la connexion
+                    </a>
+                </div>
+                
+                <!-- Verification Code Form -->
+                <div id="verificationCodeTab" class="tab-content">
+                    <h2><i class="fas fa-shield-alt"></i> Vérification du code</h2>
+                    <p>Un code de vérification a été envoyé à votre adresse email. Ce code expire dans 15 minutes.</p>
+                    <form id="verificationCodeForm">
+                        <div class="form-group">
+                            <label for="verificationCode" class="form-label">
+                                <i class="fas fa-key"></i> Code de vérification
+                            </label>
+                            <input type="text" id="verificationCode" class="form-control" required>
+                            <i class="fas fa-key input-icon"></i>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check-circle"></i> Vérifier le code
+                        </button>
+                    </form>
+                    <a href="#" class="back-link" id="backToResetRequest">
+                        <i class="fas fa-arrow-left"></i> Retour à la demande de réinitialisation
+                    </a>
+                </div>
+                
+                <!-- New Password Form -->
+                <div id="newPasswordTab" class="tab-content">
+                    <h2><i class="fas fa-lock"></i> Nouveau mot de passe</h2>
+                    <p>Veuillez entrer votre nouveau mot de passe.</p>
+                    <form id="newPasswordForm">
+                        <div class="form-group">
+                            <label for="newPassword" class="form-label">
+                                <i class="fas fa-lock"></i> Nouveau mot de passe
+                            </label>
+                            <input type="password" id="newPassword" class="form-control" minlength="8" required>
+                            <i class="fas fa-lock input-icon"></i>
+                            <i class="fas fa-eye password-toggle" data-target="newPassword"></i>
+                            
+                            <div class="password-strength" id="newPasswordStrength">
+                                <div class="strength-meter">
+                                    <div class="strength-meter-fill" id="newStrengthMeter"></div>
+                                </div>
+                                <div class="strength-text">
+                                    <span>Force du mot de passe: <span class="strength-label" id="newStrengthLabel">Faible</span></span>
+                                    <span id="newStrengthScore">0/100</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmNewPassword" class="form-label">
+                                <i class="fas fa-shield-alt"></i> Confirmer le mot de passe
+                            </label>
+                            <input type="password" id="confirmNewPassword" class="form-control" minlength="8" required>
+                            <i class="fas fa-shield-alt input-icon"></i>
+                            <i class="fas fa-eye password-toggle" data-target="confirmNewPassword"></i>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Réinitialiser le mot de passe
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- User Info (shown when logged in) -->
+                <div id="userInfo" style="display: none;">
+                    <div class="welcome-header">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="welcome-text">
+                            <h3>Bienvenue, <span id="userName"></span>!</h3>
+                            <p>Heureux de vous revoir</p>
+                        </div>
+                    </div>
+                    
+                    <div class="user-details">
+                        <div class="user-detail">
+                            <div class="detail-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="detail-content">
+                                <p class="detail-label">Email</p>
+                                <p class="detail-value" id="userEmail"></p>
+                            </div>
+                        </div>
+                        <div class="user-detail">
+                            <div class="detail-icon">
+                                <i class="fas fa-user-tag"></i>
+                            </div>
+                            <div class="detail-content">
+                                <p class="detail-label">Rôle</p>
+                                <p class="detail-value" id="userRole"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="redirectButtons">
+                        <button id="dashboardBtn" class="btn btn-primary">
+                            <i class="fas fa-tachometer-alt"></i> Accéder au tableau de bord
+                        </button>
+                        <button id="logoutBtn" class="btn btn-danger">
+                            <i class="fas fa-sign-out-alt"></i> Se déconnecter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Service de Réservation. Tous droits réservés. <a href="#">Conditions d'utilisation</a> | <a href="#">Politique de confidentialité</a></p>
+    </footer>
+    
+    <!-- Modal pour les messages de succès -->
+    <div id="successModal" class="modal success-modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-check-circle"></i> Succès</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="success-checkmark">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="success-message" id="successMessage">
+                    Opération réalisée avec succès !
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="successModalBtn">OK</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal pour les messages d'erreur -->
+    <div id="errorModal" class="modal error-modal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-exclamation-circle"></i> Erreur</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="error-icon">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div class="error-message" id="errorMessage">
+                    Une erreur est survenue.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="errorModalBtn">Fermer</button>
             </div>
         </div>
     </div>
@@ -282,11 +1859,6 @@
         const passwordResetRequestForm = document.getElementById('passwordResetRequestForm');
         const verificationCodeForm = document.getElementById('verificationCodeForm');
         const newPasswordForm = document.getElementById('newPasswordForm');
-        const loginMessage = document.getElementById('loginMessage');
-        const registerMessage = document.getElementById('registerMessage');
-        const resetRequestMessage = document.getElementById('resetRequestMessage');
-        const verificationMessage = document.getElementById('verificationMessage');
-        const newPasswordMessage = document.getElementById('newPasswordMessage');
         const userInfo = document.getElementById('userInfo');
         const userEmailSpan = document.getElementById('userEmail');
         const userRoleSpan = document.getElementById('userRole');
@@ -295,6 +1867,28 @@
         const forgotPasswordLink = document.getElementById('forgotPasswordLink');
         const backToLoginFromRequest = document.getElementById('backToLoginFromRequest');
         const backToResetRequest = document.getElementById('backToResetRequest');
+        const formContainer = document.getElementById('formContainer');
+        const passwordToggles = document.querySelectorAll('.password-toggle');
+        const registerPassword = document.getElementById('registerPassword');
+        const passwordStrength = document.getElementById('passwordStrength');
+        const strengthMeter = document.getElementById('strengthMeter');
+        const strengthLabel = document.getElementById('strengthLabel');
+        const strengthScore = document.getElementById('strengthScore');
+        const newPassword = document.getElementById('newPassword');
+        const newPasswordStrength = document.getElementById('newPasswordStrength');
+        const newStrengthMeter = document.getElementById('newStrengthMeter');
+        const newStrengthLabel = document.getElementById('newStrengthLabel');
+        const newStrengthScore = document.getElementById('newStrengthScore');
+        const faqItems = document.querySelectorAll('.faq-item');
+        
+        // Modal Elements
+        const successModal = document.getElementById('successModal');
+        const errorModal = document.getElementById('errorModal');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const successModalBtn = document.getElementById('successModalBtn');
+        const errorModalBtn = document.getElementById('errorModalBtn');
+        const closeModalButtons = document.querySelectorAll('.close-modal');
      
         // Variables to store reset email and code
         let resetEmailValue = '';
@@ -313,7 +1907,198 @@
             }
             
             checkSession();
+            
+            // Create particles
+            createParticles();
+            
+            // Initialize FAQ accordion
+            initFaqAccordion();
         });
+        
+        // Create particles function
+        function createParticles() {
+            const particles = document.getElementById('particles');
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random position
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                particle.style.left = `${x}%`;
+                particle.style.top = `${y}%`;
+                
+                // Random size
+                const size = Math.random() * 5 + 3;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Random color
+                const colors = ['rgba(67, 97, 238, 0.1)', 'rgba(16, 185, 129, 0.1)', 'rgba(59, 130, 246, 0.1)', 'rgba(245, 158, 11, 0.1)'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.backgroundColor = color;
+                
+                // Random movement
+                const xMove = (Math.random() - 0.5) * 200;
+                const yMove = (Math.random() - 0.5) * 200;
+                particle.style.setProperty('--x', `${xMove}px`);
+                particle.style.setProperty('--y', `${yMove}px`);
+                
+                // Random animation duration
+                const duration = Math.random() * 10 + 10;
+                particle.style.animationDuration = `${duration}s`;
+                
+                // Random animation delay
+                const delay = Math.random() * 5;
+                particle.style.animationDelay = `${delay}s`;
+                
+                particles.appendChild(particle);
+            }
+        }
+        
+        // Initialize FAQ accordion
+        function initFaqAccordion() {
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+                    
+                    // Close all items
+                    faqItems.forEach(faq => {
+                        faq.classList.remove('active');
+                    });
+                    
+                    // If the clicked item wasn't active, open it
+                    if (!isActive) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+        }
+        
+        // Add scroll effect to form container
+        window.addEventListener('scroll', function() {
+            const scrollPosition = window.scrollY;
+            if (scrollPosition > 100) {
+                formContainer.classList.add('scrolled');
+            } else {
+                formContainer.classList.remove('scrolled');
+            }
+        });
+        
+        // Password toggle functionality
+        passwordToggles.forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const passwordInput = document.getElementById(targetId);
+                
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    this.classList.remove('fa-eye');
+                    this.classList.add('fa-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    this.classList.remove('fa-eye-slash');
+                    this.classList.add('fa-eye');
+                }
+            });
+        });
+        
+        // Password strength meter
+        registerPassword.addEventListener('input', updatePasswordStrength);
+        newPassword.addEventListener('input', updateNewPasswordStrength);
+        
+        function updatePasswordStrength() {
+            const password = registerPassword.value;
+            const score = calculatePasswordStrength(password);
+            
+            // Show the strength meter
+            passwordStrength.style.display = 'block';
+            
+            // Update meter width
+            strengthMeter.style.width = `${score}%`;
+            
+            // Update score text
+            strengthScore.textContent = `${score}/100`;
+            
+            // Update label and color
+            if (score < 30) {
+                strengthLabel.textContent = 'Faible';
+                strengthMeter.style.backgroundColor = '#ef4444';
+            } else if (score < 60) {
+                strengthLabel.textContent = 'Moyen';
+                strengthMeter.style.backgroundColor = '#f59e0b';
+            } else if (score < 80) {
+                strengthLabel.textContent = 'Bon';
+                strengthMeter.style.backgroundColor = '#3b82f6';
+            } else {
+                strengthLabel.textContent = 'Excellent';
+                strengthMeter.style.backgroundColor = '#10b981';
+            }
+        }
+        
+        function updateNewPasswordStrength() {
+            const password = newPassword.value;
+            const score = calculatePasswordStrength(password);
+            
+            // Show the strength meter
+            newPasswordStrength.style.display = 'block';
+            
+            // Update meter width
+            newStrengthMeter.style.width = `${score}%`;
+            
+            // Update score text
+            newStrengthScore.textContent = `${score}/100`;
+            
+            // Update label and color
+            if (score < 30) {
+                newStrengthLabel.textContent = 'Faible';
+                newStrengthMeter.style.backgroundColor = '#ef4444';
+            } else if (score < 60) {
+                newStrengthLabel.textContent = 'Moyen';
+                newStrengthMeter.style.backgroundColor = '#f59e0b';
+            } else if (score < 80) {
+                newStrengthLabel.textContent = 'Bon';
+                newStrengthMeter.style.backgroundColor = '#3b82f6';
+            } else {
+                newStrengthLabel.textContent = 'Excellent';
+                newStrengthMeter.style.backgroundColor = '#10b981';
+            }
+        }
+        
+        function calculatePasswordStrength(password) {
+            let score = 0;
+            
+            // Length check
+            const length = password.length;
+            if (length > 0) {
+                score += Math.min(length * 2, 20); // Max 20 points for length
+            }
+            
+            // Complexity checks
+            if (/[a-z]/.test(password)) score += 10; // Has lowercase
+            if (/[A-Z]/.test(password)) score += 10; // Has uppercase
+            if (/\d/.test(password)) score += 10; // Has number
+            if (/[^a-zA-Z0-9]/.test(password)) score += 10; // Has special character
+            
+            // Variety check
+            const uniqueChars = new Set(password).size;
+            score += Math.min(uniqueChars * 2, 20); // Max 20 points for variety
+            
+            // Patterns check (subtract points for patterns)
+            if (/(.)\1{2,}/.test(password)) score -= 10; // Repeated characters
+            if (/123|234|345|456|567|678|789|987|876|765|654|543|432|321/.test(password)) score -= 10; // Sequential numbers
+            if (/abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz/.test(password.toLowerCase())) score -= 10; // Sequential letters
+            
+            // Common password check (subtract points)
+            const commonPasswords = ['password', '123456', 'qwerty', 'admin', 'welcome', 'letmein'];
+            if (commonPasswords.includes(password.toLowerCase())) score -= 30;
+            
+            // Ensure score is between 0 and 100
+            return Math.max(0, Math.min(100, score));
+        }
         
         // Tab switching functionality
         navTabs.forEach(tab => {
@@ -329,6 +2114,55 @@
             });
         });
         
+        // Modal Functions
+        function showSuccessModal(message, callback) {
+            successMessage.textContent = message;
+            successModal.style.display = 'block';
+            
+            // Set callback for the OK button if provided
+            if (callback) {
+                successModalBtn.onclick = function() {
+                    closeAllModals();
+                    callback();
+                };
+            } else {
+                successModalBtn.onclick = closeAllModals;
+            }
+        }
+        
+        function showErrorModal(message) {
+            errorMessage.textContent = message;
+            errorModal.style.display = 'block';
+            errorModalBtn.onclick = closeAllModals;
+        }
+        
+        function closeAllModals() {
+            successModal.style.display = 'none';
+            errorModal.style.display = 'none';
+        }
+        
+        // Close modals with X button or when clicking outside
+        closeModalButtons.forEach(button => {
+            button.addEventListener('click', closeAllModals);
+        });
+        
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                closeAllModals();
+            }
+        });
+        
+        // Helper function to show loading state on buttons
+        function setButtonLoading(button, isLoading) {
+            if (isLoading) {
+                button.classList.add('loading');
+                button.disabled = true;
+            } else {
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+        }
+        
         // Dashboard button handler
         dashboardBtn.addEventListener('click', () => {
             if (userRole.includes('ROLE_ADMIN')) {
@@ -343,6 +2177,9 @@
         // Login Form Handler
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            const submitButton = loginForm.querySelector('button[type="submit"]');
+            setButtonLoading(submitButton, true);
             
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
@@ -360,25 +2197,27 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    loginMessage.className = 'success';
-                    loginMessage.textContent = data.message;
-                    
-                    // Check session to get user details
-                    await checkSession();
+                    showSuccessModal(data.message, async function() {
+                        // Check session to get user details
+                        await checkSession();
+                    });
                 } else {
-                    loginMessage.className = 'error';
-                    loginMessage.textContent = data.message;
+                    showErrorModal(data.message);
                 }
             } catch (error) {
-                loginMessage.className = 'error';
-                loginMessage.textContent = 'Erreur de connexion au serveur';
+                showErrorModal('Erreur de connexion au serveur');
                 console.error('Login error:', error);
+            } finally {
+                setButtonLoading(submitButton, false);
             }
         });
         
         // Register Form Handler
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            const submitButton = registerForm.querySelector('button[type="submit"]');
+            setButtonLoading(submitButton, true);
             
             registrationData = {
                 username: document.getElementById('registerUsername').value,
@@ -388,8 +2227,8 @@
             };
             // Check if passwords match
             if (registrationData.password !== registrationData.passwordConfirm) {
-                registerMessage.className = 'error';
-                registerMessage.textContent = 'Les mots de passe ne correspondent pas';
+                showErrorModal('Les mots de passe ne correspondent pas');
+                setButtonLoading(submitButton, false);
                 return;
             }
             
@@ -405,30 +2244,31 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    registerMessage.className = 'success';
-                    registerMessage.textContent = data.message;
-                    
-                    // Afficher le formulaire de vérification d'email
-                    tabContents.forEach(c => c.classList.remove('active'));
-                    document.getElementById('verifyEmailTab').classList.add('active');
+                    showSuccessModal(data.message, function() {
+                        // Afficher le formulaire de vérification d'email
+                        tabContents.forEach(c => c.classList.remove('active'));
+                        document.getElementById('verifyEmailTab').classList.add('active');
+                    });
                 } else {
-                    registerMessage.className = 'error';
-                    registerMessage.textContent = data.message;
+                    showErrorModal(data.message);
                 }
-            }  catch (error) {
-                registerMessage.className = 'error';
-                registerMessage.textContent = 'Erreur de connexion au serveur';
+            } catch (error) {
+                showErrorModal('Erreur de connexion au serveur');
                 console.error('Register error:', error);
+            } finally {
+                setButtonLoading(submitButton, false);
             }
         });
         
         // Gestionnaire pour le formulaire de vérification d'email
         const verifyEmailForm = document.getElementById('verifyEmailForm');
-        const verifyEmailMessage = document.getElementById('verifyEmailMessage');
         const resendVerificationCode = document.getElementById('resendVerificationCode');
         
         verifyEmailForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            const submitButton = verifyEmailForm.querySelector('button[type="submit"]');
+            setButtonLoading(submitButton, true);
             
             const code = document.getElementById('emailVerificationCode').value;
             
@@ -447,24 +2287,24 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    verifyEmailMessage.className = 'success';
-                    verifyEmailMessage.textContent = data.message;
-                    
-                    // Redirection vers la page de connexion après 2 secondes
-                    setTimeout(() => {
+                    showSuccessModal(data.message, function() {
+                        // Redirection vers la page de connexion
                         tabContents.forEach(c => c.classList.remove('active'));
                         document.getElementById('loginTab').classList.add('active');
-                        loginMessage.className = 'success';
-                        loginMessage.textContent = 'Inscription réussie. Vous pouvez maintenant vous connecter.';
-                    }, 2000);
+                        
+                        // Afficher un message de succès dans la modale
+                        setTimeout(() => {
+                            showSuccessModal('Inscription réussie. Vous pouvez maintenant vous connecter.');
+                        }, 100);
+                    });
                 } else {
-                    verifyEmailMessage.className = 'error';
-                    verifyEmailMessage.textContent = data.message;
+                    showErrorModal(data.message);
                 }
             } catch (error) {
-                verifyEmailMessage.className = 'error';
-                verifyEmailMessage.textContent = 'Erreur de connexion au serveur';
+                showErrorModal('Erreur de connexion au serveur');
                 console.error('Email verification error:', error);
+            } finally {
+                setButtonLoading(submitButton, false);
             }
         });
         
@@ -484,15 +2324,12 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    verifyEmailMessage.className = 'success';
-                    verifyEmailMessage.textContent = 'Un nouveau code de vérification a été envoyé à votre adresse email.';
+                    showSuccessModal('Un nouveau code de vérification a été envoyé à votre adresse email.');
                 } else {
-                    verifyEmailMessage.className = 'error';
-                    verifyEmailMessage.textContent = data.message;
+                    showErrorModal(data.message);
                 }
             } catch (error) {
-                verifyEmailMessage.className = 'error';
-                verifyEmailMessage.textContent = 'Erreur de connexion au serveur';
+                showErrorModal('Erreur de connexion au serveur');
                 console.error('Resend verification code error:', error);
             }
         });
@@ -500,6 +2337,8 @@
         // Logout Handler
         logoutBtn.addEventListener('click', async () => {
             try {
+                setButtonLoading(logoutBtn, true);
+                
                 const response = await fetch(`${API_BASE_URL}/auth/logout`, {
                     method: 'POST',
                     credentials: 'include'
@@ -511,8 +2350,7 @@
                     // Hide user info and show login form
                     userInfo.style.display = 'none';
                     document.getElementById('loginTab').classList.add('active');
-                    loginMessage.className = 'success';
-                    loginMessage.textContent = data.message;
+                    showSuccessModal(data.message);
                     
                     // Reset forms
                     loginForm.reset();
@@ -520,6 +2358,9 @@
                 }
             } catch (error) {
                 console.error('Logout error:', error);
+                showErrorModal('Erreur lors de la déconnexion');
+            } finally {
+                setButtonLoading(logoutBtn, false);
             }
         });
         
@@ -560,6 +2401,9 @@
         passwordResetRequestForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const submitButton = passwordResetRequestForm.querySelector('button[type="submit"]');
+            setButtonLoading(submitButton, true);
+            
             resetEmailValue = document.getElementById('resetEmail').value;
             
             try {
@@ -574,26 +2418,28 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    resetRequestMessage.className = 'success';
-                    resetRequestMessage.textContent = data.message;
-                    
-                    // Hide current tab and show verification code tab
-                    tabContents.forEach(c => c.classList.remove('active'));
-                    document.getElementById('verificationCodeTab').classList.add('active');
+                    showSuccessModal(data.message, function() {
+                        // Hide current tab and show verification code tab
+                        tabContents.forEach(c => c.classList.remove('active'));
+                        document.getElementById('verificationCodeTab').classList.add('active');
+                    });
                 } else {
-                    resetRequestMessage.className = 'error';
-                    resetRequestMessage.textContent = data.message;
+                    showErrorModal(data.message);
                 }
             } catch (error) {
-                resetRequestMessage.className = 'error';
-                resetRequestMessage.textContent = 'Erreur de connexion au serveur';
+                showErrorModal('Erreur de connexion au serveur');
                 console.error('Password reset request error:', error);
+            } finally {
+                setButtonLoading(submitButton, false);
             }
         });
         
         // Verification Code Form Handler
         verificationCodeForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            const submitButton = verificationCodeForm.querySelector('button[type="submit"]');
+            setButtonLoading(submitButton, true);
             
             resetCodeValue = document.getElementById('verificationCode').value;
             
@@ -612,20 +2458,19 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    verificationMessage.className = 'success';
-                    verificationMessage.textContent = data.message;
-                    
-                    // Hide current tab and show new password tab
-                    tabContents.forEach(c => c.classList.remove('active'));
-                    document.getElementById('newPasswordTab').classList.add('active');
+                    showSuccessModal(data.message, function() {
+                        // Hide current tab and show new password tab
+                        tabContents.forEach(c => c.classList.remove('active'));
+                        document.getElementById('newPasswordTab').classList.add('active');
+                    });
                 } else {
-                    verificationMessage.className = 'error';
-                    verificationMessage.textContent = data.message;
+                    showErrorModal(data.message);
                 }
             } catch (error) {
-                verificationMessage.className = 'error';
-                verificationMessage.textContent = 'Erreur de connexion au serveur';
+                showErrorModal('Erreur de connexion au serveur');
                 console.error('Verification code error:', error);
+            } finally {
+                setButtonLoading(submitButton, false);
             }
         });
         
@@ -633,13 +2478,16 @@
         newPasswordForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+            const submitButton = newPasswordForm.querySelector('button[type="submit"]');
+            setButtonLoading(submitButton, true);
+            
+            const newPasswordValue = document.getElementById('newPassword').value;
+            const confirmNewPasswordValue = document.getElementById('confirmNewPassword').value;
             
             // Check if passwords match
-            if (newPassword !== confirmNewPassword) {
-                newPasswordMessage.className = 'error';
-                newPasswordMessage.textContent = 'Les mots de passe ne correspondent pas';
+            if (newPasswordValue !== confirmNewPasswordValue) {
+                showErrorModal('Les mots de passe ne correspondent pas');
+                setButtonLoading(submitButton, false);
                 return;
             }
             
@@ -652,35 +2500,35 @@
                     body: JSON.stringify({
                         email: resetEmailValue,
                         code: resetCodeValue,
-                        newPassword: newPassword,
-                        confirmPassword: confirmNewPassword
+                        newPassword: newPasswordValue,
+                        confirmPassword: confirmNewPasswordValue
                     })
                 });
                 
                 const data = await response.json();
                 
                 if (response.ok) {
-                    newPasswordMessage.className = 'success';
-                    newPasswordMessage.textContent = data.message;
-                    
-                    // Reset form
-                    newPasswordForm.reset();
-                    
-                    // Redirect to login tab after 2 seconds
-                    setTimeout(() => {
+                    showSuccessModal(data.message, function() {
+                        // Reset form
+                        newPasswordForm.reset();
+                        
+                        // Redirect to login tab
                         tabContents.forEach(c => c.classList.remove('active'));
                         document.getElementById('loginTab').classList.add('active');
-                        loginMessage.className = 'success';
-                        loginMessage.textContent = 'Mot de passe réinitialisé avec succès. Vous pouvez maintenant vous connecter.';
-                    }, 2000);
+                        
+                        // Show success message
+                        setTimeout(() => {
+                            showSuccessModal('Mot de passe réinitialisé avec succès. Vous pouvez maintenant vous connecter.');
+                        }, 100);
+                    });
                 } else {
-                    newPasswordMessage.className = 'error';
-                    newPasswordMessage.textContent = data.message;
+                    showErrorModal(data.message);
                 }
             } catch (error) {
-                newPasswordMessage.className = 'error';
-                newPasswordMessage.textContent = 'Erreur de connexion au serveur';
+                showErrorModal('Erreur de connexion au serveur');
                 console.error('New password error:', error);
+            } finally {
+                setButtonLoading(submitButton, false);
             }
         });
         
@@ -719,14 +2567,15 @@
                     userRoleSpan.textContent = role;
                     document.getElementById('userName').textContent = username;
                     
-                        if (role.includes('ROLE_ADMIN')) {
-                            window.location.href = 'admin-dashboard.html';
-                        } else if (role.includes('ROLE_AGENT')) {
-                            window.location.href = 'agent-dashboard.html';
-                        } else {
-                            window.location.href = 'user-dashboard.html';
-                        }
-              }
+                    // Redirect to appropriate dashboard
+                    if (role.includes('ROLE_ADMIN')) {
+                        window.location.href = 'admin-dashboard.html';
+                    } else if (role.includes('ROLE_AGENT')) {
+                        window.location.href = 'agent-dashboard.html';
+                    } else {
+                        window.location.href = 'user-dashboard.html';
+                    }
+                }
             } catch (error) {
                 console.error('Session check error:', error);
             }

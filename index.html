@@ -1486,7 +1486,7 @@
         const satisfactionRate = document.getElementById('satisfaction-rate');
         
         // Configuration
-        //const API_URL = 'http://localhost:8082';
+        //const API_BASE_URL = 'http://localhost:8082';
         
         // Create particles for background animation
         function createParticles() {
@@ -1533,7 +1533,7 @@
         // Fetch and display testimonials
         async function loadTestimonials() {
     try {
-        const response = await fetch(`${API_URL}/api/public/feedback/testimonials?size=3`);
+        const response = await fetch(`${API_BASE_URL}/api/public/feedback/testimonials?size=3`);
         
         if (!response.ok) {
             throw new Error('Erreur lors du chargement des témoignages');
@@ -1584,7 +1584,7 @@
         // Fetch and display review statistics
         async function loadReviewStats() {
     try {
-        const response = await fetch(`${API_URL}/api/public/feedback/statistics`);
+        const response = await fetch(`${API_BASE_URL}/api/public/feedback/statistics`);
         
         if (!response.ok) {
             throw new Error('Erreur lors du chargement des statistiques');
@@ -1631,7 +1631,7 @@
         // Fetch and display user comments
         async function loadComments() {
     try {
-        const response = await fetch(`${API_URL}/api/public/feedback/comments?size=3`);
+        const response = await fetch(`${API_BASE_URL}/api/public/feedback/comments?size=3`);
         
         if (!response.ok) {
             throw new Error('Erreur lors du chargement des commentaires');
@@ -1685,7 +1685,7 @@
         // Load site statistics
         async function loadSiteStats() {
     try {
-        const response = await fetch(`${API_URL}/api/public/stats`);
+        const response = await fetch(`${API_BASE_URL}/api/public/stats`);
         
         if (!response.ok) {
             throw new Error('Erreur lors du chargement des statistiques du site');
@@ -1743,7 +1743,7 @@
         // Check if user is already logged in
         async function checkSession() {
             try {
-                const response = await fetch(`${API_URL}/auth/check-session`, {
+                const response = await fetch(`${API_BASE_URL}/auth/check-session`, {
                     method: 'GET',
                     credentials: 'include'
                 });

@@ -4,7 +4,7 @@ const config = {
         API_URL: 'http://localhost:8082'
     },
     production: {
-        API_URL: 'https://f3c1f0a8db54f44a054453982c23677c.serveo.net'
+        API_URL: 'https://880bc10889706e1b0e5de18654d0b1cf.serveo.net'
     }
 };
 

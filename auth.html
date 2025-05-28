@@ -2197,10 +2197,9 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    showSuccessModal(data.message, async function() {
-                        // Check session to get user details
-                        await checkSession();
-                    });
+                    showSuccessModal(data.message); // Affiche le message de succès
+                    // Appeler checkSession immédiatement pour obtenir les détails de l'utilisateur et rediriger
+                    await checkSession();
                 } else {
                     showErrorModal(data.message);
                 }
